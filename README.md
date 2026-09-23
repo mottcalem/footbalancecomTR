@@ -1,30 +1,63 @@
-# Welcome to your Lovable project
+# FootBalance Türkiye
 
-This project was built with [Lovable](https://lovable.dev).
+FootBalance Türkiye web sitesinin frontend uygulamasıdır. Ayak ve basış analizi, kişiye özel ortopedik tabanlık ve merkez/randevu akışı üzerine tasarlanmış, mobil uyumlu ve modern bir landing page ve yönlendirme yapısı içerir.
 
-## Build with Lovable
+## Proje Hakkında
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+- Ayak ve basış sorunlarına yönelik farkındalık oluşturan içerik
+- Kişiye özel ortopedik tabanlık anlatımı ve kullanım süreci
+- Hizmet noktaları / merkez bulma sayfası
+- Randevu oluşturma akışı
+- Mobil ve masaüstü uyumlu kullanıcı deneyimi
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+## Teknoloji Stack
 
-## Development
+- React
+- TypeScript
+- Vite
+- TanStack Router
+- Tailwind CSS
+- Radix UI bileşenleri
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+## Geliştirme
 
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+Ön koşul: Node.js 18+ sürümü yüklü olmalıdır.
+
+```bash
+npm install
 npm run dev
 ```
 
-## Built with
+Uygulama varsayılan olarak yerel geliştirme sunucusunda çalışır. Tarayıcıda aşağıdaki adresi açabilirsiniz:
 
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
-# footbalancecomTR
+```text
+http://localhost:5173
+```
+
+## Build
+
+```bash
+npm run build
+```
+
+## Kod Kalitesi
+
+```bash
+npm run lint
+```
+
+## Yapı
+
+```text
+src/
+  components/
+  data/
+  hooks/
+  lib/
+  routes/
+public/
+```
+
+## Not
+
+Bu proje FootBalance Türkiye markası için özel olarak hazırlanmış bir web arayüzü olup, ürün, merkez ve randevu bilgilerini kullanıcıya sunmaya yönelik bir frontend uygulamasıdır.

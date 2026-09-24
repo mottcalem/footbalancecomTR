@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, CalendarDays, Check, ChevronLeft, Footprints, MapPin, Menu, Navigation, Search, SlidersHorizontal, UserCheck, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -40,6 +40,20 @@ const track = (event: EventName, data: Record<string, string> = {}) => {
   if (typeof window === "undefined") return;
   window.dispatchEvent(new CustomEvent("footbalance:analytics", { detail: { event, ...data } }));
 };
+
+type LocationStatus = "loading" | "ready" | "no-center" | "unavailable";
+
+type ReverseGeocodeResult = {
+  address?: { city?: string; town?: string; province?: string; state?: string };
+};
+
+function matchingCenterCity(place: string | undefined, longitude: number, cities: string[]) {
+  if (!place) return undefined;
+  const detected = place.toLocaleLowerCase("tr-TR");
+  if (detected === "istanbul") return longitude >= 29 ? "İstanbul (Anadolu)" : "İstanbul (Avrupa)";
+  if (detected === "kocaeli") return "İzmit";
+  return cities.find((city) => city.toLocaleLowerCase("tr-TR") === detected);
+}
 
 
 
@@ -173,13 +187,50 @@ Kişiye özel ortopedik tabanlık ise ayak ve basış yapına göre şekillendir
 
 
 function BookingPanel({ onClose }: { onClose: () => void }) {
-  const [step,setStep]=useState(1); const [center,setCenter]=useState(""); const [day,setDay]=useState(""); const [time,setTime]=useState(""); const [done,setDone]=useState(false); const [cityFilter,setCityFilter]=useState(""); const [districtQuery,setDistrictQuery]=useState("");
+  const [step,setStep]=useState(1); const [center,setCenter]=useState(""); const [day,setDay]=useState(""); const [time,setTime]=useState(""); const [done,setDone]=useState(false); const [cityFilter,setCityFilter]=useState(""); const [districtQuery,setDistrictQuery]=useState(""); const [locationStatus,setLocationStatus]=useState<LocationStatus>("loading");
   const cities=[...new Set(CENTERS.map(c=>c.city).filter(c=>c!=="Diğer"))].sort((a,b)=>a.localeCompare(b,"tr"));
   const norm=(s:string)=>s.toLocaleLowerCase("tr-TR");
-  const filteredCenters=CENTERS.filter(c=>(!cityFilter||c.city===cityFilter)&&(!districtQuery.trim()||norm(`${c.name} ${c.address}`).includes(norm(districtQuery.trim()))));
+  const filteredCenters=CENTERS.filter(c=>(!cityFilter||c.city===cityFilter)&&(!districtQuery.trim()||norm(`${c.name} ${c.address}`).includes(norm(districtQuery.trim())))).sort((a,b)=>Number(b.main)-Number(a.main));
   const next=()=>setStep(s=>Math.min(4,s+1));
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setLocationStatus("unavailable");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&zoom=10`);
+          if (!response.ok) throw new Error("Konum çözümlenemedi");
+          const result = (await response.json()) as ReverseGeocodeResult;
+          const place = result.address?.city ?? result.address?.town ?? result.address?.province ?? result.address?.state;
+          const detectedCity = matchingCenterCity(place, longitude, cities);
+          if (detectedCity) {
+            setCityFilter(detectedCity);
+            setLocationStatus("ready");
+          } else {
+            setLocationStatus("no-center");
+          }
+        } catch {
+          setLocationStatus("unavailable");
+        }
+      },
+      () => setLocationStatus("unavailable"),
+      { enableHighAccuracy: false, timeout: 10_000, maximumAge: 300_000 },
+    );
+  }, []);
   return <div className="fixed inset-0 z-50 bg-foreground/45" role="presentation" onMouseDown={e=>e.target===e.currentTarget&&onClose()}><aside role="dialog" aria-modal="true" aria-labelledby="booking-title" className="absolute inset-y-0 right-0 w-full max-w-xl overflow-y-auto bg-background p-5 shadow-2xl sm:p-8"><div className="flex items-center justify-between"><img src={logo} alt="FootBalance" className="h-7 w-auto"/><Button aria-label="Randevu panelini kapat" variant="ghost" size="icon" className="h-11 w-11" onClick={onClose}><X/></Button></div>{done?<div className="py-12"><span className="grid size-14 place-items-center rounded-full bg-secondary"><Check/></span><h2 id="booking-title" className="mt-6 text-3xl font-semibold">Randevun oluşturuldu.</h2><dl className="mt-8 grid gap-3 rounded-xl bg-muted p-5 text-sm"><div><dt className="text-muted-foreground">Merkez</dt><dd className="font-semibold">{center}</dd></div><div><dt className="text-muted-foreground">Tarih ve saat</dt><dd className="font-semibold">{day}, {time}</dd></div><div><dt className="text-muted-foreground">Adres</dt><dd className="font-semibold">{CENTERS.find(c=>c.name===center)?.address ?? "Teşvikiye Cd. 42, Şişli"}</dd></div></dl><div className="mt-5 flex gap-3"><BrandButton><Navigation/> Yol Tarifi</BrandButton><BrandButton variant="quiet"><CalendarDays/> Takvimime Ekle</BrandButton></div><h3 className="mt-10 text-xl font-semibold">Randevunda seni ne bekliyor?</h3><ol className="mt-5 space-y-3 text-muted-foreground"><li>1. Ayak ve basış analizi</li><li>2. Uzman değerlendirmesi</li><li>3. Sana uygun tabanlık seçimi</li><li>4. Uygun durumda kişiye özel şekillendirme</li></ol></div>:<><div className="mt-4">
-  {step===1&&<div className="space-y-4"><div className="rounded-2xl bg-secondary px-6 py-8 text-center sm:px-10"><h3 className="text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">Sana en yakın FootBalance merkezini bul.</h3><p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted-foreground">Türkiye genelinde +100 yetkili merkez. Ayak analizi randevunu oluşturturmak için ara.</p></div><div className="flex flex-col gap-3 md:flex-row md:items-center"><label className="relative w-full md:max-w-md"><span className="sr-only">Merkez ara</span><Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true"/><input type="search" value={districtQuery} onChange={e=>setDistrictQuery(e.target.value)} placeholder="Şehir, semt veya merkez ara..." className="h-12 w-full rounded-full border border-border bg-background pl-11 pr-5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"/></label><label className="w-full md:w-64"><span className="sr-only">Şehir seç</span><select value={cityFilter} onChange={e=>{setCityFilter(e.target.value);track("center_search",{city:e.target.value})}} className="h-12 w-full rounded-full border border-border bg-background px-5 text-sm font-semibold outline-none focus-visible:ring-2 focus-visible:ring-ring"><option value="">Tüm Şehirler</option>{cities.map(c=><option key={c} value={c}>{c}</option>)}</select></label></div>{(cityFilter||districtQuery.trim())&&(filteredCenters.length===0?<p className="rounded-xl border border-border p-6 text-center text-sm text-muted-foreground">Seçtiğin kriterlere uygun merkez bulunamadı.</p>:filteredCenters.map((c,i)=><button type="button" key={`${c.name}-${c.city}-${i}`} onClick={()=>{setCenter(c.name);track("center_selected",{center:c.name});next()}} className={`min-h-20 w-full rounded-xl border p-4 text-left ${center===c.name?"border-primary bg-secondary":"border-border"}`}><span className="font-semibold">{c.name}</span><span className="mt-1 block text-sm text-muted-foreground">{c.city} · {c.address}</span>{c.phone&&<span className="mt-0.5 block text-sm text-muted-foreground">{c.phone}</span>}</button>))}</div>}
+  {step === 1 && <div className="space-y-4">
+    <div className="rounded-2xl bg-secondary px-6 py-8 text-center sm:px-10"><h3 className="text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">Sana en yakın FootBalance merkezini bul.</h3><p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted-foreground">Türkiye genelinde +100 yetkili merkez. Ayak analizi randevunu oluşturturmak için ara.</p></div>
+    <div className="flex flex-col gap-3 md:flex-row md:items-center"><label className="relative w-full md:max-w-md"><span className="sr-only">Merkez ara</span><Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true"/><input type="search" value={districtQuery} onChange={e=>setDistrictQuery(e.target.value)} placeholder="Şehir, semt veya merkez ara..." className="h-12 w-full rounded-full border border-border bg-background pl-11 pr-5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"/></label><label className="w-full md:w-64"><span className="sr-only">Şehir seç</span><select value={cityFilter} onChange={e=>{setCityFilter(e.target.value);setLocationStatus("unavailable");track("center_search",{city:e.target.value})}} className="h-12 w-full rounded-full border border-border bg-background px-5 text-sm font-semibold outline-none focus-visible:ring-2 focus-visible:ring-ring"><option value="">Tüm Şehirler</option>{cities.map(c=><option key={c} value={c}>{c}</option>)}</select></label></div>
+    {locationStatus === "loading" && <p className="text-xs text-muted-foreground" role="status">Konumunuz belirleniyor…</p>}
+    {locationStatus === "ready" && <p className="text-xs text-muted-foreground" role="status">Konumunuza göre {cityFilter} merkezleri gösteriliyor.</p>}
+    {locationStatus === "no-center" && <div role="alert" className="rounded-xl border border-primary/25 bg-secondary/35 px-4 py-3 text-sm leading-6 text-foreground"><span className="font-semibold">Bulunduğunuz konumda henüz bir FootBalance merkezi görünmüyor.</span>{" "}Yukarıdaki şehir listesinden farklı bir lokasyon seçerek diğer merkezleri görüntüleyebilirsiniz.</div>}
+    {locationStatus === "unavailable" && !cityFilter && <p className="text-xs text-muted-foreground" role="status">Konumunuza erişilemedi; şehir seçerek merkezleri görüntüleyebilirsiniz.</p>}
+    {(cityFilter||districtQuery.trim())&&(filteredCenters.length===0?<p className="rounded-xl border border-border p-6 text-center text-sm text-muted-foreground">Seçtiğin kriterlere uygun merkez bulunamadı.</p>:filteredCenters.map((c,i)=><button type="button" key={`${c.name}-${c.city}-${i}`} onClick={()=>{setCenter(c.name);track("center_selected",{center:c.name});next()}} className={`min-h-20 w-full rounded-xl border p-4 text-left ${c.main?"border-primary/50 bg-secondary/40":"border-border"} ${center===c.name?"ring-2 ring-primary":""}`}><span className="flex items-center justify-between gap-3 font-semibold">{c.name}{c.main&&<span className="shrink-0 text-xs" aria-label="Önerilen merkez">★</span>}</span><span className="mt-1 block text-sm text-muted-foreground">{c.city} · {c.address}</span>{c.phone&&<span className="mt-0.5 block text-sm text-muted-foreground">{c.phone}</span>}</button>))}
+  </div>}
   {step===2&&<div className="grid grid-cols-2 gap-3">{["7 Eylül Pazartesi","8 Eylül Salı","9 Eylül Çarşamba","10 Eylül Perşembe"].map(d=><button type="button" key={d} onClick={()=>{setDay(d);track("appointment_date_selected",{date:d});next()}} className={`min-h-20 rounded-xl border p-3 font-semibold ${day===d?"border-primary bg-secondary":"border-border"}`}>{d}</button>)}</div>}
   {step===3&&<div className="grid grid-cols-3 gap-3">{["10:00","11:30","13:00","14:30","16:00","17:30"].map(t=><button type="button" key={t} onClick={()=>{setTime(t);track("appointment_time_selected",{time:t});next()}} className={`min-h-14 rounded-xl border font-semibold ${time===t?"border-primary bg-secondary":"border-border"}`}>{t}</button>)}</div>}
   {step===4&&<form id="booking-form" className="space-y-4" onSubmit={e=>{e.preventDefault();track("appointment_completed");setDone(true)}}><label className="block text-sm font-semibold">Ad Soyad<input required className="mt-2 h-12 w-full rounded-lg border border-input px-4 font-normal"/></label><label className="block text-sm font-semibold">Telefon<input required type="tel" className="mt-2 h-12 w-full rounded-lg border border-input px-4 font-normal"/></label><label className="block text-sm font-semibold">E-posta <span className="font-normal text-muted-foreground">(isteğe bağlı)</span><input type="email" className="mt-2 h-12 w-full rounded-lg border border-input px-4 font-normal"/></label><label className="flex gap-3 text-sm leading-6"><input required type="checkbox" className="mt-1 size-5"/> KVKK aydınlatma metnini okudum ve randevu iletişimine onay veriyorum.</label></form>}

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Mail, MapPin, Menu, Navigation, Phone, Search, User, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/footbalance-logo.svg";
@@ -24,12 +24,38 @@ export const Route = createFileRoute("/merkezler")({
 
 const norm = (s: string) => s.toLocaleLowerCase("tr-TR");
 
+type LocationStatus = "loading" | "ready" | "no-center" | "unavailable";
+
+type ReverseGeocodeResult = {
+  address?: {
+    city?: string;
+    town?: string;
+    province?: string;
+    state?: string;
+  };
+};
+
+function matchingCenterCity(place: string | undefined, longitude: number) {
+  if (!place) return undefined;
+
+  const detected = norm(place);
+  if (detected === "istanbul") {
+    return longitude >= 29 ? "İstanbul (Anadolu)" : "İstanbul (Avrupa)";
+  }
+  if (detected === "kocaeli") return "İzmit";
+
+  return CENTER_CITIES.find((centerCity) => norm(centerCity) === detected);
+}
+
 function CenterCard({ c }: { c: Center }) {
   return (
-    <article className="flex h-full flex-col rounded-2xl border border-border bg-card p-5 transition hover:border-foreground/25 hover:shadow-sm">
-      <div className="flex items-center gap-3">
+    <article className={`flex h-full flex-col rounded-2xl border bg-card p-5 transition hover:border-foreground/25 hover:shadow-sm ${c.main ? "border-primary/50 ring-1 ring-primary/15" : "border-border"}`}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
         <img src={c.main ? centerLogoMain : centerLogo} alt="" aria-hidden="true" className="h-9 w-9 shrink-0 rounded-lg" />
         <h3 className="text-sm font-bold leading-5 text-foreground">{c.name}</h3>
+        </div>
+        {c.main && <span title="Önerilen merkez" aria-label="Önerilen merkez" className="grid size-9 shrink-0 place-items-center rounded-full bg-secondary text-lg font-bold text-foreground">★</span>}
       </div>
       <div className="mt-4 space-y-2 text-xs leading-5 text-muted-foreground">
         {c.person && <p className="flex gap-2"><User className="mt-0.5 size-3.5 shrink-0 text-mint-deep" aria-hidden="true" /> <span>{c.person}</span></p>}
@@ -56,6 +82,43 @@ function CentersPage() {
   const [menu, setMenu] = useState(false);
   const [q, setQ] = useState("");
   const [city, setCity] = useState("Tüm Şehirler");
+  const [locationStatus, setLocationStatus] = useState<LocationStatus>("loading");
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setLocationStatus("unavailable");
+      return;
+    }
+
+    const detectLocation = async (position: GeolocationPosition) => {
+      try {
+        const { latitude, longitude } = position.coords;
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&zoom=10`,
+        );
+        if (!response.ok) throw new Error("Konum çözümlenemedi");
+
+        const result = (await response.json()) as ReverseGeocodeResult;
+        const place = result.address?.city ?? result.address?.town ?? result.address?.province ?? result.address?.state;
+        const detectedCity = matchingCenterCity(place, longitude);
+
+        if (detectedCity) {
+          setCity(detectedCity);
+          setLocationStatus("ready");
+        } else {
+          setLocationStatus("no-center");
+        }
+      } catch {
+        setLocationStatus("unavailable");
+      }
+    };
+
+    navigator.geolocation.getCurrentPosition(
+      detectLocation,
+      () => setLocationStatus("unavailable"),
+      { enableHighAccuracy: false, timeout: 10_000, maximumAge: 300_000 },
+    );
+  }, []);
 
   const list = useMemo(() => {
     const term = norm(q.trim());
@@ -65,7 +128,7 @@ function CentersPage() {
   const hasFilter = city !== "Tüm Şehirler" || q.trim().length > 0;
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-md">
         <div className="mx-auto flex h-[76px] max-w-[1360px] items-center gap-6 px-5 lg:px-8">
           <Link to="/" aria-label="FootBalance Türkiye ana sayfa" className="shrink-0"><img src={logo} alt="FootBalance" className="h-8 w-auto" /></Link>
@@ -90,7 +153,7 @@ function CentersPage() {
         )}
       </header>
 
-      <main>
+      <main className="flex-1">
         <section className="bg-[#eaf5f2]">
           <div className="mx-auto max-w-[1360px] px-5 py-12 lg:px-8 lg:py-16">
             <p className="mb-5 text-xs font-bold uppercase text-muted-foreground">Hizmet Noktaları</p>
@@ -105,13 +168,30 @@ function CentersPage() {
               </label>
               <label className="w-full md:w-64">
                 <span className="sr-only">Şehir seç</span>
-                <select value={city} onChange={(e) => setCity(e.target.value)} className="h-12 w-full rounded-full border border-border bg-background px-5 text-sm font-semibold outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                <select
+                  value={city}
+                  onChange={(e) => {
+                    setCity(e.target.value);
+                    setLocationStatus("unavailable");
+                  }}
+                  className="h-12 w-full rounded-full border border-border bg-background px-5 text-sm font-semibold outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
                   <option>Tüm Şehirler</option>
                   {CENTER_CITIES.map((c) => <option key={c}>{c}</option>)}
                 </select>
               </label>
-              
             </div>
+            <p className="mt-3 text-xs text-muted-foreground" role="status">
+              {locationStatus === "loading" && "Konumunuz belirleniyor…"}
+              {locationStatus === "ready" && `Konumunuza göre ${city} merkezleri gösteriliyor.`}
+              {locationStatus === "unavailable" && "Konumunuza erişilemedi; şehir seçerek merkezleri görüntüleyebilirsiniz."}
+            </p>
+            {locationStatus === "no-center" && (
+              <div role="alert" className="mt-4 rounded-xl border border-primary/25 bg-background px-4 py-3 text-sm leading-6 text-foreground">
+                <span className="font-semibold">Bulunduğunuz konumda henüz bir FootBalance merkezi görünmüyor.</span>{" "}
+                Yukarıdaki şehir listesinden farklı bir lokasyon seçerek diğer merkezleri görüntüleyebilirsiniz.
+              </div>
+            )}
           </div>
         </section>
 

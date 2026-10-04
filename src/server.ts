@@ -1,4 +1,6 @@
 import "./lib/error-capture";
+import { handleRequestSubmission } from "./lib/requests/handler";
+import { languagePath } from "./lib/i18n/urls";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
@@ -47,6 +49,16 @@ function isH3SwallowedErrorBody(body: string): boolean {
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
+      const url = new URL(request.url);
+      if (url.pathname === "/api/requests") return handleRequestSubmission(request, env);
+      if (
+        (request.method === "GET" || request.method === "HEAD") &&
+        url.searchParams.get("lang") === "en"
+      ) {
+        url.pathname = languagePath(url.pathname, "en");
+        url.searchParams.delete("lang");
+        return Response.redirect(url.href, 308);
+      }
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);

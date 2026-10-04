@@ -14,6 +14,7 @@ import { Route as CozumOrtagiOlRouteImport } from './routes/cozum-ortagi-ol'
 import { Route as HakkimizdaRouteImport } from './routes/hakkimizda'
 import { Route as IletisimRouteImport } from './routes/iletisim'
 import { Route as MerkezlerRouteImport } from './routes/merkezler'
+import { Route as RandevuRouteImport } from './routes/randevu'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +41,11 @@ const MerkezlerRoute = MerkezlerRouteImport.update({
   path: '/merkezler',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RandevuRoute = RandevuRouteImport.update({
+  id: '/randevu',
+  path: '/randevu',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/hakkimizda': typeof HakkimizdaRoute
   '/iletisim': typeof IletisimRoute
   '/merkezler': typeof MerkezlerRoute
+  '/randevu': typeof RandevuRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/hakkimizda': typeof HakkimizdaRoute
   '/iletisim': typeof IletisimRoute
   '/merkezler': typeof MerkezlerRoute
+  '/randevu': typeof RandevuRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,25 @@ export interface FileRoutesById {
   '/hakkimizda': typeof HakkimizdaRoute
   '/iletisim': typeof IletisimRoute
   '/merkezler': typeof MerkezlerRoute
+  '/randevu': typeof RandevuRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/cozum-ortagi-ol' | '/hakkimizda' | '/iletisim' | '/merkezler'
+    | '/'
+    | '/cozum-ortagi-ol'
+    | '/hakkimizda'
+    | '/iletisim'
+    | '/merkezler'
+    | '/randevu'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/cozum-ortagi-ol' | '/hakkimizda' | '/iletisim' | '/merkezler'
+  to:
+    | '/'
+    | '/cozum-ortagi-ol'
+    | '/hakkimizda'
+    | '/iletisim'
+    | '/merkezler'
+    | '/randevu'
   id:
     | '__root__'
     | '/'
@@ -76,6 +96,7 @@ export interface FileRouteTypes {
     | '/hakkimizda'
     | '/iletisim'
     | '/merkezler'
+    | '/randevu'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -84,6 +105,7 @@ export interface RootRouteChildren {
   HakkimizdaRoute: typeof HakkimizdaRoute
   IletisimRoute: typeof IletisimRoute
   MerkezlerRoute: typeof MerkezlerRoute
+  RandevuRoute: typeof RandevuRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -123,6 +145,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MerkezlerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/randevu': {
+      id: '/randevu'
+      path: '/randevu'
+      fullPath: '/randevu'
+      preLoaderRoute: typeof RandevuRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -132,6 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   HakkimizdaRoute: HakkimizdaRoute,
   IletisimRoute: IletisimRoute,
   MerkezlerRoute: MerkezlerRoute,
+  RandevuRoute: RandevuRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

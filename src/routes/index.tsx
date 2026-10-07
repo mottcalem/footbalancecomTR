@@ -1,7 +1,8 @@
 import { languagePath } from "@/lib/i18n/urls";
 import { translate, useTranslation, LanguageSwitcher } from "@/lib/i18n";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { BookingDialog } from "@/components/booking-dialog";
 import {
   ArrowRight,
   CalendarDays,
@@ -148,7 +149,7 @@ function BrandButton({
 
 function Home() {
   const { tx } = useTranslation();
-  const navigate = useNavigate();
+  const [bookingOpen, setBookingOpen] = useState(false);
   const [menu, setMenu] = useState(false);
   const [blogOpen, setBlogOpen] = useState(false);
   const openBlog = () => {
@@ -158,7 +159,7 @@ function Home() {
   };
   const openBooking = (source: string) => {
     track(source === "hero" ? "hero_booking_click" : "appointment_started", { source });
-    void navigate({ to: "/randevu" });
+    setBookingOpen(true);
   };
   const scrollTo = (id: string, event?: EventName) => {
     if (event) track(event);
@@ -809,23 +810,32 @@ function Home() {
                 "Türkiye genelindeki yetkili merkezler arasında sana en yakın olanı seç ve ayak analizi randevunu oluştur.",
               )}
             </p>
-            <Link to="/merkezler" onClick={() => track("center_finder_open")}>
-              <BrandButton>{tx("Hizmet Merkezlerimiz")} </BrandButton>
-            </Link>
+            <BrandButton
+              onClick={() => {
+                track("center_finder_open");
+                setBookingOpen(true);
+              }}
+            >
+              {tx("Hizmet Merkezlerimiz")}
+            </BrandButton>
           </div>
         </section>
         {blogOpen && <BlogGuide />}
       </main>
 
+      <BookingDialog open={bookingOpen} onOpenChange={setBookingOpen} />
       <Footer onBooking={() => openBooking("footer")} onOpenBlog={openBlog} />
       <div className="fixed inset-x-0 bottom-0 z-40 grid h-16 grid-cols-2 border-t border-border bg-background md:hidden">
-        <Link
-          to="/merkezler"
-          onClick={() => track("center_finder_open")}
+        <button
+          type="button"
+          onClick={() => {
+            track("center_finder_open");
+            setBookingOpen(true);
+          }}
           className="flex h-full items-center justify-center gap-2 text-sm font-semibold"
         >
           <MapPin className="size-4" /> {tx("Merkez Bul")}
-        </Link>
+        </button>
         <Button className="h-full rounded-none" onClick={() => openBooking("mobile-bar")}>
           <CalendarDays /> {tx("Randevu Al")}
         </Button>

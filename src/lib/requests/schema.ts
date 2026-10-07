@@ -32,7 +32,14 @@ export const requestSchema = z
         (value) => /^[+\d\s().-]+$/.test(value) && /^\d{10,15}$/.test(value.replace(/\D/g, "")),
         "Geçerli bir telefon numarası yazın.",
       ),
-    email: z.string().trim().email("Geçerli bir e-posta adresi yazın.").max(254),
+    email: z
+      .string()
+      .trim()
+      .max(254)
+      .refine(
+        (value) => !value || z.string().email().safeParse(value).success,
+        "Geçerli bir e-posta adresi yazın.",
+      ),
     city: z.string().trim().min(2, "Şehir seçin veya yazın.").max(80),
     center: z.string().trim().max(200).default(""),
     company: z.string().trim().max(150).default(""),
@@ -49,7 +56,20 @@ export const requestSchema = z
             value >= todayInIstanbul()),
         "Bugün veya ileri bir tarih seçin.",
       ),
-    preferredTime: z.enum(["", "morning", "afternoon", "any"]).default(""),
+    preferredTime: z
+      .enum([
+        "",
+        "morning",
+        "afternoon",
+        "any",
+        "10:00",
+        "11:30",
+        "13:00",
+        "14:30",
+        "16:00",
+        "17:30",
+      ])
+      .default(""),
     message: z.string().trim().max(2000, "Mesajınız en fazla 2000 karakter olabilir.").default(""),
     consent: z.boolean().refine(Boolean, "İletişim onayını işaretleyin."),
     website: z.string().max(0).default(""),
@@ -58,6 +78,12 @@ export const requestSchema = z
     if (value.type === "appointment" && !value.center)
       context.addIssue({ code: "custom", path: ["center"], message: "Bir merkez seçin." });
     if (value.type === "partner") {
+      if (!value.email)
+        context.addIssue({
+          code: "custom",
+          path: ["email"],
+          message: "Geçerli bir e-posta adresi yazın.",
+        });
       if (value.company.length < 2)
         context.addIssue({
           code: "custom",

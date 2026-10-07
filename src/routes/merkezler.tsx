@@ -2,12 +2,12 @@ import { languagePath } from "@/lib/i18n/urls";
 import { translate, useTranslation, LanguageSwitcher } from "@/lib/i18n";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Info, Mail, MapPin, Menu, Navigation, Phone, Search, User, X } from "lucide-react";
+import { Info, MapPin, Menu, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CenterCard } from "@/components/center-card";
+import { BookingDialog } from "@/components/booking-dialog";
 import logo from "@/assets/footbalance-logo.svg";
-import centerLogo from "@/assets/center-logo.svg";
-import centerLogoMain from "@/assets/center-logo-main.svg";
-import { CENTERS, CENTER_CITIES, type Center } from "@/data/centers";
+import { CENTERS, CENTER_CITIES } from "@/data/centers";
 
 export const Route = createFileRoute("/merkezler")({
   loaderDeps: ({ search }) => ({ lang: search.lang }),
@@ -74,83 +74,8 @@ function matchingCenterCity(place: string | undefined, longitude: number) {
   return CENTER_CITIES.find((centerCity) => norm(centerCity) === detected);
 }
 
-function CenterCard({ c }: { c: Center }) {
-  const { tx } = useTranslation();
-  return (
-    <article
-      className={`flex h-full flex-col rounded-2xl border bg-card p-5 transition hover:border-foreground/25 hover:shadow-sm ${c.main ? "border-primary/50 ring-1 ring-primary/15" : "border-border"}`}
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <img
-            src={c.main ? centerLogoMain : centerLogo}
-            alt=""
-            aria-hidden="true"
-            className="h-9 w-9 shrink-0 rounded-lg"
-          />
-          <h3 className="text-sm font-bold leading-5 text-foreground">{c.name}</h3>
-        </div>
-        {c.main && (
-          <span
-            title={tx("Önerilen merkez")}
-            aria-label={tx("Önerilen merkez")}
-            className="grid size-9 shrink-0 place-items-center rounded-full bg-secondary text-lg font-bold text-foreground"
-          >
-            ★
-          </span>
-        )}
-      </div>
-      <div className="mt-4 space-y-2 text-xs leading-5 text-muted-foreground">
-        {c.person && (
-          <p className="flex gap-2">
-            <User className="mt-0.5 size-3.5 shrink-0 text-mint-deep" aria-hidden="true" />{" "}
-            <span>{c.person}</span>
-          </p>
-        )}
-        {c.phone && (
-          <p className="flex gap-2">
-            <Phone className="mt-0.5 size-3.5 shrink-0 text-mint-deep" aria-hidden="true" />{" "}
-            <a href={`tel:${c.phone.replace(/[^\d+]/g, "")}`} className="hover:text-foreground">
-              {c.phone}
-            </a>
-          </p>
-        )}
-        {c.address && (
-          <p className="flex gap-2">
-            <MapPin className="mt-0.5 size-3.5 shrink-0 text-mint-deep" aria-hidden="true" />{" "}
-            <span>{c.address}</span>
-          </p>
-        )}
-      </div>
-      <div className="mt-auto grid grid-cols-2 gap-2.5 pt-4">
-        {c.email ? (
-          <a
-            href={`mailto:${c.email}`}
-            className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg bg-graphite text-xs font-semibold text-primary-foreground transition hover:bg-graphite/90"
-          >
-            <Mail className="size-3.5" aria-hidden="true" /> {tx("E-Posta Gönder")}{" "}
-          </a>
-        ) : (
-          <span aria-hidden="true" className="min-h-9" />
-        )}
-        {c.maps ? (
-          <a
-            href={c.maps}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg bg-graphite text-xs font-semibold text-primary-foreground transition hover:bg-graphite/90"
-          >
-            <Navigation className="size-3.5" aria-hidden="true" /> {tx("Yol Tarifi")}{" "}
-          </a>
-        ) : (
-          <span aria-hidden="true" className="min-h-9" />
-        )}
-      </div>
-    </article>
-  );
-}
-
 function CentersPage() {
+  const [bookingCenter, setBookingCenter] = useState<string | undefined>();
   const { tx } = useTranslation();
   const [menu, setMenu] = useState(false);
   const [q, setQ] = useState("");
@@ -209,6 +134,13 @@ function CentersPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
+      <BookingDialog
+        open={bookingCenter !== undefined}
+        initialCenter={bookingCenter}
+        onOpenChange={(open) => {
+          if (!open) setBookingCenter(undefined);
+        }}
+      />
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-md">
         <div className="mx-auto flex h-[76px] max-w-[1360px] items-center gap-6 px-5 lg:px-8">
           <Link to="/" aria-label={tx("FootBalance Türkiye ana sayfa")} className="shrink-0">
@@ -355,7 +287,11 @@ function CentersPage() {
           <div className="mx-auto max-w-[1360px] px-5 py-12 lg:px-8 lg:py-16">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {list.map((c) => (
-                <CenterCard key={`${c.name}-${c.address}`} c={c} />
+                <CenterCard
+                  key={`${c.name}-${c.address}`}
+                  c={c}
+                  onBooking={() => setBookingCenter(String(CENTERS.indexOf(c)))}
+                />
               ))}
             </div>
             {list.length === 0 && (

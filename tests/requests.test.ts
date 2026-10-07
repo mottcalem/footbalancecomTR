@@ -90,3 +90,12 @@ test("reports acceptance only after delivery succeeds, and preserves failures", 
     globalThis.fetch = originalFetch;
   }
 });
+
+test("accepts optional appointment email and exact time preferences", () => {
+  assert.equal(
+    requestSchema.safeParse({ ...appointment, email: "", preferredTime: "11:30" }).success,
+    true,
+  );
+  assert.equal(requestSchema.safeParse({ ...partner, email: "" }).success, false);
+  assert.equal(requestSchema.safeParse({ ...appointment, preferredTime: "25:00" }).success, false);
+});

@@ -1,5 +1,5 @@
+import { existingPageHead } from "@/lib/seo";
 import { RequestForm } from "@/components/request-form";
-import { languagePath } from "@/lib/i18n/urls";
 import { translate, useTranslation, LanguageSwitcher } from "@/lib/i18n";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
@@ -18,39 +18,16 @@ import logo from "@/assets/footbalance-logo.svg";
 
 export const Route = createFileRoute("/cozum-ortagi-ol")({
   loaderDeps: ({ search }) => ({ lang: search.lang }),
-  head: ({ match }) => ({
-    meta: [
-      { title: translate("Çözüm Ortağı Ol | FootBalance Türkiye", match.search.lang) },
-      {
-        name: "description",
-        content: translate(
-          "FootBalance çözüm ortaklığı ile kendi merkezinizde 10 dakikada ayak ve basış analizi yapın, %100 kişiye özel ortopedik tabanlık şekillendirin. Başvuru formunu doldurun, sizi arayalım.",
-          match.search.lang,
-        ),
-      },
-      {
-        property: "og:title",
-        content: translate("Çözüm Ortağı Ol | FootBalance Türkiye", match.search.lang),
-      },
-      {
-        property: "og:description",
-        content: translate(
-          "Kendi merkezinizde FootBalance teknolojisi: 10 dakikada analiz, kişiye özel ortopedik tabanlık ve rekabette farklılaşma.",
-          match.search.lang,
-        ),
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [
-      {
-        rel: "canonical",
-        href: languagePath("/cozum-ortagi-ol", match.search.lang ?? "tr"),
-      },
-      { rel: "alternate", hrefLang: "tr", href: "/cozum-ortagi-ol" },
-      { rel: "alternate", hrefLang: "en", href: "/en/cozum-ortagi-ol" },
-    ],
-  }),
+  head: ({ match }) =>
+    existingPageHead(
+      "/cozum-ortagi-ol",
+      match.search.lang,
+      translate("Çözüm Ortağı Ol | FootBalance Türkiye", match.search.lang),
+      translate(
+        "FootBalance çözüm ortaklığı ile kendi merkezinizde 10 dakikada ayak ve basış analizi yapın, %100 kişiye özel ortopedik tabanlık şekillendirin. Başvuru formunu doldurun, sizi arayalım.",
+        match.search.lang,
+      ),
+    ),
   component: PartnerPage,
 });
 
@@ -191,6 +168,7 @@ function PartnerPage() {
             <a href="#sistem">{tx("3D Sistem")}</a>
             <a href="#referanslar">{tx("Referanslar")}</a>
             <a href="#sss-ortak">{tx("Sık Sorulan Sorular")}</a>
+            <Link to="/ayak-sagligi-hakkinda-bilgiler/">{tx("Blog")}</Link>
           </nav>
           <BrandButton onClick={scrollToForm} className="ml-auto hidden sm:inline-flex lg:ml-0">
             {tx("Başvuru Yap")}
@@ -223,6 +201,13 @@ function PartnerPage() {
             <a className="py-3" href="#sss-ortak" onClick={() => setMenu(false)}>
               {tx("Sık Sorulan Sorular")}
             </a>
+            <Link
+              to="/ayak-sagligi-hakkinda-bilgiler/"
+              className="py-3"
+              onClick={() => setMenu(false)}
+            >
+              {tx("Blog")}
+            </Link>
           </nav>
         )}
       </header>
@@ -505,14 +490,20 @@ function PartnerFooter() {
   const { tx } = useTranslation();
   const groups: Record<string, string[]> = {
     FootBalance: ["Hakkımızda", "Teknolojimiz", "Kullanıcı Deneyimleri", "İletişim"],
-    "Ayak Sağlığı": ["Ayak Sağlığı Rehberi", "Sık Sorulan Sorular"],
+    "Ayak Sağlığı": ["Blog", "Sık Sorulan Sorular"],
     "Çözüm Ortaklığı": ["Ne Kazandırır?", "3D Sistem", "Referanslar", "Başvuru"],
     Online: ["Online Mağaza", "Instagram", "YouTube"],
   };
   return (
     <footer className="bg-graphite text-primary-foreground">
       <div className="mx-auto max-w-[1360px] px-5 py-16 lg:px-8">
-        <img src={logo} alt="FootBalance" className="h-9 w-auto brightness-0 invert" />
+        <Link
+          to="/"
+          aria-label={tx("FootBalance Türkiye ana sayfa")}
+          className="inline-block shrink-0"
+        >
+          <img src={logo} alt="FootBalance" className="h-9 w-auto brightness-0 invert" />
+        </Link>
         <div className="mt-12 grid grid-cols-2 gap-8 md:grid-cols-4">
           {Object.entries(groups).map(([g, links]) => (
             <div key={g}>
@@ -520,7 +511,16 @@ function PartnerFooter() {
               <ul className="mt-4 space-y-3 text-sm text-primary-foreground/65">
                 {links.map((x) => (
                   <li key={x}>
-                    <span className="min-h-6 text-left">{tx(x)}</span>
+                    {x === "Blog" ? (
+                      <Link
+                        to="/ayak-sagligi-hakkinda-bilgiler/"
+                        className="min-h-6 text-left hover:text-primary-foreground"
+                      >
+                        {tx(x)}
+                      </Link>
+                    ) : (
+                      <span className="min-h-6 text-left">{tx(x)}</span>
+                    )}
                   </li>
                 ))}
               </ul>

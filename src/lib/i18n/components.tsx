@@ -1,7 +1,7 @@
 import { type ReactNode } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import { LanguageContext, useTranslation } from "./context";
-import { languagePath } from "./urls";
+import { PUBLIC_PATHS, languagePath } from "./urls";
 import { type Language } from "./translate";
 export function LanguageProvider({
   language,
@@ -31,7 +31,12 @@ export function LanguageSwitcher() {
         const search = new URLSearchParams(location.searchStr);
         search.delete("lang");
         const query = search.toString();
-        const href = `${languagePath(location.pathname, code)}${query ? `?${query}` : ""}${location.hash ? `#${location.hash}` : ""}`;
+        const routeKey = location.pathname.replace(/\/$/, "") || "/";
+        const targetPath =
+          code !== language && !PUBLIC_PATHS[routeKey]
+            ? languagePath("/ayak-sagligi-hakkinda-bilgiler", code)
+            : languagePath(location.pathname, code);
+        const href = `${targetPath}${query ? `?${query}` : ""}${location.hash ? `#${location.hash}` : ""}`;
         return (
           <a
             key={code}

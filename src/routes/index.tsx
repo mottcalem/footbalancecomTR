@@ -1,4 +1,4 @@
-import { languagePath } from "@/lib/i18n/urls";
+import { existingPageHead } from "@/lib/seo";
 import { translate, useTranslation, LanguageSwitcher } from "@/lib/i18n";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
@@ -40,41 +40,16 @@ import logo from "@/assets/footbalance-logo.svg";
 
 export const Route = createFileRoute("/")({
   loaderDeps: ({ search }) => ({ lang: search.lang }),
-  head: ({ match }) => ({
-    meta: [
-      {
-        title: translate("Kişiye Özel Ortopedik Tabanlık | FootBalance Türkiye", match.search.lang),
-      },
-      {
-        name: "description",
-        content: translate(
-          "FootBalance ile ayak ve basış yapınızı analiz ettirin, ihtiyacınıza uygun kişiye özel ortopedik tabanlığınızı keşfedin. Size en yakın FootBalance merkezinden randevu alın.",
-          match.search.lang,
-        ),
-      },
-      {
-        property: "og:title",
-        content: translate(
-          "Kişiye Özel Ortopedik Tabanlık | FootBalance Türkiye",
-          match.search.lang,
-        ),
-      },
-      {
-        property: "og:description",
-        content: translate(
-          "Ayak ve basış analiziyle kişiye özel ortopedik tabanlığınızı keşfedin ve randevunuzu oluşturun.",
-          match.search.lang,
-        ),
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [
-      { rel: "canonical", href: languagePath("/", match.search.lang ?? "tr") },
-      { rel: "alternate", hrefLang: "tr", href: "/" },
-      { rel: "alternate", hrefLang: "en", href: "/en" },
-    ],
-  }),
+  head: ({ match }) =>
+    existingPageHead(
+      "/",
+      match.search.lang,
+      translate("Kişiye Özel Ortopedik Tabanlık | FootBalance Türkiye", match.search.lang),
+      translate(
+        "FootBalance ile ayak ve basış yapınızı analiz ettirin, ihtiyacınıza uygun kişiye özel ortopedik tabanlığınızı keşfedin. Size en yakın FootBalance merkezinden randevu alın.",
+        match.search.lang,
+      ),
+    ),
   component: Home,
 });
 
@@ -169,9 +144,9 @@ function Home() {
     <div className="min-h-screen bg-background text-foreground pb-16 md:pb-0">
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-md">
         <div className="mx-auto flex h-[76px] max-w-[1360px] items-center gap-6 px-5 lg:px-8">
-          <a href="#top" aria-label={tx("FootBalance Türkiye ana sayfa")} className="shrink-0">
+          <Link to="/" aria-label={tx("FootBalance Türkiye ana sayfa")} className="shrink-0">
             <img src={logo} alt="FootBalance" className="h-8 w-auto" />
-          </a>
+          </Link>
           <nav
             aria-label={tx("Ana menü")}
             className="ml-auto hidden items-center gap-5 text-[13px] font-semibold lg:flex"
@@ -180,9 +155,10 @@ function Home() {
             <a href="#nedir">{tx("Kişiye Özel Tabanlık")}</a>
             <a href="#teknoloji">{tx("Nasıl Hazırlanır?")}</a>
             <a href="#sss">{tx("Sık Sorulan Sorular")}</a>
+            <Link to="/ayak-sagligi-hakkinda-bilgiler/">{tx("Blog")}</Link>
           </nav>
           <Link
-            to="/cozum-ortagi-ol"
+            to="/cozum-ortagi-ol/"
             onClick={() => track("online_store_click")}
             className="ml-auto hidden min-h-11 items-center text-sm font-semibold text-muted-foreground xl:flex"
           >
@@ -216,8 +192,15 @@ function Home() {
             <a className="py-3" href="#sss" onClick={() => setMenu(false)}>
               {tx("Sık Sorulan Sorular")}
             </a>
-            <Link className="py-3" to="/cozum-ortagi-ol" onClick={() => setMenu(false)}>
+            <Link className="py-3" to="/cozum-ortagi-ol/" onClick={() => setMenu(false)}>
               {tx("Çözüm Ortağı Ol")}
+            </Link>
+            <Link
+              to="/ayak-sagligi-hakkinda-bilgiler/"
+              className="py-3"
+              onClick={() => setMenu(false)}
+            >
+              {tx("Blog")}
             </Link>
           </nav>
         )}
@@ -854,7 +837,7 @@ function Footer({ onBooking, onOpenBlog }: { onBooking: () => void; onOpenBlog: 
   };
   const onClick = (x: string) => {
     if (x === "Randevu Al") return onBooking;
-    if (x === "Ayak Sağlığı Rehberi") return onOpenBlog;
+    if (x === "Blog") return onOpenBlog;
     if (x === "Merkez Bul") return () => scroll("top");
     if (x === "Teknolojimiz") return () => scroll("teknoloji");
     if (x === "Kullanıcı Deneyimleri") return () => scroll("deneyimler");
@@ -866,7 +849,7 @@ function Footer({ onBooking, onOpenBlog }: { onBooking: () => void; onOpenBlog: 
   const groups = {
     FootBalance: ["Hakkımızda", "Teknolojimiz", "Kullanıcı Deneyimleri", "İletişim"],
     "Kişiye Özel Tabanlık": ["Nasıl Çalışır?", "Kimler İçin?"],
-    "Ayak Sağlığı": ["Ayak Sağlığı Rehberi", "Sık Sorulan Sorular"],
+    "Ayak Sağlığı": ["Blog", "Sık Sorulan Sorular"],
     Merkezler: ["Merkez Bul", "Randevu Al"],
     Online: ["Online Mağaza", "Instagram", "YouTube"],
   };
@@ -874,14 +857,20 @@ function Footer({ onBooking, onOpenBlog }: { onBooking: () => void; onOpenBlog: 
     <footer className="bg-graphite text-primary-foreground">
       <div className="mx-auto max-w-[1360px] px-5 py-16 lg:px-8">
         <div className="flex items-center gap-4">
-          <img src={logo} alt="FootBalance" className="h-9 w-auto brightness-0 invert" />
+          <Link
+            to="/"
+            aria-label={tx("FootBalance Türkiye ana sayfa")}
+            className="inline-block shrink-0"
+          >
+            <img src={logo} alt="FootBalance" className="h-9 w-auto brightness-0 invert" />
+          </Link>
         </div>
         <div className="mt-10 grid grid-cols-2 gap-6 md:grid-cols-5 md:gap-5">
           {Object.entries(groups).map(([g, links]) => (
             <div key={g}>
               {g === tx("Online") ? (
                 <Link
-                  to="/cozum-ortagi-ol"
+                  to="/cozum-ortagi-ol/"
                   onClick={() => track("online_store_click")}
                   className="text-sm font-bold uppercase text-primary-foreground hover:text-primary-foreground/80"
                 >
@@ -897,7 +886,7 @@ function Footer({ onBooking, onOpenBlog }: { onBooking: () => void; onOpenBlog: 
                     return (
                       <li key={x}>
                         <Link
-                          to="/hakkimizda"
+                          to="/hakkimizda/"
                           className="min-h-6 block text-left hover:text-primary-foreground"
                         >
                           {tx(x)}
@@ -908,7 +897,7 @@ function Footer({ onBooking, onOpenBlog }: { onBooking: () => void; onOpenBlog: 
                     return (
                       <li key={x}>
                         <Link
-                          to="/iletisim"
+                          to="/iletisim/"
                           className="min-h-6 block text-left hover:text-primary-foreground"
                         >
                           {tx(x)}
@@ -919,8 +908,20 @@ function Footer({ onBooking, onOpenBlog }: { onBooking: () => void; onOpenBlog: 
                     return (
                       <li key={x}>
                         <Link
-                          to="/cozum-ortagi-ol"
+                          to="/cozum-ortagi-ol/"
                           onClick={() => track("online_store_click")}
+                          className="min-h-6 block text-left hover:text-primary-foreground"
+                        >
+                          {tx(x)}
+                        </Link>
+                      </li>
+                    );
+                  if (x === "Blog")
+                    return (
+                      <li key={x}>
+                        <Link
+                          to="/ayak-sagligi-hakkinda-bilgiler/"
+                          onClick={() => track("blog_post_click")}
                           className="min-h-6 block text-left hover:text-primary-foreground"
                         >
                           {tx(x)}
@@ -931,7 +932,7 @@ function Footer({ onBooking, onOpenBlog }: { onBooking: () => void; onOpenBlog: 
                     return (
                       <li key={x}>
                         <Link
-                          to="/merkezler"
+                          to="/merkezler/"
                           onClick={() => track("center_finder_open")}
                           className="min-h-6 block text-left hover:text-primary-foreground"
                         >
@@ -1057,9 +1058,7 @@ function BlogGuide() {
           {list.map((p) => (
             <a
               key={p.url}
-              href={p.url}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={new URL(p.url).pathname}
               onClick={() => track("blog_post_click")}
               className="flex flex-col rounded-2xl border border-border bg-card p-6 transition hover:border-foreground/25 hover:shadow-sm"
             >
@@ -1072,6 +1071,12 @@ function BlogGuide() {
             </a>
           ))}
         </div>
+        <a
+          href={language === "en" ? "/en/foot-health-blog/" : "/ayak-sagligi-hakkinda-bilgiler/"}
+          className="mt-8 inline-flex rounded-full border border-border px-6 py-3 font-semibold"
+        >
+          {language === "en" ? "Browse all articles →" : "Tüm blog yazılarını gör →"}
+        </a>
         {list.length === 0 && (
           <p className="mt-8 text-sm text-muted-foreground">
             {tx("Aramanla eşleşen yazı bulunamadı.")}

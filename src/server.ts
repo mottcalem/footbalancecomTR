@@ -1,6 +1,9 @@
 import "./lib/error-capture";
 import { handleRequestSubmission } from "./lib/requests/handler";
-import { languagePath } from "./lib/i18n/urls";
+import legacyRedirects from "./data/legacy-redirects.json";
+import posts from "./data/blog-index.json";
+import pages from "./data/legacy-pages.json";
+import { internalPath, PUBLIC_PATHS, languagePath } from "./lib/i18n/urls";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
@@ -58,6 +61,28 @@ export default {
         url.pathname = languagePath(url.pathname, "en");
         url.searchParams.delete("lang");
         return Response.redirect(url.href, 308);
+      }
+      if (request.method === "GET" || request.method === "HEAD") {
+        if (url.pathname === "/feed/" || url.pathname === "/feed") {
+          url.pathname = "/feed.xml";
+          return Response.redirect(url.href, 308);
+        }
+        const path = decodeURI(url.pathname);
+        const alias = (legacyRedirects as Record<string, string>)[path.replace(/\/$/, "") + "/"];
+        if (alias) {
+          url.pathname = alias;
+          return Response.redirect(url.href, 301);
+        }
+        const resolved = internalPath(path);
+        const known = PUBLIC_PATHS[resolved.path];
+        const legacy = [...pages, ...posts].find(
+          (p) => p.path.replace(/\/$/, "") === path.replace(/\/$/, ""),
+        );
+        const canonical = known ? known[resolved.language] : legacy?.path;
+        if (canonical && path !== canonical) {
+          url.pathname = canonical;
+          return Response.redirect(url.href, 301);
+        }
       }
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);

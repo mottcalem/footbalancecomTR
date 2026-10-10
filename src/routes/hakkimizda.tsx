@@ -1,4 +1,4 @@
-import { languagePath } from "@/lib/i18n/urls";
+import { existingPageHead } from "@/lib/seo";
 import { translate, useTranslation, LanguageSwitcher } from "@/lib/i18n";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
@@ -11,36 +11,16 @@ import productsImage from "@/assets/about-products.jpg";
 
 export const Route = createFileRoute("/hakkimizda")({
   loaderDeps: ({ search }) => ({ lang: search.lang }),
-  head: ({ match }) => ({
-    meta: [
-      { title: translate("Hakkımızda | FootBalance Türkiye", match.search.lang) },
-      {
-        name: "description",
-        content: translate(
-          "FootBalance'ın Finlandiya'da geliştirilen patentli teknolojisini, bilimsel yaklaşımını, küresel merkez ağını ve kişiye özel ortopedik tabanlık deneyimini keşfedin.",
-          match.search.lang,
-        ),
-      },
-      {
-        property: "og:title",
-        content: translate("Hakkımızda | FootBalance Türkiye", match.search.lang),
-      },
-      {
-        property: "og:description",
-        content: translate(
-          "6 kıtada, 50'den fazla ülkede ve 2.000'in üzerinde lokasyonda kişiye özel ortopedik tabanlık teknolojisi.",
-          match.search.lang,
-        ),
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [
-      { rel: "canonical", href: languagePath("/hakkimizda", match.search.lang ?? "tr") },
-      { rel: "alternate", hrefLang: "tr", href: "/hakkimizda" },
-      { rel: "alternate", hrefLang: "en", href: "/en/hakkimizda" },
-    ],
-  }),
+  head: ({ match }) =>
+    existingPageHead(
+      "/hakkimizda",
+      match.search.lang,
+      translate("Hakkımızda | FootBalance Türkiye", match.search.lang),
+      translate(
+        "FootBalance'ın Finlandiya'da geliştirilen patentli teknolojisini, bilimsel yaklaşımını, küresel merkez ağını ve kişiye özel ortopedik tabanlık deneyimini keşfedin.",
+        match.search.lang,
+      ),
+    ),
   component: AboutPage,
 });
 
@@ -100,14 +80,15 @@ function AboutPage() {
             <Link to="/" hash="sss">
               {tx("Sık Sorulan Sorular")}
             </Link>
+            <Link to="/ayak-sagligi-hakkinda-bilgiler/">{tx("Blog")}</Link>
           </nav>
           <Link
-            to="/cozum-ortagi-ol"
+            to="/cozum-ortagi-ol/"
             className="ml-auto hidden min-h-11 items-center text-sm font-semibold text-muted-foreground xl:flex"
           >
             {tx("Çözüm Ortağı Ol")}
           </Link>
-          <Link to="/randevu" className="hidden sm:inline-flex">
+          <Link to="/randevu/" className="hidden sm:inline-flex">
             <Button type="button" variant="appointment" size="touch">
               {tx("Randevu Al")}
             </Button>
@@ -134,11 +115,18 @@ function AboutPage() {
             <Link className="py-3" to="/" hash="teknoloji" onClick={() => setMenu(false)}>
               {tx("Nasıl Hazırlanır?")}
             </Link>
-            <Link className="py-3" to="/merkezler" onClick={() => setMenu(false)}>
+            <Link className="py-3" to="/merkezler/" onClick={() => setMenu(false)}>
               {tx("Merkez Bul")}
             </Link>
-            <Link className="py-3" to="/cozum-ortagi-ol" onClick={() => setMenu(false)}>
+            <Link className="py-3" to="/cozum-ortagi-ol/" onClick={() => setMenu(false)}>
               {tx("Çözüm Ortağı Ol")}
+            </Link>
+            <Link
+              to="/ayak-sagligi-hakkinda-bilgiler/"
+              className="py-3"
+              onClick={() => setMenu(false)}
+            >
+              {tx("Blog")}
             </Link>
           </nav>
         )}
@@ -160,7 +148,7 @@ function AboutPage() {
                 )}
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link to="/merkezler">
+                <Link to="/merkezler/">
                   <Button type="button" variant="appointment" size="touch">
                     {tx("Sana En Yakın Merkezi Bul")} <ArrowRight />
                   </Button>
@@ -304,7 +292,7 @@ function AboutPage() {
               </p>
             </div>
             <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-              <Link to="/merkezler">
+              <Link to="/merkezler/">
                 <Button type="button" variant="quiet" size="touch" className="w-full">
                   {tx("Merkez Bul")}
                 </Button>
@@ -316,18 +304,27 @@ function AboutPage() {
 
       <footer className="bg-graphite text-primary-foreground">
         <div className="mx-auto flex max-w-[1360px] flex-col gap-5 px-5 py-10 text-xs text-primary-foreground/55 sm:flex-row sm:items-center sm:justify-between lg:px-8">
-          <img src={logo} alt="FootBalance" className="h-8 w-auto brightness-0 invert" />
+          <Link
+            to="/"
+            aria-label={tx("FootBalance Türkiye ana sayfa")}
+            className="inline-block shrink-0"
+          >
+            <img src={logo} alt="FootBalance" className="h-8 w-auto brightness-0 invert" />
+          </Link>
+          <Link to="/ayak-sagligi-hakkinda-bilgiler/" className="hover:underline">
+            {tx("Blog")}
+          </Link>
           <p>{tx("© 2026 FootBalance Türkiye")}</p>
         </div>
       </footer>
       <div className="fixed inset-x-0 bottom-0 z-40 grid h-16 grid-cols-2 border-t border-border bg-background md:hidden">
         <Link
-          to="/merkezler"
+          to="/merkezler/"
           className="flex h-full items-center justify-center gap-2 text-sm font-semibold"
         >
           <MapPin className="size-4" /> {tx("Merkez Bul")}
         </Link>
-        <Link to="/randevu" className="h-full">
+        <Link to="/randevu/" className="h-full">
           <Button className="h-full w-full rounded-none">{tx("Randevu Al")}</Button>
         </Link>
       </div>

@@ -1,4 +1,4 @@
-import { languagePath } from "@/lib/i18n/urls";
+import { existingPageHead } from "@/lib/seo";
 import { translate, useTranslation, LanguageSwitcher } from "@/lib/i18n";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
@@ -8,36 +8,16 @@ import logo from "@/assets/footbalance-logo.svg";
 
 export const Route = createFileRoute("/iletisim")({
   loaderDeps: ({ search }) => ({ lang: search.lang }),
-  head: ({ match }) => ({
-    meta: [
-      { title: translate("İletişim | FootBalance Türkiye", match.search.lang) },
-      {
-        name: "description",
-        content: translate(
-          "FootBalance Türkiye Merkez Ofis iletişim bilgileri, çalışma saatleri ve iletişim formu. Randevu talebi, geri bildirim ve çözüm ortaklığı için bize ulaşın.",
-          match.search.lang,
-        ),
-      },
-      {
-        property: "og:title",
-        content: translate("İletişim | FootBalance Türkiye", match.search.lang),
-      },
-      {
-        property: "og:description",
-        content: translate(
-          "Merkez ofis telefon, e-posta ve adres bilgileri ile iletişim formu.",
-          match.search.lang,
-        ),
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [
-      { rel: "canonical", href: languagePath("/iletisim", match.search.lang ?? "tr") },
-      { rel: "alternate", hrefLang: "tr", href: "/iletisim" },
-      { rel: "alternate", hrefLang: "en", href: "/en/iletisim" },
-    ],
-  }),
+  head: ({ match }) =>
+    existingPageHead(
+      "/iletisim",
+      match.search.lang,
+      translate("İletişim | FootBalance Türkiye", match.search.lang),
+      translate(
+        "FootBalance Türkiye Merkez Ofis iletişim bilgileri, çalışma saatleri ve iletişim formu. Randevu talebi, geri bildirim ve çözüm ortaklığı için bize ulaşın.",
+        match.search.lang,
+      ),
+    ),
   component: ContactPage,
 });
 
@@ -69,16 +49,17 @@ function ContactPage() {
             <Link to="/" hash="teknoloji">
               {tx("Nasıl Hazırlanır?")}
             </Link>
-            <Link to="/merkezler">{tx("Merkezler")}</Link>
-            <Link to="/hakkimizda">{tx("Hakkımızda")}</Link>
+            <Link to="/merkezler/">{tx("Merkezler")}</Link>
+            <Link to="/hakkimizda/">{tx("Hakkımızda")}</Link>
+            <Link to="/ayak-sagligi-hakkinda-bilgiler/">{tx("Blog")}</Link>
           </nav>
           <Link
-            to="/cozum-ortagi-ol"
+            to="/cozum-ortagi-ol/"
             className="ml-auto hidden min-h-11 items-center text-sm font-semibold text-muted-foreground xl:flex"
           >
             {tx("Çözüm Ortağı Ol")}
           </Link>
-          <Link to="/randevu" className="hidden sm:inline-flex">
+          <Link to="/randevu/" className="hidden sm:inline-flex">
             <Button type="button" variant="appointment" size="touch">
               {tx("Randevu Al")}
             </Button>
@@ -99,14 +80,21 @@ function ContactPage() {
             <Link className="py-3" to="/" onClick={() => setMenu(false)}>
               {tx("Ana Sayfa")}
             </Link>
-            <Link className="py-3" to="/merkezler" onClick={() => setMenu(false)}>
+            <Link className="py-3" to="/merkezler/" onClick={() => setMenu(false)}>
               {tx("Merkez Bul")}
             </Link>
-            <Link className="py-3" to="/hakkimizda" onClick={() => setMenu(false)}>
+            <Link className="py-3" to="/hakkimizda/" onClick={() => setMenu(false)}>
               {tx("Hakkımızda")}
             </Link>
-            <Link className="py-3" to="/cozum-ortagi-ol" onClick={() => setMenu(false)}>
+            <Link className="py-3" to="/cozum-ortagi-ol/" onClick={() => setMenu(false)}>
               {tx("Çözüm Ortağı Ol")}
+            </Link>
+            <Link
+              to="/ayak-sagligi-hakkinda-bilgiler/"
+              className="py-3"
+              onClick={() => setMenu(false)}
+            >
+              {tx("Blog")}
             </Link>
           </nav>
         )}
@@ -172,7 +160,7 @@ function ContactPage() {
                   "Formu doldur, ekibimiz en kısa sürede seninle iletişime geçsin. Randevu için dilersen doğrudan sana en yakın merkeze de ulaşabilirsin.",
                 )}
               </p>
-              <Link to="/merkezler" className="mt-7 inline-flex">
+              <Link to="/merkezler/" className="mt-7 inline-flex">
                 <Button type="button" variant="quiet" size="touch">
                   {tx("Merkez Bul")} <ArrowRight />
                 </Button>
@@ -278,18 +266,27 @@ function ContactPage() {
 
       <footer className="bg-graphite text-primary-foreground">
         <div className="mx-auto flex max-w-[1360px] flex-col gap-5 px-5 py-10 text-xs text-primary-foreground/55 sm:flex-row sm:items-center sm:justify-between lg:px-8">
-          <img src={logo} alt="FootBalance" className="h-8 w-auto brightness-0 invert" />
+          <Link
+            to="/"
+            aria-label={tx("FootBalance Türkiye ana sayfa")}
+            className="inline-block shrink-0"
+          >
+            <img src={logo} alt="FootBalance" className="h-8 w-auto brightness-0 invert" />
+          </Link>
+          <Link to="/ayak-sagligi-hakkinda-bilgiler/" className="hover:underline">
+            {tx("Blog")}
+          </Link>
           <p>{tx("© 2026 FootBalance Türkiye")}</p>
         </div>
       </footer>
       <div className="fixed inset-x-0 bottom-0 z-40 grid h-16 grid-cols-2 border-t border-border bg-background md:hidden">
         <Link
-          to="/merkezler"
+          to="/merkezler/"
           className="flex h-full items-center justify-center gap-2 text-sm font-semibold"
         >
           <MapPin className="size-4" /> {tx("Merkez Bul")}
         </Link>
-        <Link to="/randevu" className="h-full">
+        <Link to="/randevu/" className="h-full">
           <Button className="h-full w-full rounded-none">{tx("Randevu Al")}</Button>
         </Link>
       </div>

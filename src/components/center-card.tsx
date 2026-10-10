@@ -1,4 +1,4 @@
-import { Mail, MapPin, Navigation, Phone, User } from "lucide-react";
+import { MapPin, Navigation, Phone, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n";
 import type { Center } from "@/data/centers";
@@ -61,46 +61,31 @@ export function CenterCard({
           </p>
         )}
       </div>
-      <div className={compact ? "mt-auto pt-4" : "contents"}>
+      <div className={compact ? "mt-auto pt-4" : "mt-auto flex gap-2 pt-5"}>
         <Button
           type="button"
           variant={compact ? "outline" : "appointment"}
           className={
             compact
               ? "h-9 rounded-full border-primary/20 px-4 text-xs font-medium shadow-none hover:bg-secondary"
-              : "mt-5"
+              : "min-h-10 flex-1 rounded-lg px-3 text-xs shadow-none"
           }
           onClick={onBooking}
         >
           {tx("Randevu Al")}
         </Button>
+        {!compact && c.maps && (
+          <a
+            href={c.maps}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-lg border border-border px-3 text-xs font-semibold text-foreground transition hover:bg-secondary"
+          >
+            <Navigation className="size-3.5" aria-hidden="true" />
+            {tx("Yol Tarifi")}
+          </a>
+        )}
       </div>
-      {!compact && (
-        <div className="mt-auto grid grid-cols-2 gap-2.5 pt-4">
-          {c.email ? (
-            <a
-              href={`mailto:${c.email}`}
-              className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg bg-graphite text-xs font-semibold text-primary-foreground transition hover:bg-graphite/90"
-            >
-              <Mail className="size-3.5" aria-hidden="true" /> {tx("E-Posta Gönder")}{" "}
-            </a>
-          ) : (
-            <span aria-hidden="true" className="min-h-9" />
-          )}
-          {c.maps ? (
-            <a
-              href={c.maps}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg bg-graphite text-xs font-semibold text-primary-foreground transition hover:bg-graphite/90"
-            >
-              <Navigation className="size-3.5" aria-hidden="true" /> {tx("Yol Tarifi")}{" "}
-            </a>
-          ) : (
-            <span aria-hidden="true" className="min-h-9" />
-          )}
-        </div>
-      )}
     </article>
   );
 }

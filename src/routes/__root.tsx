@@ -1,3 +1,5 @@
+import { Analytics } from "@/components/analytics";
+import { jsonLd } from "@/lib/seo";
 import { useTranslation, translate, LanguageProvider } from "@/lib/i18n";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
@@ -100,6 +102,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "google-site-verification", content: "pYFQuT79Ob7oSB9l2quOdhnLKq9CzHanxbTrrUAQ0C8" },
+      { name: "verification", content: "f612c7d25f5690ad41496fcfdbf8d1" },
     ],
     links: [
       {
@@ -111,6 +115,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@400;500;600;700&display=swap",
+      },
+      { rel: "llms-sitemap", href: "https://footbalance.com.tr/llms.txt" },
+      {
+        rel: "alternate",
+        type: "application/rss+xml",
+        title: "FootBalance Blog",
+        href: "https://footbalance.com.tr/feed/",
       },
       { rel: "icon", href: "/favicon.svg?v=footbalance333", type: "image/svg+xml" },
     ],
@@ -130,6 +141,38 @@ function RootShell({ children }: { children: ReactNode }) {
       <html lang={language}>
         <head>
           <HeadContent />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: jsonLd({
+                "@context": "https://schema.org",
+                "@graph": [
+                  {
+                    "@type": "Organization",
+                    "@id": "https://footbalance.com.tr/#organization",
+                    name: "FootBalance",
+                    url: "https://footbalance.com.tr/",
+                    logo: "https://footbalance.com.tr/favicon.svg",
+                    sameAs: [
+                      "https://www.facebook.com/FootBalanceTR",
+                      "https://www.instagram.com/FootBalanceTR/",
+                      "https://www.youtube.com/channel/UCFnMmPY9CVrzRmI7v_8D2gg",
+                      "https://twitter.com/FootBalanceTR",
+                      "https://www.linkedin.com/company/footbalance-t%C3%BCrkiye/",
+                    ],
+                  },
+                  {
+                    "@type": "WebSite",
+                    "@id": "https://footbalance.com.tr/#website",
+                    url: "https://footbalance.com.tr/",
+                    name: "FootBalance Türkiye",
+                    publisher: { "@id": "https://footbalance.com.tr/#organization" },
+                    inLanguage: ["tr", "en"],
+                  },
+                ],
+              }),
+            }}
+          />
         </head>
         <body>
           {children}
@@ -149,11 +192,12 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
-      {pathname !== "/merkezler" &&
-        pathname !== "/randevu" &&
+      <Analytics />
+      {pathname.replace(/\/$/, "") !== "/merkezler" &&
+        pathname.replace(/\/$/, "") !== "/randevu" &&
         pathname.replace(/\/$/, "") !== "/cozum-ortagi-ol" && (
           <Link
-            to="/merkezler"
+            to="/merkezler/"
             className="fixed right-0 top-1/2 z-30 hidden -translate-y-1/2 items-center gap-2 rounded-l-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition-transform hover:-translate-x-1 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 lg:inline-flex"
           >
             <MapPin className="size-4" aria-hidden="true" />

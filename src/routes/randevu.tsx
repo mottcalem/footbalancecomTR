@@ -1,31 +1,24 @@
+import { existingPageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X, Check, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RequestForm } from "@/components/request-form";
 import { translate, useTranslation, LanguageSwitcher } from "@/lib/i18n";
-import { languagePath } from "@/lib/i18n/urls";
 import logo from "@/assets/footbalance-logo.svg";
 
 export const Route = createFileRoute("/randevu")({
   loaderDeps: ({ search }) => ({ lang: search.lang }),
-  head: ({ match }) => ({
-    meta: [
-      { title: translate("Randevu Talebi | FootBalance Türkiye", match.search.lang) },
-      {
-        name: "description",
-        content: translate(
-          "Size en yakın FootBalance merkezinde ayak analizi için randevu talebi oluşturun. Tercih ettiğiniz gün ve saati belirtin, ekibimiz sizi arasın.",
-          match.search.lang,
-        ),
-      },
-    ],
-    links: [
-      { rel: "canonical", href: languagePath("/randevu", match.search.lang ?? "tr") },
-      { rel: "alternate", hrefLang: "tr", href: "/randevu" },
-      { rel: "alternate", hrefLang: "en", href: "/en/randevu" },
-    ],
-  }),
+  head: ({ match }) =>
+    existingPageHead(
+      "/randevu",
+      match.search.lang,
+      translate("Randevu Talebi | FootBalance Türkiye", match.search.lang),
+      translate(
+        "Size en yakın FootBalance merkezinde ayak analizi için randevu talebi oluşturun. Tercih ettiğiniz gün ve saati belirtin, ekibimiz sizi arasın.",
+        match.search.lang,
+      ),
+    ),
   component: AppointmentPage,
 });
 function AppointmentPage() {
@@ -54,14 +47,15 @@ function AppointmentPage() {
             <Link to="/" hash="sss">
               {tx("Sık Sorulan Sorular")}
             </Link>
+            <Link to="/ayak-sagligi-hakkinda-bilgiler/">{tx("Blog")}</Link>
           </nav>
           <Link
-            to="/cozum-ortagi-ol"
+            to="/cozum-ortagi-ol/"
             className="ml-auto hidden min-h-11 items-center text-sm font-semibold text-muted-foreground xl:flex"
           >
             {tx("Çözüm Ortağı Ol")}
           </Link>
-          <Link to="/randevu" className="hidden sm:inline-flex">
+          <Link to="/randevu/" className="hidden sm:inline-flex">
             <Button type="button" variant="appointment" size="touch">
               {tx("Randevu Al")}
             </Button>
@@ -88,11 +82,18 @@ function AppointmentPage() {
             <Link className="py-3" to="/" hash="teknoloji" onClick={() => setMenu(false)}>
               {tx("Nasıl Hazırlanır?")}
             </Link>
-            <Link className="py-3" to="/merkezler" onClick={() => setMenu(false)}>
+            <Link className="py-3" to="/merkezler/" onClick={() => setMenu(false)}>
               {tx("Merkez Bul")}
             </Link>
-            <Link className="py-3" to="/cozum-ortagi-ol" onClick={() => setMenu(false)}>
+            <Link className="py-3" to="/cozum-ortagi-ol/" onClick={() => setMenu(false)}>
               {tx("Çözüm Ortağı Ol")}
+            </Link>
+            <Link
+              to="/ayak-sagligi-hakkinda-bilgiler/"
+              className="py-3"
+              onClick={() => setMenu(false)}
+            >
+              {tx("Blog")}
             </Link>
           </nav>
         )}
@@ -144,8 +145,11 @@ function AppointmentPage() {
       </main>
       <footer className="border-t border-border bg-background">
         <div className="mx-auto flex max-w-[1180px] flex-wrap items-center justify-between gap-4 px-5 py-7 text-xs text-muted-foreground">
+          <Link to="/ayak-sagligi-hakkinda-bilgiler/" className="hover:underline">
+            {tx("Blog")}
+          </Link>
           <p>© 2026 FootBalance Türkiye</p>
-          <Link to="/iletisim">{tx("İletişim")}</Link>
+          <Link to="/iletisim/">{tx("İletişim")}</Link>
         </div>
       </footer>
     </div>

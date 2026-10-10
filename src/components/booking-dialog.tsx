@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { ChevronLeft, Search, Check } from "lucide-react";
+import { languagePath } from "@/lib/i18n/urls";
+import { detectCenterCity, type LocationStatus } from "@/lib/center-location";
+import { useEffect, useRef, useState } from "react";
+import { ChevronLeft, Search, Check, Info, MapPin, CalendarDays, Clock3 } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { CenterCard } from "@/components/center-card";
 import { Button } from "@/components/ui/button";
@@ -35,6 +37,25 @@ function BookingSteps({ initialCenter }: { initialCenter?: string | undefined })
   const [center, setCenter] = useState(initialCenter ?? "");
   const [query, setQuery] = useState("");
   const [city, setCity] = useState("");
+  const [locationStatus, setLocationStatus] = useState<LocationStatus>("loading");
+  const manualCity = useRef(false);
+  useEffect(() => {
+    if (initialCenter) return;
+    let active = true;
+    detectCenterCity()
+      .then((detectedCity) => {
+        if (!active || manualCity.current) return;
+        if (detectedCity) setCity(detectedCity);
+        setLocationStatus(detectedCity ? "ready" : "no-center");
+      })
+      .catch(() => {
+        if (active && !manualCity.current) setLocationStatus("unavailable");
+      });
+    return () => {
+      active = false;
+    };
+  }, [initialCenter]);
+
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [offset, setOffset] = useState(0);
@@ -108,7 +129,13 @@ function BookingSteps({ initialCenter }: { initialCenter?: string | undefined })
   }
   return (
     <div className="text-sm leading-5 text-[#062d3e]">
-      <img src={logo} alt="FootBalance" className="mb-6 h-6 w-auto" />
+      <a
+        href={languagePath("/", language)}
+        aria-label={tx("FootBalance Türkiye ana sayfa")}
+        className="mb-6 inline-block"
+      >
+        <img src={logo} alt="FootBalance" className="h-6 w-auto" />
+      </a>
       <SheetTitle className={step === 0 ? "sr-only" : "mb-2 text-lg"}>
         {tx(
           [
@@ -120,11 +147,44 @@ function BookingSteps({ initialCenter }: { initialCenter?: string | undefined })
           ][step],
         )}
       </SheetTitle>
-      <SheetDescription className={step === 0 ? "sr-only" : "mb-5 text-sm"}>
+      <SheetDescription className="sr-only">
         {step > 0 && selected
           ? `${selected.name}${date ? ` · ${date}` : ""}${time ? ` · ${time}` : ""}`
           : tx("Merkez seçin")}
       </SheetDescription>
+      {step > 0 && selected && (
+        <div className="mb-6 rounded-2xl border border-[#b9e5dd] border-l-4 border-l-primary bg-[#e2f8f4] p-4 sm:p-5">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#416571]">
+            {tx("Seçtiğiniz Randevu Merkezi")}
+          </p>
+          <p className="text-lg font-bold leading-6 text-[#062d3e] sm:text-xl">{selected.name}</p>
+          <div className="mt-3 flex items-start gap-2 text-sm leading-5 text-[#416571]">
+            <MapPin aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+            <span>{selected.address}</span>
+          </div>
+          {(date || time) && (
+            <div className="mt-4 flex flex-wrap gap-3 border-t border-[#b9e5dd] pt-3 text-sm font-semibold">
+              {date && (
+                <span className="flex items-center gap-2">
+                  <CalendarDays aria-hidden="true" className="size-4 shrink-0" />
+                  {new Intl.DateTimeFormat(language === "en" ? "en-GB" : "tr-TR", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                    timeZone: "Europe/Istanbul",
+                  }).format(new Date(`${date}T12:00:00+03:00`))}
+                </span>
+              )}
+              {time && (
+                <span className="flex items-center gap-2">
+                  <Clock3 aria-hidden="true" className="size-4 shrink-0" />
+                  {time}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+      )}
       {step === 0 && (
         <>
           <div className="mb-5 rounded-2xl bg-[#e2f8f4] px-5 py-7 text-center">
@@ -151,7 +211,10 @@ function BookingSteps({ initialCenter }: { initialCenter?: string | undefined })
             <select
               aria-label={tx("Şehir")}
               value={city}
-              onChange={(e) => setCity(e.target.value)}
+              onChange={(e) => {
+                manualCity.current = true;
+                setCity(e.target.value);
+              }}
               className="min-h-12 rounded-full border border-[#d1dfe5] bg-white px-4"
             >
               <option value="">{tx("Tüm Şehirler")}</option>
@@ -160,6 +223,31 @@ function BookingSteps({ initialCenter }: { initialCenter?: string | undefined })
               ))}
             </select>
           </div>
+          {!manualCity.current && (
+            <div
+              role={locationStatus === "no-center" ? "alert" : "status"}
+              className={
+                locationStatus === "no-center"
+                  ? "mb-4 flex items-start gap-3 rounded-xl border border-amber-300 border-l-4 border-l-amber-500 bg-amber-50 px-4 py-4 text-sm font-medium leading-6 text-amber-950 shadow-sm"
+                  : "mb-4 text-xs text-muted-foreground"
+              }
+            >
+              {locationStatus === "no-center" && (
+                <Info aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-amber-700" />
+              )}
+              <span>
+                {locationStatus === "loading" && tx("Konumunuz belirleniyor…")}
+                {locationStatus === "ready" &&
+                  tx("Konumunuza göre {city} merkezleri gösteriliyor.", { city: tx(city) })}
+                {locationStatus === "unavailable" &&
+                  tx("Konumunuza erişilemedi; şehir seçerek merkezleri görüntüleyebilirsiniz.")}
+                {locationStatus === "no-center" &&
+                  tx(
+                    "Bulunduğunuz şehirde merkezimiz bulunmuyor; tüm merkezleri görüntüleyebilir veya şehir seçebilirsiniz.",
+                  )}
+              </span>
+            </div>
+          )}
           <div className="grid gap-3 sm:grid-cols-2">
             {CENTERS.map((c, i) => ({ c, i }))
               .filter(

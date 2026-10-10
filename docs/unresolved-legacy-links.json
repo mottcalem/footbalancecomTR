@@ -1,0 +1,29 @@
+{
+  "unavailableLiveLinks": [
+    {
+      "path": "/ayak-egzersizleri/",
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "path": "/ayakkabi-tabanlik-uyumu/",
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "path": "/hali-saha-tabanlik/",
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "path": "/ortopedik-tabanliklar/duz-taban-icin-tabanlik-rehberi-hangi-tabanlik-secilmeli/",
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "path": "/tabanlik-bakim-rehberi/",
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "path": "/topuk-dikeni-tabanlik/",
+      "error": "HTTP Error 404: Not Found"
+    }
+  ],
+  "recoveredAliases": 78
+}

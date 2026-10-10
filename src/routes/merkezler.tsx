@@ -1,4 +1,5 @@
-import { languagePath } from "@/lib/i18n/urls";
+import { existingPageHead } from "@/lib/seo";
+import { detectCenterCity, type LocationStatus } from "@/lib/center-location";
 import { translate, useTranslation, LanguageSwitcher } from "@/lib/i18n";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
@@ -11,36 +12,16 @@ import { CENTERS, CENTER_CITIES } from "@/data/centers";
 
 export const Route = createFileRoute("/merkezler")({
   loaderDeps: ({ search }) => ({ lang: search.lang }),
-  head: ({ match }) => ({
-    meta: [
-      { title: translate("FootBalance Hizmet Noktaları | Yetkili Merkezler", match.search.lang) },
-      {
-        name: "description",
-        content: translate(
-          "Türkiye ve yurt dışındaki FootBalance yetkili hizmet noktalarını şehre göre filtreleyin; adres, telefon ve yol tarifi bilgilerine ulaşıp ayak analizi randevunuzu oluşturun.",
-          match.search.lang,
-        ),
-      },
-      {
-        property: "og:title",
-        content: translate("FootBalance Hizmet Noktaları | Yetkili Merkezler", match.search.lang),
-      },
-      {
-        property: "og:description",
-        content: translate(
-          "Sana en yakın FootBalance merkezini şehre göre bul; adres, telefon ve yol tarifi tek ekranda.",
-          match.search.lang,
-        ),
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [
-      { rel: "canonical", href: languagePath("/merkezler", match.search.lang ?? "tr") },
-      { rel: "alternate", hrefLang: "tr", href: "/merkezler" },
-      { rel: "alternate", hrefLang: "en", href: "/en/merkezler" },
-    ],
-  }),
+  head: ({ match }) =>
+    existingPageHead(
+      "/merkezler",
+      match.search.lang,
+      translate("FootBalance Hizmet Noktaları | Yetkili Merkezler", match.search.lang),
+      translate(
+        "Türkiye ve yurt dışındaki FootBalance yetkili hizmet noktalarını şehre göre filtreleyin; adres, telefon ve yol tarifi bilgilerine ulaşıp ayak analizi randevunuzu oluşturun.",
+        match.search.lang,
+      ),
+    ),
   component: CentersPage,
 });
 
@@ -51,29 +32,6 @@ const norm = (s: string) =>
     .normalize("NFD")
     .replace(/\p{Diacritic}/gu, "");
 
-type LocationStatus = "loading" | "ready" | "no-center" | "unavailable";
-
-type ReverseGeocodeResult = {
-  address?: {
-    city?: string;
-    town?: string;
-    province?: string;
-    state?: string;
-  };
-};
-
-function matchingCenterCity(place: string | undefined, longitude: number) {
-  if (!place) return undefined;
-
-  const detected = norm(place);
-  if (detected === "istanbul") {
-    return longitude >= 29 ? "İstanbul (Anadolu)" : "İstanbul (Avrupa)";
-  }
-  if (detected === "kocaeli") return "İzmit";
-
-  return CENTER_CITIES.find((centerCity) => norm(centerCity) === detected);
-}
-
 function CentersPage() {
   const [bookingCenter, setBookingCenter] = useState<string | undefined>();
   const { tx } = useTranslation();
@@ -83,43 +41,19 @@ function CentersPage() {
   const [locationStatus, setLocationStatus] = useState<LocationStatus>("loading");
 
   useEffect(() => {
-    if (!navigator.geolocation) {
-      setLocationStatus("unavailable");
-      return;
-    }
-
-    const detectLocation = async (position: GeolocationPosition) => {
-      try {
-        const { latitude, longitude } = position.coords;
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&zoom=10`,
-        );
-        if (!response.ok) throw new Error("Konum çözümlenemedi");
-
-        const result = (await response.json()) as ReverseGeocodeResult;
-        const place =
-          result.address?.city ??
-          result.address?.town ??
-          result.address?.province ??
-          result.address?.state;
-        const detectedCity = matchingCenterCity(place, longitude);
-
-        if (detectedCity) {
-          setCity(detectedCity);
-          setLocationStatus("ready");
-        } else {
-          setLocationStatus("no-center");
-        }
-      } catch {
-        setLocationStatus("unavailable");
-      }
+    let active = true;
+    detectCenterCity()
+      .then((detectedCity) => {
+        if (!active) return;
+        if (detectedCity) setCity(detectedCity);
+        setLocationStatus(detectedCity ? "ready" : "no-center");
+      })
+      .catch(() => {
+        if (active) setLocationStatus("unavailable");
+      });
+    return () => {
+      active = false;
     };
-
-    navigator.geolocation.getCurrentPosition(
-      detectLocation,
-      () => setLocationStatus("unavailable"),
-      { enableHighAccuracy: false, timeout: 10_000, maximumAge: 300_000 },
-    );
   }, []);
 
   const list = (() => {
@@ -162,14 +96,15 @@ function CentersPage() {
             <Link to="/" hash="sss">
               {tx("Sık Sorulan Sorular")}
             </Link>
+            <Link to="/ayak-sagligi-hakkinda-bilgiler/">{tx("Blog")}</Link>
           </nav>
           <Link
-            to="/cozum-ortagi-ol"
+            to="/cozum-ortagi-ol/"
             className="ml-auto hidden min-h-11 items-center text-sm font-semibold text-muted-foreground xl:flex"
           >
             {tx("Çözüm Ortağı Ol")}
           </Link>
-          <Link to="/randevu" className="hidden sm:inline-flex">
+          <Link to="/randevu/" className="hidden sm:inline-flex">
             <Button type="button" variant="appointment" size="touch">
               {tx("Randevu Al")}
             </Button>
@@ -199,8 +134,15 @@ function CentersPage() {
             <Link className="py-3" to="/" hash="sss" onClick={() => setMenu(false)}>
               {tx("Sık Sorulan Sorular")}
             </Link>
-            <Link className="py-3" to="/cozum-ortagi-ol" onClick={() => setMenu(false)}>
+            <Link className="py-3" to="/cozum-ortagi-ol/" onClick={() => setMenu(false)}>
               {tx("Çözüm Ortağı Ol")}
+            </Link>
+            <Link
+              to="/ayak-sagligi-hakkinda-bilgiler/"
+              className="py-3"
+              onClick={() => setMenu(false)}
+            >
+              {tx("Blog")}
             </Link>
           </nav>
         )}
@@ -307,7 +249,16 @@ function CentersPage() {
 
       <footer className="bg-graphite text-primary-foreground">
         <div className="mx-auto flex max-w-[1360px] flex-col gap-5 px-5 py-10 text-xs text-primary-foreground/55 sm:flex-row sm:items-center sm:justify-between lg:px-8">
-          <img src={logo} alt="FootBalance" className="h-8 w-auto brightness-0 invert" />
+          <Link
+            to="/"
+            aria-label={tx("FootBalance Türkiye ana sayfa")}
+            className="inline-block shrink-0"
+          >
+            <img src={logo} alt="FootBalance" className="h-8 w-auto brightness-0 invert" />
+          </Link>
+          <Link to="/ayak-sagligi-hakkinda-bilgiler/" className="hover:underline">
+            {tx("Blog")}
+          </Link>
           <p>{tx("© 2026 FootBalance Türkiye")}</p>
         </div>
       </footer>

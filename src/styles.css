@@ -153,19 +153,110 @@
     text-rendering: optimizeLegibility;
   }
 
-  html { scroll-behavior: smooth; }
-  h1, h2, h3, h4 { font-family: var(--font-display); letter-spacing: 0; }
-  button, a { letter-spacing: 0; }
+  html {
+    scroll-behavior: smooth;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: 0;
+  }
+  button,
+  a {
+    letter-spacing: 0;
+  }
 }
 
 @keyframes scan-line {
-  0%, 100% { transform: translateY(0); opacity: .25; }
-  50% { transform: translateY(430px); opacity: .7; }
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.25;
+  }
+  50% {
+    transform: translateY(430px);
+    opacity: 0.7;
+  }
 }
 
-@utility scan-line { animation: scan-line 5s ease-in-out infinite; }
+@utility scan-line {
+  animation: scan-line 5s ease-in-out infinite;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+.article-content {
+  line-height: 1.85;
+  overflow-wrap: anywhere;
+}
+.article-content p,
+.article-content ul,
+.article-content ol,
+.article-content figure,
+.article-content blockquote,
+.article-content table {
+  margin-block: 1.25rem;
+}
+.article-content h2 {
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  font-size: 1.65rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+.article-content h3 {
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.3rem;
+  font-weight: 650;
+}
+.article-content ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+}
+.article-content ol {
+  list-style: decimal;
+  padding-left: 1.5rem;
+}
+.article-content a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.article-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 1rem;
+}
+.article-content iframe,
+.article-content video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 1rem;
+}
+.article-content table {
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+.article-content th,
+.article-content td {
+  border: 1px solid var(--border);
+  padding: 0.75rem;
+}
+.article-content blockquote {
+  border-left: 4px solid var(--primary);
+  padding: 0.75rem 1.25rem;
+  background: #e2f8f4;
 }

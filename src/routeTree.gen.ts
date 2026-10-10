@@ -10,6 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SplatRouteImport } from './routes/$'
+import { Route as AyakSagligiHakkindaBilgilerRouteImport } from './routes/ayak-sagligi-hakkinda-bilgiler'
 import { Route as CozumOrtagiOlRouteImport } from './routes/cozum-ortagi-ol'
 import { Route as HakkimizdaRouteImport } from './routes/hakkimizda'
 import { Route as IletisimRouteImport } from './routes/iletisim'
@@ -21,6 +23,17 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SplatRoute = SplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AyakSagligiHakkindaBilgilerRoute =
+  AyakSagligiHakkindaBilgilerRouteImport.update({
+    id: '/ayak-sagligi-hakkinda-bilgiler',
+    path: '/ayak-sagligi-hakkinda-bilgiler',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const CozumOrtagiOlRoute = CozumOrtagiOlRouteImport.update({
   id: '/cozum-ortagi-ol',
   path: '/cozum-ortagi-ol',
@@ -49,6 +62,8 @@ const RandevuRoute = RandevuRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
+  '/ayak-sagligi-hakkinda-bilgiler': typeof AyakSagligiHakkindaBilgilerRoute
   '/cozum-ortagi-ol': typeof CozumOrtagiOlRoute
   '/hakkimizda': typeof HakkimizdaRoute
   '/iletisim': typeof IletisimRoute
@@ -57,6 +72,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
+  '/ayak-sagligi-hakkinda-bilgiler': typeof AyakSagligiHakkindaBilgilerRoute
   '/cozum-ortagi-ol': typeof CozumOrtagiOlRoute
   '/hakkimizda': typeof HakkimizdaRoute
   '/iletisim': typeof IletisimRoute
@@ -66,6 +83,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
+  '/ayak-sagligi-hakkinda-bilgiler': typeof AyakSagligiHakkindaBilgilerRoute
   '/cozum-ortagi-ol': typeof CozumOrtagiOlRoute
   '/hakkimizda': typeof HakkimizdaRoute
   '/iletisim': typeof IletisimRoute
@@ -76,6 +95,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/$'
+    | '/ayak-sagligi-hakkinda-bilgiler'
     | '/cozum-ortagi-ol'
     | '/hakkimizda'
     | '/iletisim'
@@ -84,6 +105,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/$'
+    | '/ayak-sagligi-hakkinda-bilgiler'
     | '/cozum-ortagi-ol'
     | '/hakkimizda'
     | '/iletisim'
@@ -92,6 +115,8 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/$'
+    | '/ayak-sagligi-hakkinda-bilgiler'
     | '/cozum-ortagi-ol'
     | '/hakkimizda'
     | '/iletisim'
@@ -101,6 +126,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SplatRoute: typeof SplatRoute
+  AyakSagligiHakkindaBilgilerRoute: typeof AyakSagligiHakkindaBilgilerRoute
   CozumOrtagiOlRoute: typeof CozumOrtagiOlRoute
   HakkimizdaRoute: typeof HakkimizdaRoute
   IletisimRoute: typeof IletisimRoute
@@ -115,6 +142,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$': {
+      id: '/$'
+      path: '/$'
+      fullPath: '/$'
+      preLoaderRoute: typeof SplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ayak-sagligi-hakkinda-bilgiler': {
+      id: '/ayak-sagligi-hakkinda-bilgiler'
+      path: '/ayak-sagligi-hakkinda-bilgiler'
+      fullPath: '/ayak-sagligi-hakkinda-bilgiler'
+      preLoaderRoute: typeof AyakSagligiHakkindaBilgilerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cozum-ortagi-ol': {
@@ -157,6 +198,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SplatRoute: SplatRoute,
+  AyakSagligiHakkindaBilgilerRoute: AyakSagligiHakkindaBilgilerRoute,
   CozumOrtagiOlRoute: CozumOrtagiOlRoute,
   HakkimizdaRoute: HakkimizdaRoute,
   IletisimRoute: IletisimRoute,

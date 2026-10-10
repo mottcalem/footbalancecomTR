@@ -11,6 +11,7 @@ export const getRouter = () => {
     rewrite: languageRewrite,
     context: { queryClient },
     scrollRestoration: true,
+    trailingSlash: "always",
     defaultPreloadStaleTime: 0,
   });
 

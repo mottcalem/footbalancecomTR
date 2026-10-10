@@ -99,6 +99,8 @@ def elementor(nodes):
    if vid:out.append('<iframe src="https://www.youtube.com/embed/'+vid[1]+'"></iframe>')
   out+=elementor(node.get('elements',[]))
  return out
+overrides_file=ROOT/'src/data/blog-image-overrides.json'
+image_overrides=json.loads(overrides_file.read_text()) if overrides_file.exists() else {}
 records=[];media={'/wp-content/uploads/2023/07/thumb.jpg'}
 for x in posts:
  p=path(field(x,'link')); title=html.unescape(field(x,'title')); pm={field(m,'wp:meta_key'):field(m,'wp:meta_value') for m in x.findall('wp:postmeta',NS)}
@@ -112,6 +114,7 @@ for x in posts:
   content='\n'.join('<p>'+part.replace('\n','<br>')+'</p>' for part in re.split(r'\n\s*\n',content.strip()) if part.strip())
  clean=Clean();clean.feed(content);content=''.join(clean.out);media.update(clean.media)
  featured=attachments.get(pm.get('_thumbnail_id',''),'')
+ if not featured:featured=image_overrides.get(p,'')
  if featured:featured=path(featured);media.add(featured)
  live=meta.get(p,{})
  seo_title=live.get('title') or pm.get('rank_math_title') or title+' | FootBalance Türkiye'

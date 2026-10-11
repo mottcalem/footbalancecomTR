@@ -260,3 +260,12 @@
   padding: 0.75rem 1.25rem;
   background: #e2f8f4;
 }
+
+/* Keep mobile form focus from zooming and shifting the viewport on iOS. */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}

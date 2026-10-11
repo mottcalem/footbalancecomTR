@@ -1,9 +1,8 @@
 import { existingPageHead } from "@/lib/seo";
-import { detectCenterCity, type LocationStatus } from "@/lib/center-location";
 import { translate, useTranslation, LanguageSwitcher } from "@/lib/i18n";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Info, MapPin, Menu, Search, X } from "lucide-react";
+import { useState } from "react";
+import { Menu, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CenterCard } from "@/components/center-card";
 import { BookingDialog } from "@/components/booking-dialog";
@@ -38,25 +37,10 @@ function CentersPage() {
   const [menu, setMenu] = useState(false);
   const [q, setQ] = useState("");
   const [city, setCity] = useState("Tüm Şehirler");
-  const [locationStatus, setLocationStatus] = useState<LocationStatus>("loading");
-
-  useEffect(() => {
-    let active = true;
-    detectCenterCity()
-      .then((detectedCity) => {
-        if (!active) return;
-        if (detectedCity) setCity(detectedCity);
-        setLocationStatus(detectedCity ? "ready" : "no-center");
-      })
-      .catch(() => {
-        if (active) setLocationStatus("unavailable");
-      });
-    return () => {
-      active = false;
-    };
-  }, []);
+  const hasSearch = q.trim().length > 0 || city !== "Tüm Şehirler";
 
   const list = (() => {
+    if (!hasSearch) return [];
     const term = norm(q.trim());
     return CENTERS.filter(
       (c) =>
@@ -76,7 +60,7 @@ function CentersPage() {
         }}
       />
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-md">
-        <div className="mx-auto flex h-[76px] max-w-[1360px] items-center gap-6 px-5 lg:px-8">
+        <div className="mx-auto flex h-[76px] max-w-[1360px] items-center gap-2 px-4 sm:gap-6 sm:px-5 lg:px-8">
           <Link to="/" aria-label={tx("FootBalance Türkiye ana sayfa")} className="shrink-0">
             <img src={logo} alt="FootBalance" className="h-8 w-auto" />
           </Link>
@@ -114,7 +98,7 @@ function CentersPage() {
             aria-label={tx("Menüyü aç")}
             variant="ghost"
             size="icon"
-            className="ml-auto h-11 w-11 lg:hidden"
+            className="ml-auto h-11 w-11 shrink-0 lg:hidden"
             onClick={() => setMenu(!menu)}
           >
             {menu ? <X /> : <Menu />}
@@ -184,7 +168,6 @@ function CentersPage() {
                   value={city}
                   onChange={(e) => {
                     setCity(e.target.value);
-                    setLocationStatus("unavailable");
                   }}
                   className="h-12 w-full rounded-full border border-border bg-background px-5 text-sm font-semibold outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
@@ -198,30 +181,8 @@ function CentersPage() {
               </label>
             </div>
             <p className="mt-3 text-xs text-muted-foreground" role="status">
-              {locationStatus === "loading" && tx("Konumunuz belirleniyor…")}
-              {locationStatus === "ready" &&
-                tx("Konumunuza göre {city} merkezleri gösteriliyor.", { city: tx(city) })}
-              {locationStatus === "unavailable" &&
-                tx("Konumunuza erişilemedi; şehir seçerek merkezleri görüntüleyebilirsiniz.")}
+              {tx("Merkezleri görüntülemek için arama yapın veya şehir seçin.")}
             </p>
-            {locationStatus === "no-center" && (
-              <div
-                role="alert"
-                className="mt-4 flex items-start gap-3 rounded-xl border border-amber-300 border-l-4 border-l-amber-500 bg-amber-50 px-5 py-4 text-sm leading-6 text-amber-950 shadow-sm"
-              >
-                <Info className="mt-0.5 size-5 shrink-0 text-amber-700" aria-hidden="true" />
-                <div>
-                  <p className="font-bold">
-                    {tx("Bulunduğunuz konumda henüz bir FootBalance merkezi görünmüyor.")}
-                  </p>
-                  <p className="mt-1">
-                    {tx(
-                      "Tüm merkezlerimizi aşağıda görüntüleyebilirsiniz. Yukarıdaki şehir listesinden farklı bir lokasyon seçerek merkezleri filtreleyebilirsiniz.",
-                    )}
-                  </p>
-                </div>
-              </div>
-            )}
           </div>
         </section>
 
@@ -236,7 +197,7 @@ function CentersPage() {
                 />
               ))}
             </div>
-            {list.length === 0 && (
+            {hasSearch && list.length === 0 && (
               <p className="text-sm text-muted-foreground">
                 {tx(
                   "Aramanla eşleşen merkez bulunamadı. Farklı bir şehir ya da anahtar kelime deneyebilirsin.",

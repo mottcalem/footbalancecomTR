@@ -1,4 +1,5 @@
 import { Analytics } from "@/components/analytics";
+import { ScrollToTop } from "@/components/scroll-to-top";
 import { jsonLd } from "@/lib/seo";
 import { useTranslation, translate, LanguageProvider } from "@/lib/i18n";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -193,6 +194,7 @@ function RootComponent() {
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
       <Analytics />
+      <ScrollToTop />
       {pathname.replace(/\/$/, "") !== "/merkezler" &&
         pathname.replace(/\/$/, "") !== "/randevu" &&
         pathname.replace(/\/$/, "") !== "/cozum-ortagi-ol" && (

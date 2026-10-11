@@ -1,7 +1,6 @@
 import { languagePath } from "@/lib/i18n/urls";
-import { detectCenterCity, type LocationStatus } from "@/lib/center-location";
-import { useEffect, useRef, useState } from "react";
-import { ChevronLeft, Search, Check, Info, MapPin, CalendarDays, Clock3 } from "lucide-react";
+import { useState } from "react";
+import { ChevronLeft, Search, Check, MapPin, CalendarDays, Clock3 } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { CenterCard } from "@/components/center-card";
 import { Button } from "@/components/ui/button";
@@ -37,24 +36,25 @@ function BookingSteps({ initialCenter }: { initialCenter?: string | undefined })
   const [center, setCenter] = useState(initialCenter ?? "");
   const [query, setQuery] = useState("");
   const [city, setCity] = useState("");
-  const [locationStatus, setLocationStatus] = useState<LocationStatus>("loading");
-  const manualCity = useRef(false);
-  useEffect(() => {
-    if (initialCenter) return;
-    let active = true;
-    detectCenterCity()
-      .then((detectedCity) => {
-        if (!active || manualCity.current) return;
-        if (detectedCity) setCity(detectedCity);
-        setLocationStatus(detectedCity ? "ready" : "no-center");
-      })
-      .catch(() => {
-        if (active && !manualCity.current) setLocationStatus("unavailable");
-      });
-    return () => {
-      active = false;
-    };
-  }, [initialCenter]);
+  const hasSearch = query.trim().length > 0 || city !== "";
+  const normalize = (value: string) =>
+    value
+      .toLocaleLowerCase("tr-TR")
+      .replace(/ı/g, "i")
+      .normalize("NFD")
+      .replace(/\p{Diacritic}/gu, "");
+  const term = normalize(query.trim());
+  const centers = hasSearch
+    ? CENTERS.map((c, i) => ({ c, i }))
+        .filter(
+          ({ c }) =>
+            (!city || c.city === city) &&
+            [c.name, c.person, c.city, tx(c.city), c.address].some((value) =>
+              normalize(value).includes(term),
+            ),
+        )
+        .sort((a, b) => Number(b.c.main) - Number(a.c.main))
+    : [];
 
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -198,7 +198,7 @@ function BookingSteps({ initialCenter }: { initialCenter?: string | undefined })
             </p>
           </div>
           <div className="mb-4 flex flex-col gap-3 sm:flex-row">
-            <label className="flex flex-1 items-center gap-2 rounded-full border border-[#d1dfe5] px-4">
+            <label className="flex min-w-0 flex-1 items-center gap-2 rounded-full border border-[#d1dfe5] px-4">
               <Search aria-hidden="true" className="size-4 shrink-0" />
               <input
                 aria-label={tx("Merkez ara")}
@@ -212,10 +212,9 @@ function BookingSteps({ initialCenter }: { initialCenter?: string | undefined })
               aria-label={tx("Şehir")}
               value={city}
               onChange={(e) => {
-                manualCity.current = true;
                 setCity(e.target.value);
               }}
-              className="min-h-12 rounded-full border border-[#d1dfe5] bg-white px-4"
+              className="min-h-12 min-w-0 rounded-full border border-[#d1dfe5] bg-white px-4 sm:w-52"
             >
               <option value="">{tx("Tüm Şehirler")}</option>
               {CENTER_CITIES.map((c) => (
@@ -223,59 +222,22 @@ function BookingSteps({ initialCenter }: { initialCenter?: string | undefined })
               ))}
             </select>
           </div>
-          {!manualCity.current && (
-            <div
-              role={locationStatus === "no-center" ? "alert" : "status"}
-              className={
-                locationStatus === "no-center"
-                  ? "mb-4 flex items-start gap-3 rounded-xl border border-amber-300 border-l-4 border-l-amber-500 bg-amber-50 px-4 py-4 text-sm font-medium leading-6 text-amber-950 shadow-sm"
-                  : "mb-4 text-xs text-muted-foreground"
-              }
-            >
-              {locationStatus === "no-center" && (
-                <Info aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-amber-700" />
-              )}
-              <span>
-                {locationStatus === "loading" && tx("Konumunuz belirleniyor…")}
-                {locationStatus === "ready" &&
-                  tx("Konumunuza göre {city} merkezleri gösteriliyor.", { city: tx(city) })}
-                {locationStatus === "unavailable" &&
-                  tx("Konumunuza erişilemedi; şehir seçerek merkezleri görüntüleyebilirsiniz.")}
-                {locationStatus === "no-center" &&
-                  tx(
-                    "Bulunduğunuz şehirde merkezimiz bulunmuyor; tüm merkezleri görüntüleyebilir veya şehir seçebilirsiniz.",
-                  )}
-              </span>
-            </div>
-          )}
+          <p role="status" className="mb-4 text-xs text-muted-foreground">
+            {tx("Merkezleri görüntülemek için arama yapın veya şehir seçin.")}
+          </p>
           <div className="grid gap-3 sm:grid-cols-2">
-            {CENTERS.map((c, i) => ({ c, i }))
-              .filter(
-                ({ c }) =>
-                  (!city || c.city === city) &&
-                  `${c.name} ${c.person} ${c.city} ${c.address}`
-                    .toLocaleLowerCase("tr-TR")
-                    .includes(query.toLocaleLowerCase("tr-TR")),
-              )
-              .sort((a, b) => Number(b.c.main) - Number(a.c.main))
-              .map(({ c, i }) => (
-                <CenterCard
-                  compact
-                  key={i}
-                  c={c}
-                  onBooking={() => {
-                    setCenter(String(i));
-                    setStep(1);
-                  }}
-                />
-              ))}
-            {!CENTERS.some(
-              (c) =>
-                (!city || c.city === city) &&
-                `${c.name} ${c.person} ${c.city} ${c.address}`
-                  .toLocaleLowerCase("tr-TR")
-                  .includes(query.toLocaleLowerCase("tr-TR")),
-            ) && <p role="status">{tx("Merkez bulunamadı.")}</p>}
+            {centers.map(({ c, i }) => (
+              <CenterCard
+                compact
+                key={i}
+                c={c}
+                onBooking={() => {
+                  setCenter(String(i));
+                  setStep(1);
+                }}
+              />
+            ))}
+            {hasSearch && centers.length === 0 && <p role="status">{tx("Merkez bulunamadı.")}</p>}
           </div>
         </>
       )}
@@ -297,7 +259,7 @@ function BookingSteps({ initialCenter }: { initialCenter?: string | undefined })
               </button>
             ))}
           </div>
-          <div className="mt-5 flex justify-between gap-3">
+          <div className="mt-5 flex flex-wrap justify-between gap-3">
             <Button variant="quiet" disabled={offset === 0} onClick={() => setOffset(offset - 4)}>
               {tx("Önceki Günler")}
             </Button>

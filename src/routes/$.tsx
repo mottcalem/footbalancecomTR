@@ -45,7 +45,7 @@ function LegacyContent() {
     const p = content.page;
     return (
       <ContentLayout>
-        <div className="mx-auto max-w-3xl rounded-3xl border border-border bg-card p-8 sm:p-12">
+        <div className="mx-auto max-w-3xl rounded-3xl border border-border bg-card p-5 sm:p-12">
           <h1 className="text-3xl font-semibold">{(p.title || "FootBalance").split(" | ")[0]}</h1>
           <p className="mt-6 text-lg text-muted-foreground">
             {p.path.startsWith("/en/") ? "Content is being updated." : "İçerik güncellenmektedir."}

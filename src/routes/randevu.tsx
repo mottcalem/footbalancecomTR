@@ -27,7 +27,7 @@ function AppointmentPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-md">
-        <div className="mx-auto flex h-[76px] max-w-[1360px] items-center gap-6 px-5 lg:px-8">
+        <div className="mx-auto flex h-[76px] max-w-[1360px] items-center gap-2 px-4 sm:gap-6 sm:px-5 lg:px-8">
           <Link to="/" aria-label={tx("FootBalance Türkiye ana sayfa")} className="shrink-0">
             <img src={logo} alt="FootBalance" className="h-8 w-auto" />
           </Link>
@@ -65,7 +65,7 @@ function AppointmentPage() {
             aria-label={tx("Menüyü aç")}
             variant="ghost"
             size="icon"
-            className="ml-auto h-11 w-11 lg:hidden"
+            className="ml-auto h-11 w-11 shrink-0 lg:hidden"
             onClick={() => setMenu(!menu)}
           >
             {menu ? <X /> : <Menu />}

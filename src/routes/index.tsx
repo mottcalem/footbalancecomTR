@@ -143,7 +143,7 @@ function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground pb-16 md:pb-0">
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-md">
-        <div className="mx-auto flex h-[76px] max-w-[1360px] items-center gap-6 px-5 lg:px-8">
+        <div className="mx-auto flex h-[76px] max-w-[1360px] items-center gap-2 px-4 sm:gap-6 sm:px-5 lg:px-8">
           <Link to="/" aria-label={tx("FootBalance Türkiye ana sayfa")} className="shrink-0">
             <img src={logo} alt="FootBalance" className="h-8 w-auto" />
           </Link>
@@ -172,7 +172,7 @@ function Home() {
             aria-label={tx("Menüyü aç")}
             variant="ghost"
             size="icon"
-            className="ml-auto h-11 w-11 lg:hidden"
+            className="ml-auto h-11 w-11 shrink-0 lg:hidden"
             onClick={() => setMenu(!menu)}
           >
             {menu ? <X /> : <Menu />}
@@ -249,13 +249,20 @@ function Home() {
                   </li>
                 ))}
               </ul>
-              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                <BrandButton onClick={() => openBooking("hero")} className="sm:min-h-14">
-                  {tx("Ücretsiz Ayak Analizi İçin Randevu Al")} <ArrowRight />
+              <div className="mt-7 grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)] items-stretch gap-2 sm:gap-3">
+                <BrandButton
+                  onClick={() => openBooking("hero")}
+                  className="min-h-14 min-w-0 w-full px-3 text-xs sm:px-4 sm:text-sm"
+                >
+                  <span className="min-w-0 text-balance leading-5">
+                    {tx("Ücretsiz Ayak Analizi İçin Randevu Al")}
+                  </span>
+                  <ArrowRight />
                 </BrandButton>
                 <BrandButton
                   variant="quiet"
                   onClick={() => scrollTo("teknoloji", "how_it_works_click")}
+                  className="min-h-14 min-w-0 w-full px-3 text-xs leading-5 sm:text-sm"
                 >
                   {tx("Nasıl Çalışıyor?")}
                 </BrandButton>

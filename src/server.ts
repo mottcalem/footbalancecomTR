@@ -1,4 +1,5 @@
 import "./lib/error-capture";
+import { handleGoogleReviews } from "./lib/reviews/handler";
 import { handleRequestSubmission } from "./lib/requests/handler";
 import legacyRedirects from "./data/legacy-redirects.json";
 import posts from "./data/blog-index.json";
@@ -53,6 +54,7 @@ export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       const url = new URL(request.url);
+      if (url.pathname === "/api/google-reviews") return handleGoogleReviews(request, env);
       if (url.pathname === "/api/requests") return handleRequestSubmission(request, env);
       if (
         (request.method === "GET" || request.method === "HEAD") &&

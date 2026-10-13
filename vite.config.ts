@@ -5,6 +5,13 @@
 //     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { loadEnv } from "vite";
+
+// Keep Google credentials on the server; never use the VITE_ prefix for secrets.
+const localGoogleEnv = loadEnv("", process.cwd(), "GOOGLE_");
+for (const key of ["GOOGLE_PLACES_API_KEY", "GOOGLE_PLACE_ID"]) {
+  if (!process.env[key] && localGoogleEnv[key]) process.env[key] = localGoogleEnv[key];
+}
 
 export default defineConfig({
   tanstackStart: {

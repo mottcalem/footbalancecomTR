@@ -1,3 +1,4 @@
+import { GoogleReviews } from "@/components/google-reviews";
 import { FAQ_ITEMS } from "@/data/faq";
 import { existingPageHead } from "@/lib/seo";
 import { translate, useTranslation, LanguageSwitcher } from "@/lib/i18n";
@@ -30,12 +31,12 @@ import sportImage from "@/assets/need-sport-banner.jpg";
 import insoleImage from "@/assets/insole-product-detail.jpg";
 import techImage from "@/assets/technology-scan.jpg";
 import finalImage from "@/assets/final-movement.jpg";
-import problemIceDisa from "@/assets/problems/1-ice-disa-basma.png";
-import problemDuzTaban from "@/assets/problems/2-duz-taban-yuksek-kemer.png";
-import problemPlantar from "@/assets/problems/3-plantar-fasiit.png";
-import problemCocuk from "@/assets/problems/4-cocuk-basis.png";
-import problemDizKalca from "@/assets/problems/5-diz-kalca-omurga.png";
-import problemTaban from "@/assets/problems/6-taban-agrisi.png";
+import problemIceDisa from "@/assets/problems/ice-disa-basma.jpg";
+import problemDuzTaban from "@/assets/problems/duz-taban.jpg";
+import problemPlantar from "@/assets/problems/plantar-fasiit.jpg";
+import problemCocuk from "@/assets/problems/cocuklarda-basis.jpg";
+import problemDizKalca from "@/assets/problems/diz-kalca-omurga-agrilari.jpg";
+import problemTaban from "@/assets/problems/ayak-taban-agrisi.jpg";
 import farkImage from "@/assets/footbalance-insole-in-shoe.jpg";
 import logo from "@/assets/footbalance-logo.svg";
 
@@ -664,77 +665,7 @@ function Home() {
           </div>
         </section>
 
-        <section id="deneyimler" className="bg-background">
-          <div className="mx-auto max-w-[1360px] px-5 py-20 lg:px-8 lg:py-28">
-            <div className="flex items-end justify-between gap-4">
-              <div>
-                <h2 className="text-3xl font-semibold sm:text-5xl">
-                  {tx("Hareket etmeye devam edenlerin deneyimleri.")}
-                </h2>
-                <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
-                  {tx(
-                    "Günlük yaşamdan spora, FootBalance’ın farklı hareket ihtiyaçlarına eşlik ettiği alanları keşfet.",
-                  )}
-                </p>
-              </div>
-              <div className="hidden gap-2 sm:flex">
-                <button
-                  type="button"
-                  aria-label={tx("Geri")}
-                  onClick={(e) => {
-                    const s = e.currentTarget
-                      .closest("section")!
-                      .querySelector("[data-reviews-scroll]")!;
-                    s.scrollBy({ left: -s.clientWidth * 0.8, behavior: "smooth" });
-                  }}
-                  className="grid h-11 w-11 place-items-center rounded-full border border-border text-foreground hover:bg-muted"
-                >
-                  ←
-                </button>
-                <button
-                  type="button"
-                  aria-label={tx("İleri")}
-                  onClick={(e) => {
-                    const s = e.currentTarget
-                      .closest("section")!
-                      .querySelector("[data-reviews-scroll]")!;
-                    s.scrollBy({ left: s.clientWidth * 0.8, behavior: "smooth" });
-                  }}
-                  className="grid h-11 w-11 place-items-center rounded-full border border-border text-foreground hover:bg-muted"
-                >
-                  →
-                </button>
-              </div>
-            </div>
-            <div
-              data-reviews-scroll
-              className="mt-10 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 [scrollbar-width:thin]"
-            >
-              {[
-                [activeImage, tx("Aktif yaşam / 50+")],
-                [sportImage, tx("Koşu")],
-                [supportImage, tx("Tenis, padel ve spor")],
-              ].map(([img, label]) => (
-                <figure key={label} className="snap-start shrink-0 w-[220px] sm:w-[260px]">
-                  <img
-                    src={img}
-                    loading="lazy"
-                    width={1000}
-                    height={1250}
-                    alt={tx("{label} deneyim alanı", { label: tx(label) })}
-                    className="aspect-[4/3] w-full rounded-xl object-cover"
-                  />
-                  <figcaption className="mt-3 text-base font-semibold">{tx(label)}</figcaption>
-                </figure>
-              ))}
-            </div>
-            <p className="mt-7 text-sm text-muted-foreground">
-              {tx(
-                "Doğrulanmış Türkiye kullanıcı hikâyeleri yayımlandıkça bu alanda paylaşılacaktır.",
-              )}
-            </p>
-          </div>
-        </section>
+        <GoogleReviews />
 
         <section id="sss" className="bg-muted">
           <div className="mx-auto max-w-[1360px] px-5 py-12 lg:px-8 lg:py-16">

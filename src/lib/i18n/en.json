@@ -455,5 +455,9 @@
   "Telefonla randevu almak istersen": "Prefer to book by phone?",
   "05xx xxx xx xx": "+90 5xx xxx xx xx",
   "Bulunduğunuz şehirde merkezimiz bulunmuyor; tüm merkezleri görüntüleyebilir veya şehir seçebilirsiniz.": "There are no centers in your city; browse all centers or select a city.",
-  "Seçtiğiniz Randevu Merkezi": "Your Selected Appointment Center"
+  "Seçtiğiniz Randevu Merkezi": "Your Selected Appointment Center",
+  "Bayiyi Ara": "Call the Dealer",
+  "Sana en yakın merkezi seç. FootBalance merkezinde online randevu oluşturabilir, diğer bayilerimiz için telefon ve yol tarifi bilgilerine ulaşabilirsin.": "Choose your nearest center. Book online at the FootBalance center or find phone numbers and directions for our other dealers.",
+  "FootBalance merkezinde online ayak analizi randevusu alın veya size en yakın bayinin telefon ve yol tarifi bilgilerine ulaşın.": "Book a foot analysis appointment online at the FootBalance center or find phone numbers and directions for your nearest dealer.",
+  "FootBalance cihazında uzman eşliğinde ayak ve basış analizi": "Foot and gait analysis with a specialist using the FootBalance device"
 }

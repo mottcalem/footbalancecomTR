@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Menu, X, Check, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { RequestForm } from "@/components/request-form";
+import { BookingSteps } from "@/components/booking-dialog";
 import { translate, useTranslation, LanguageSwitcher } from "@/lib/i18n";
 import logo from "@/assets/footbalance-logo.svg";
 
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/randevu")({
       match.search.lang,
       translate("Randevu Talebi | FootBalance Türkiye", match.search.lang),
       translate(
-        "Size en yakın FootBalance merkezinde ayak analizi için randevu talebi oluşturun. Tercih ettiğiniz gün ve saati belirtin, ekibimiz sizi arasın.",
+        "FootBalance merkezinde online ayak analizi randevusu alın veya size en yakın bayinin telefon ve yol tarifi bilgilerine ulaşın.",
         match.search.lang,
       ),
     ),
@@ -110,7 +110,7 @@ function AppointmentPage() {
             </h1>
             <p className="mt-5 text-lg leading-8 text-muted-foreground">
               {tx(
-                "Sana en yakın merkezi seç, iletişim bilgilerini bırak. Ekibimiz randevunu planlamak için seni arasın.",
+                "Sana en yakın merkezi seç. FootBalance merkezinde online randevu oluşturabilir, diğer bayilerimiz için telefon ve yol tarifi bilgilerine ulaşabilirsin.",
               )}
             </p>
             <ul className="mt-8 space-y-4 text-sm">
@@ -139,7 +139,7 @@ function AppointmentPage() {
             </div>
           </div>
           <div className="min-w-0 lg:col-span-7">
-            <RequestForm type="appointment" />
+            <BookingSteps inline />
           </div>
         </div>
       </main>

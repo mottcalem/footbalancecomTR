@@ -1,3 +1,4 @@
+import { FAQ_ITEMS } from "@/data/faq";
 import { existingPageHead } from "@/lib/seo";
 import { translate, useTranslation, LanguageSwitcher } from "@/lib/i18n";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -22,11 +23,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import heroImage from "@/assets/footbalance-hero.jpg";
-import supportImage from "@/assets/need-support.jpg";
-import activeImage from "@/assets/need-active.jpg";
-import sportImage from "@/assets/need-sport.jpg";
-import insoleImage from "@/assets/insole-product.jpg";
+import heroImage from "@/assets/footbalance-hero-analysis.jpg";
+import supportImage from "@/assets/need-support-banner.jpg";
+import activeImage from "@/assets/need-active-banner.jpg";
+import sportImage from "@/assets/need-sport-banner.jpg";
+import insoleImage from "@/assets/insole-product-detail.jpg";
 import techImage from "@/assets/technology-scan.jpg";
 import finalImage from "@/assets/final-movement.jpg";
 import problemIceDisa from "@/assets/problems/1-ice-disa-basma.png";
@@ -35,7 +36,7 @@ import problemPlantar from "@/assets/problems/3-plantar-fasiit.png";
 import problemCocuk from "@/assets/problems/4-cocuk-basis.png";
 import problemDizKalca from "@/assets/problems/5-diz-kalca-omurga.png";
 import problemTaban from "@/assets/problems/6-taban-agrisi.png";
-import farkImage from "@/assets/fark-basis.jpg";
+import farkImage from "@/assets/footbalance-insole-in-shoe.jpg";
 import logo from "@/assets/footbalance-logo.svg";
 
 export const Route = createFileRoute("/")({
@@ -274,10 +275,11 @@ function Home() {
             <div className="md:col-span-7">
               <img
                 src={heroImage}
-                width={1600}
-                height={1104}
-                alt={tx("İstanbul sahilinde aktif şekilde yürüyen bir kadın")}
-                className="aspect-[16/11] w-full rounded-2xl object-cover"
+                width={1920}
+                height={1100}
+                alt={tx("FootBalance cihazında uzman eşliğinde ayak ve basış analizi")}
+                fetchPriority="high"
+                className="h-auto w-full rounded-2xl"
               />
             </div>
           </div>
@@ -343,9 +345,9 @@ function Home() {
                     src={img}
                     loading="lazy"
                     width={1000}
-                    height={1250}
+                    height={1000}
                     alt={tx("{kicker} yaşam tarzı", { kicker: tx(kicker) })}
-                    className="aspect-[4/3] w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                    className="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                   />
                   <div className="p-6">
                     <p className="text-xs font-bold uppercase text-muted-foreground">
@@ -483,7 +485,7 @@ function Home() {
                   width={1200}
                   height={1408}
                   alt={tx("Ayak basışı ve kişiye özel FootBalance tabanlığı")}
-                  className="aspect-[4/5] w-full object-cover"
+                  className="h-auto w-full"
                 />
               </div>
               <div className="mt-8 grid gap-4 sm:grid-cols-2">
@@ -542,7 +544,7 @@ function Home() {
                 width={1200}
                 height={1408}
                 alt={tx("Ayak basışı ve kişiye özel FootBalance tabanlığı")}
-                className="aspect-[4/5] w-full object-cover md:aspect-[3/4]"
+                className="h-auto w-full"
               />
             </div>
           </div>
@@ -735,55 +737,28 @@ function Home() {
         </section>
 
         <section id="sss" className="bg-muted">
-          <div className="mx-auto grid max-w-[1360px] gap-8 px-5 py-12 md:grid-cols-12 lg:px-8 lg:py-16">
-            <h2 className="text-2xl font-semibold sm:text-3xl md:col-span-5 md:pr-6">
-              {tx("Randevu almadan önce bilmek isteyebileceklerin.")}
+          <div className="mx-auto max-w-[1360px] px-5 py-12 lg:px-8 lg:py-16">
+            <h2 className="mb-8 text-center text-2xl font-semibold sm:text-3xl lg:mb-12">
+              {tx("Sık Sorulan Sorular")}
             </h2>
-            <div className="md:col-span-7">
-              <Accordion type="single" collapsible>
-                {[
-                  [
-                    tx("Ne kadar sürüyor?"),
-                    tx(
-                      "Ayak analizi ve sana özel tabanlığın hazırlanması yaklaşık 10 dakika içinde gerçekleştirilebilir.",
-                    ),
-                  ],
-                  [
-                    tx("Tabanlığı hemen kullanabilir miyim?"),
-                    tx(
-                      "Uygun tabanlık belirlendiğinde kişiye özel şekillendirme aynı ziyaret içerisinde yapılabilir.",
-                    ),
-                  ],
-                  [
-                    tx("Spor yapmıyorsam kullanabilir miyim?"),
-                    tx(
-                      "FootBalance günlük yaşam, spor ve farklı destek ihtiyaçlarına yönelik tabanlık seçenekleri sunar.",
-                    ),
-                  ],
-                  [
-                    tx("Daha önce ortopedik tabanlık kullandıysam?"),
-                    tx(
-                      "Mevcut deneyimin, ayak yapın ve kullanım ihtiyaçların uzman tarafından yeniden değerlendirilebilir.",
-                    ),
-                  ],
-                  [
-                    tx("Ayak analizi nasıl yapılıyor?"),
-                    tx(
-                      "FootBalance sistemi ile ayak ve basış yapın değerlendirilir; bilgiler uzman değerlendirmesiyle birlikte ele alınır.",
-                    ),
-                  ],
-                ].map(([q, a], i) => (
-                  <AccordionItem key={q} value={`q${i}`}>
-                    <AccordionTrigger className="py-4 text-sm sm:text-base">
-                      {tx(q)}
-                    </AccordionTrigger>
-                    <AccordionContent className="pb-4 text-sm leading-6 text-muted-foreground">
-                      {tx(a)}
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-              <BrandButton className="mt-6" onClick={() => openBooking("faq")}>
+            <div className="grid items-start gap-x-10 md:grid-cols-2 lg:gap-x-16">
+              {[FAQ_ITEMS.slice(0, 8), FAQ_ITEMS.slice(8)].map((items, column) => (
+                <Accordion key={column} type="single" collapsible>
+                  {items.map(({ question, answer }, i) => (
+                    <AccordionItem key={question} value={`q${column}-${i}`}>
+                      <AccordionTrigger className="py-4 text-sm sm:text-base">
+                        {tx(question)}
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-4 text-sm leading-6 text-muted-foreground [&_p+p]:mt-3 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-5 [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-foreground">
+                        {answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              ))}
+            </div>
+            <div className="mt-8 flex justify-center">
+              <BrandButton onClick={() => openBooking("faq")}>
                 {tx("Ücretsiz Ayak Analizi İçin Randevu Al")}
               </BrandButton>
             </div>

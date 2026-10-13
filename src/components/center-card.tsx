@@ -15,6 +15,7 @@ export function CenterCard({
   compact?: boolean;
 }) {
   const { tx } = useTranslation();
+  const phone = c.phone.split(/\s*-\s*/)[0]?.replace(/[^\d+]/g, "") ?? "";
   return (
     <article
       className={`flex h-full flex-col rounded-2xl border bg-card p-5 transition hover:border-foreground/25 hover:shadow-sm ${c.main ? "border-primary/50 ring-1 ring-primary/15" : "border-border"}`}
@@ -49,7 +50,7 @@ export function CenterCard({
         {c.phone && (
           <p className="flex gap-2">
             <Phone className="mt-0.5 size-3.5 shrink-0 text-mint-deep" aria-hidden="true" />{" "}
-            <a href={`tel:${c.phone.replace(/[^\d+]/g, "")}`} className="hover:text-foreground">
+            <a href={`tel:${phone}`} className="hover:text-foreground">
               {c.phone}
             </a>
           </p>
@@ -61,22 +62,36 @@ export function CenterCard({
           </p>
         )}
       </div>
-      <div className={compact ? "mt-auto pt-4" : "mt-auto flex gap-2 pt-5"}>
-        <Button
-          type="button"
-          variant={compact ? "outline" : "appointment"}
-          className={
-            compact
-              ? "h-9 rounded-full border-primary/20 px-4 text-xs font-medium shadow-none hover:bg-secondary"
-              : "min-h-10 flex-1 rounded-lg px-3 text-xs shadow-none"
-          }
-          onClick={onBooking}
-        >
-          {tx("Randevu Al")}
-        </Button>
-        {!compact && c.maps && (
+      <div className="mt-auto flex flex-wrap gap-2 pt-5">
+        {c.main ? (
+          <Button
+            type="button"
+            variant={compact ? "outline" : "appointment"}
+            className="min-h-10 flex-1 rounded-lg px-3 text-xs shadow-none"
+            onClick={onBooking}
+          >
+            {tx("Randevu Al")}
+          </Button>
+        ) : (
+          phone && (
+            <Button
+              asChild
+              variant="appointment"
+              className="min-h-10 flex-1 rounded-lg px-3 text-xs shadow-none"
+            >
+              <a href={`tel:${phone}`} aria-label={`${tx("Bayiyi Ara")}: ${c.name}`}>
+                <Phone className="size-3.5" aria-hidden="true" />
+                {tx("Bayiyi Ara")}
+              </a>
+            </Button>
+          )
+        )}
+        {(!compact || !c.main) && (
           <a
-            href={c.maps}
+            href={
+              c.maps ||
+              `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.address)}`
+            }
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-lg border border-border px-3 text-xs font-semibold text-foreground transition hover:bg-secondary"

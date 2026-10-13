@@ -1,11 +1,11 @@
 import { languagePath } from "@/lib/i18n/urls";
 import { useState } from "react";
-import { ChevronLeft, Search, Check, MapPin, CalendarDays, Clock3 } from "lucide-react";
+import { ChevronLeft, Search, MapPin, Navigation, Phone } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { CenterCard } from "@/components/center-card";
 import { Button } from "@/components/ui/button";
 import { CENTERS, CENTER_CITIES } from "@/data/centers";
-import { requestSchema, todayInIstanbul } from "@/lib/requests/schema";
+import { BeeasistBooking } from "@/components/beeasist-booking";
 import { useTranslation } from "@/lib/i18n";
 import logo from "@/assets/footbalance-logo.svg";
 
@@ -30,7 +30,13 @@ export function BookingDialog({
     </Sheet>
   );
 }
-function BookingSteps({ initialCenter }: { initialCenter?: string | undefined }) {
+export function BookingSteps({
+  initialCenter,
+  inline = false,
+}: {
+  initialCenter?: string | undefined;
+  inline?: boolean;
+}) {
   const { tx, language } = useTranslation();
   const [step, setStep] = useState(initialCenter ? 1 : 0);
   const [center, setCenter] = useState(initialCenter ?? "");
@@ -56,77 +62,9 @@ function BookingSteps({ initialCenter }: { initialCenter?: string | undefined })
         .sort((a, b) => Number(b.c.main) - Number(a.c.main))
     : [];
 
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [offset, setOffset] = useState(0);
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [consent, setConsent] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
   const selected = center ? CENTERS[Number(center)] : undefined;
-  const dates = Array.from({ length: 4 }, (_, i) => {
-    const day = new Date(`${todayInIstanbul()}T12:00:00+03:00`);
-    day.setUTCDate(day.getUTCDate() + offset + i + 1);
-    return {
-      value: day.toISOString().slice(0, 10),
-      label: new Intl.DateTimeFormat(language === "en" ? "en-GB" : "tr-TR", {
-        day: "numeric",
-        month: "long",
-        weekday: "long",
-        timeZone: "Europe/Istanbul",
-      }).format(day),
-    };
-  });
-  const optionClass =
-    "rounded-2xl border border-[#d1dfe5] bg-white p-4 text-left transition hover:border-[#062d3e] hover:bg-[#e2f8f4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary";
-  async function submit(event: React.FormEvent) {
-    event.preventDefault();
-    if (busy || !selected) return;
-    const result = requestSchema.safeParse({
-      type: "appointment",
-      language,
-      name,
-      phone,
-      email,
-      consent,
-      city: selected.city,
-      center,
-      preferredDate: date,
-      preferredTime: time,
-    });
-    if (!result.success) {
-      setError(tx(result.error.issues[0]?.message));
-      return;
-    }
-    setBusy(true);
-    setError("");
-    try {
-      const response = await fetch("/api/requests", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(result.data),
-        signal: AbortSignal.timeout(15000),
-      });
-      const body = await response.json();
-      if (!response.ok || body.ok !== true) throw new Error();
-      setStep(4);
-      window.dispatchEvent(
-        new CustomEvent("footbalance:analytics", {
-          detail: { event: "appointment_requested", center, date, time },
-        }),
-      );
-    } catch {
-      setError(
-        tx(
-          "Talebiniz gönderilemedi. Bilgileriniz korunuyor; tekrar deneyebilir veya bize telefonla ulaşabilirsiniz.",
-        ),
-      );
-    } finally {
-      setBusy(false);
-    }
-  }
+  const Title = inline ? "h2" : SheetTitle;
+  const Description = inline ? "p" : SheetDescription;
   return (
     <div className="text-sm leading-5 text-[#062d3e]">
       <a
@@ -136,22 +74,12 @@ function BookingSteps({ initialCenter }: { initialCenter?: string | undefined })
       >
         <img src={logo} alt="FootBalance" className="h-6 w-auto" />
       </a>
-      <SheetTitle className={step === 0 ? "sr-only" : "mb-2 text-lg"}>
-        {tx(
-          [
-            "Sana en yakın FootBalance merkezini bul.",
-            "Tercih Edilen Tarih",
-            "Tercih Edilen Saat",
-            "İletişim Bilgileri",
-            "Randevu talebiniz alındı.",
-          ][step],
-        )}
-      </SheetTitle>
-      <SheetDescription className="sr-only">
-        {step > 0 && selected
-          ? `${selected.name}${date ? ` · ${date}` : ""}${time ? ` · ${time}` : ""}`
-          : tx("Merkez seçin")}
-      </SheetDescription>
+      <Title className={step === 0 ? "sr-only" : "mb-2 text-lg"}>
+        {tx(step === 0 ? "Sana en yakın FootBalance merkezini bul." : "Randevu Al")}
+      </Title>
+      <Description className="sr-only">
+        {step > 0 && selected ? selected.name : tx("Merkez seçin")}
+      </Description>
       {step > 0 && selected && (
         <div className="mb-6 rounded-2xl border border-[#b9e5dd] border-l-4 border-l-primary bg-[#e2f8f4] p-4 sm:p-5">
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[#416571]">
@@ -162,27 +90,6 @@ function BookingSteps({ initialCenter }: { initialCenter?: string | undefined })
             <MapPin aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
             <span>{selected.address}</span>
           </div>
-          {(date || time) && (
-            <div className="mt-4 flex flex-wrap gap-3 border-t border-[#b9e5dd] pt-3 text-sm font-semibold">
-              {date && (
-                <span className="flex items-center gap-2">
-                  <CalendarDays aria-hidden="true" className="size-4 shrink-0" />
-                  {new Intl.DateTimeFormat(language === "en" ? "en-GB" : "tr-TR", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                    timeZone: "Europe/Istanbul",
-                  }).format(new Date(`${date}T12:00:00+03:00`))}
-                </span>
-              )}
-              {time && (
-                <span className="flex items-center gap-2">
-                  <Clock3 aria-hidden="true" className="size-4 shrink-0" />
-                  {time}
-                </span>
-              )}
-            </div>
-          )}
         </div>
       )}
       {step === 0 && (
@@ -241,147 +148,39 @@ function BookingSteps({ initialCenter }: { initialCenter?: string | undefined })
           </div>
         </>
       )}
-      {step === 1 && (
+      {step === 1 && selected && (
         <>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {dates.map((d) => (
-              <button
-                type="button"
-                key={d.value}
-                className={`${optionClass} min-h-20 text-center text-base font-semibold sm:min-h-24 ${date === d.value ? "border-[#062d3e] bg-[#e2f8f4]" : ""}`}
-                onClick={() => {
-                  setDate(d.value);
-                  setTime("");
-                  setStep(2);
-                }}
-              >
-                {d.label}
-              </button>
-            ))}
-          </div>
-          <div className="mt-5 flex flex-wrap justify-between gap-3">
-            <Button variant="quiet" disabled={offset === 0} onClick={() => setOffset(offset - 4)}>
-              {tx("Önceki Günler")}
-            </Button>
-            <Button variant="quiet" onClick={() => setOffset(offset + 4)}>
-              {tx("Sonraki Günler")}
-            </Button>
-          </div>
-        </>
-      )}
-      {step === 2 && (
-        <>
-          <p className="mb-5 text-sm text-muted-foreground">
-            {tx(
-              "Tercih ettiğiniz gün ve saati belirtebilirsiniz. Randevunuz merkez tarafından onaylandıktan sonra kesinleşir.",
-            )}
-          </p>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {["10:00", "11:30", "13:00", "14:30", "16:00", "17:30"].map((t) => (
-              <button
-                type="button"
-                key={t}
-                className={`${optionClass} min-h-20 text-center text-lg font-semibold ${time === t ? "border-[#062d3e] bg-[#e2f8f4]" : ""}`}
-                onClick={() => {
-                  setTime(t);
-                  setStep(3);
-                }}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-        </>
-      )}
-      {step === 3 && (
-        <form onSubmit={submit} noValidate>
-          <fieldset disabled={busy} className="space-y-4">
-            {[
-              {
-                label: "Ad Soyad",
-                value: name,
-                change: setName,
-                type: "text",
-                autocomplete: "name",
-                max: 100,
-              },
-              {
-                label: "Telefon",
-                value: phone,
-                change: setPhone,
-                type: "tel",
-                autocomplete: "tel",
-                max: 30,
-              },
-              {
-                label: "E-posta",
-                value: email,
-                change: setEmail,
-                type: "email",
-                autocomplete: "email",
-                max: 254,
-              },
-            ].map((f) => (
-              <label key={f.label} className="block text-sm font-semibold">
-                {tx(f.label)}{" "}
-                {f.type === "email" && (
-                  <span className="font-normal text-muted-foreground">{tx("(isteğe bağlı)")}</span>
-                )}
-                <input
-                  type={f.type}
-                  autoComplete={f.autocomplete}
-                  maxLength={f.max}
-                  required={f.type !== "email"}
-                  value={f.value}
-                  onChange={(e) => f.change(e.target.value)}
-                  className="mt-2 min-h-12 w-full rounded-2xl border border-[#d1dfe5] px-4 outline-none focus:border-primary"
-                />
-              </label>
-            ))}
-            <label className="flex items-start gap-3 text-sm">
-              <input
-                type="checkbox"
-                checked={consent}
-                onChange={(e) => setConsent(e.target.checked)}
-                className="mt-0.5 size-4 shrink-0 accent-primary"
-              />
-              {tx(
-                "Talebim kapsamında benimle iletişime geçilmesine ve paylaştığım bilgilerin bu amaçla kullanılmasına onay veriyorum.",
+          {selected.main ? (
+            <BeeasistBooking />
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2">
+              {selected.phone && (
+                <Button asChild variant="appointment" size="touch">
+                  <a href={`tel:${selected.phone.split(/\s+-\s+/)[0]?.replace(/[^\d+]/g, "")}`}>
+                    <Phone aria-hidden="true" />
+                    {tx("Bayiyi Ara")}
+                  </a>
+                </Button>
               )}
-            </label>
-            <p className="text-sm text-muted-foreground">
-              {tx(
-                "Ekibimiz uygun gün ve saati sizinle birlikte kesinleştirmek için iletişime geçecek.",
-              )}
-            </p>
-            {error && (
-              <p role="alert" className="text-destructive">
-                {error}
-              </p>
-            )}
-            <div className="flex flex-wrap items-center justify-between gap-4 pt-4">
-              <Back onClick={() => setStep(2)} label={tx("Geri")} />
-              <Button type="submit" variant="appointment" size="touch">
-                {tx(busy ? "Gönderiliyor…" : "Randevuyu Oluştur")}
+              <Button asChild variant="outline" size="touch">
+                <a
+                  href={
+                    selected.maps ||
+                    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selected.address)}`
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Navigation aria-hidden="true" />
+                  {tx("Yol Tarifi")}
+                </a>
               </Button>
             </div>
-          </fieldset>
-        </form>
-      )}
-      {(step === 1 || step === 2) && (
-        <div className="mt-6">
-          <Back onClick={() => setStep(step - 1)} label={tx("Geri")} />
-        </div>
-      )}
-      {step === 4 && (
-        <div role="status" className="rounded-3xl bg-[#e2f8f4] p-8">
-          <Check className="mb-5 size-10" />
-          <p className="text-base">
-            {tx(
-              "Ekibimiz uygun gün ve saati sizinle birlikte kesinleştirmek için iletişime geçecek.",
-            )}
-          </p>
-        </div>
+          )}
+          <div className="mt-6">
+            <Back onClick={() => setStep(0)} label={tx("Geri")} />
+          </div>
+        </>
       )}
     </div>
   );

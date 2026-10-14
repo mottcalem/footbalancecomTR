@@ -216,3 +216,15 @@ test("partner SMTP requires TLS and reports success only when recipient is accep
     mocked.mock.restore();
   }
 });
+
+test("configured public origin works behind HTTPS proxy and rejects other origins", async () => {
+  const makeRequest = (origin: string) => new Request("http://127.0.0.1:3004/api/requests", {
+    method: "POST", headers: { Origin: origin, "Content-Type": "application/json" }, body: "{}",
+  });
+  const env = { FORMS_PUBLIC_ORIGIN: "https://footbalance.ugurdogan.net" };
+  const acceptedOrigin = await handleRequestSubmission(makeRequest(env.FORMS_PUBLIC_ORIGIN), env);
+  assert.equal(acceptedOrigin.status, 400);
+  assert.equal((await acceptedOrigin.json()).code, "INVALID_FORM");
+  const rejectedOrigin = await handleRequestSubmission(makeRequest("https://other.example"), env);
+  assert.equal(rejectedOrigin.status, 403);
+});

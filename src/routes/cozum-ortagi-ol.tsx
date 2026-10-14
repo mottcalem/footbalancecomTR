@@ -249,10 +249,10 @@ function PartnerPage() {
             </div>
             <div className="md:col-span-7">
               <video
-                src="/videos/footbalance-partner.mp4"
-                poster="/videos/footbalance-partner-poster.jpg"
+                src="/videos/footbalance-partner-intro.mp4"
+                poster="/videos/footbalance-partner-intro-poster.jpg"
                 width={1920}
-                height={726}
+                height={1080}
                 aria-label={tx("FootBalance merkezinde ayak ve basış analizi uygulaması")}
                 autoPlay
                 muted
@@ -260,7 +260,7 @@ function PartnerPage() {
                 playsInline
                 controls
                 preload="metadata"
-                className="aspect-[1920/726] w-full rounded-2xl object-contain"
+                className="aspect-video w-full rounded-2xl object-contain"
               />
             </div>
           </div>

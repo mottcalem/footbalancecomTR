@@ -13,7 +13,9 @@ function json(status: number, code: string) {
 export async function handleRequestSubmission(request: Request, env: unknown): Promise<Response> {
   if (request.method !== "POST")
     return new Response(null, { status: 405, headers: { Allow: "POST" } });
-  if (request.headers.get("origin") !== new URL(request.url).origin)
+  // HTTPS terminates at the reverse proxy; Node receives an internal HTTP URL.
+  const expectedOrigin = setting(env, "FORMS_PUBLIC_ORIGIN") ?? new URL(request.url).origin;
+  if (request.headers.get("origin") !== expectedOrigin)
     return json(403, "INVALID_ORIGIN");
   if (!request.headers.get("content-type")?.startsWith("application/json"))
     return json(415, "INVALID_CONTENT_TYPE");

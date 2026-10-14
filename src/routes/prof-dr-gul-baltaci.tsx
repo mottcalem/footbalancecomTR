@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,7 +32,16 @@ function InterviewPage() {
   const { tx } = useTranslation();
   const [open, setOpen] = useState(false);
   const video = useRef<HTMLVideoElement>(null);
+  const formTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  useEffect(() => {
+    formTimer.current = setTimeout(() => {
+      video.current?.pause();
+      setOpen(true);
+    }, 5000);
+    return () => clearTimeout(formTimer.current);
+  }, []);
   const openForm = () => {
+    clearTimeout(formTimer.current);
     video.current?.pause();
     setOpen(true);
   };

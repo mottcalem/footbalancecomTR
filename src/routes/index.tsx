@@ -681,18 +681,18 @@ function Home() {
                 {tx("Teknolojiyi Deneyimle — Randevu Al")}
               </BrandButton>
             </div>
-            <div className="overflow-hidden rounded-2xl border border-[#DCF6F3] bg-black shadow-sm md:col-span-7">
+            <div className="self-start overflow-hidden rounded-2xl border border-[#DCF6F3] bg-black shadow-sm md:col-span-7">
               <video
                 ref={technologyVideo}
                 muted
                 controls
                 playsInline
                 preload="metadata"
-                poster="/videos/footbalance-technology-poster.jpg"
+                poster="/videos/footbalance-technology-v2-poster.jpg"
                 aria-label={tx("FootBalance ayak ve basış analizi uygulaması")}
-                className="aspect-square w-full object-contain md:h-full"
+                className="block aspect-square w-full object-contain"
               >
-                <source src="/videos/footbalance-technology.mp4" type="video/mp4" />
+                <source src="/videos/footbalance-technology-v2.mp4" type="video/mp4" />
                 {tx("Tarayıcınız video oynatmayı desteklemiyor.")}
               </video>
             </div>

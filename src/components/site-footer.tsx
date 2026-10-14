@@ -65,7 +65,7 @@ export function SiteFooter() {
   return (
     <>
       <footer className="bg-graphite text-primary-foreground">
-        <div className="mx-auto max-w-[1360px] px-5 py-10 lg:px-8">
+        <div className="mx-auto max-w-[1360px] px-5 py-6 lg:px-8">
           <Link
             to="/"
             aria-label={tx("FootBalance Türkiye ana sayfa")}
@@ -73,7 +73,7 @@ export function SiteFooter() {
           >
             <img src={logo} alt="FootBalance" className="h-9 w-auto brightness-0 invert" />
           </Link>
-          <div className="mt-7 grid grid-cols-2 gap-6 md:grid-cols-5 md:gap-5">
+          <div className="mt-4 grid grid-cols-2 gap-5 md:grid-cols-5 md:gap-5">
             {groups.map(([title, links]) => (
               <div key={title}>
                 {title === "Çözüm Ortağı Ol" ? (
@@ -86,7 +86,7 @@ export function SiteFooter() {
                 ) : title !== "FootBalance" ? (
                   <h2 className="text-sm font-bold uppercase">{tx(title)}</h2>
                 ) : null}
-                <ul className="mt-3 space-y-2 text-sm text-primary-foreground/65">
+                <ul className="mt-2 space-y-1 text-sm text-primary-foreground/65">
                   {links.map(([label, path]) => (
                     <li key={label}>
                       {path === "booking" ? (
@@ -113,7 +113,7 @@ export function SiteFooter() {
               </div>
             ))}
           </div>
-          <div className="mt-8 flex flex-col justify-between gap-5 border-t border-primary-foreground/15 pt-5 text-xs text-primary-foreground/55 sm:flex-row">
+          <div className="mt-5 flex flex-col justify-between gap-4 border-t border-primary-foreground/15 pt-4 text-xs text-primary-foreground/55 sm:flex-row">
             <p>{tx("© 2026 FootBalance Türkiye")}</p>
             <div className="flex flex-wrap gap-5">
               {[

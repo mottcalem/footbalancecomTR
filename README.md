@@ -89,7 +89,7 @@ Ubuntu / Node.js 24+ kullanılır. `LEADS_DATA_DIR` uygulama sürümlerinin dı�
 
 ```text
 LEADS_DATA_DIR=/var/lib/footbalance/leads
-LEADS_REPORT_TO=dgn.ugur@gmail.com
+LEADS_REPORT_TO=info@onbrands.com.tr
 ```
 
 SQLite (`leads.sqlite`) asıl kayıttır; eşzamanlı kayıt ve tekrar gönderimleri

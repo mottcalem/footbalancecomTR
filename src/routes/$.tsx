@@ -2,6 +2,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { getLegacyContent } from "@/lib/content";
 import { seoHead, canonicalUrl, jsonLd } from "@/lib/seo";
 import { ContentLayout } from "@/components/content-layout";
+import { VideoLibrary } from "@/components/video-library";
 
 export const Route = createFileRoute("/$")({
   loaderDeps: ({ search }) => ({ lang: search.lang }),
@@ -45,11 +46,55 @@ function LegacyContent() {
     const p = content.page;
     return (
       <ContentLayout>
-        <div className="mx-auto max-w-3xl rounded-3xl border border-border bg-card p-5 sm:p-12">
-          <h1 className="text-3xl font-semibold">{(p.title || "FootBalance").split(" | ")[0]}</h1>
-          <p className="mt-6 text-lg text-muted-foreground">
-            {p.path.startsWith("/en/") ? "Content is being updated." : "İçerik güncellenmektedir."}
-          </p>
+        <div
+          className={
+            p.testimonials.length || p.path === "/tabanlik-sekillendirme-videolari/"
+              ? "mx-auto max-w-6xl"
+              : "mx-auto max-w-3xl rounded-3xl border border-border bg-card p-5 sm:p-12"
+          }
+        >
+          <h1 className="text-3xl font-semibold sm:text-4xl">
+            {(p.title || "FootBalance").split(" | ")[0]}
+          </h1>
+          {p.path === "/tabanlik-sekillendirme-videolari/" ? (
+            <VideoLibrary />
+          ) : p.testimonials.length ? (
+            <div className="mt-10 grid items-start gap-6 md:grid-cols-2">
+              {p.testimonials.map((testimonial) => (
+                <article
+                  key={testimonial.name}
+                  className="rounded-2xl border border-border bg-card p-6 sm:p-8"
+                >
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={testimonial.image}
+                      alt={testimonial.name}
+                      width={80}
+                      height={80}
+                      loading="lazy"
+                      className="size-20 shrink-0 rounded-full object-cover"
+                    />
+                    <h2 className="text-xl font-semibold">{testimonial.name}</h2>
+                  </div>
+                  <div
+                    className="article-content mt-5 text-sm text-muted-foreground sm:text-base [&_p:first-child]:mt-0"
+                    dangerouslySetInnerHTML={{ __html: testimonial.content }}
+                  />
+                </article>
+              ))}
+            </div>
+          ) : p.content ? (
+            <div
+              className="article-content mt-8 text-base text-muted-foreground [&_h2]:text-foreground [&_h3]:text-foreground"
+              dangerouslySetInnerHTML={{ __html: p.content }}
+            />
+          ) : (
+            <p className="mt-6 text-lg text-muted-foreground">
+              {p.path.startsWith("/en/")
+                ? "Content is being updated."
+                : "İçerik güncellenmektedir."}
+            </p>
+          )}
         </div>
       </ContentLayout>
     );

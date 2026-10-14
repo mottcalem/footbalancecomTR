@@ -1,4 +1,5 @@
 import "./lib/error-capture";
+import { handleLeadDownload } from "./lib/leads/downloads";
 import { handleGoogleReviews } from "./lib/reviews/handler";
 import { handleRequestSubmission } from "./lib/requests/handler";
 import legacyRedirects from "./data/legacy-redirects.json";
@@ -54,6 +55,7 @@ export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       const url = new URL(request.url);
+      if (url.pathname.startsWith("/api/lead-reports/")) return handleLeadDownload(request, env);
       if (url.pathname === "/api/google-reviews") return handleGoogleReviews(request, env);
       if (url.pathname === "/api/requests") return handleRequestSubmission(request, env);
       if (

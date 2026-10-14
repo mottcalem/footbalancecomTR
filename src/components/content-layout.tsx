@@ -12,7 +12,7 @@ export function ContentLayout({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-5">
-          <Link to="/">
+          <Link to="/" reloadDocument aria-label={tx("FootBalance Türkiye ana sayfa")}>
             <img src={logo} alt="FootBalance" className="h-8 w-auto" />
           </Link>
           <nav className="flex flex-wrap items-center gap-5 text-sm" aria-label={tx("Ana menü")}>
@@ -35,12 +35,7 @@ export function ContentLayout({ children }: { children: ReactNode }) {
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-5 py-10 sm:py-16">{children}</main>
-      <footer className="mt-12 border-t border-border px-5 py-8 text-center text-sm text-muted-foreground">
-        <Link to="/">FootBalance Türkiye</Link> ·{" "}
-        <Link to="/ayak-sagligi-hakkinda-bilgiler/">{tx("Blog")}</Link> ·{" "}
-        <Link to="/iletisim/">{tx("Bize Ulaşın")}</Link> ·{" "}
-        <a href="/gizlilik-politikasi/">{tx("Gizlilik Politikası")}</a>
-      </footer>
+
       <BookingDialog open={booking} onOpenChange={setBooking} />
     </div>
   );

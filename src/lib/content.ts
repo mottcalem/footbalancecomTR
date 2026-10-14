@@ -5,10 +5,26 @@ export const getLegacyContent = createServerFn({ method: "GET" })
   .handler(async ({ data: path }) => {
     const { default: posts } = await import("@/data/blog-posts.json");
     const { default: pages } = await import("@/data/legacy-pages.json");
+    const { default: importedPages } = await import("@/data/imported-pages.json");
     const normalized = `/${path.replace(/^\/+|\/+$/g, "")}/`;
     const post = posts.find((p) => p.path === normalized);
     if (post) return { kind: "post" as const, post };
     const page = pages.find((p) => p.path === normalized);
-    if (page) return { kind: "page" as const, page };
+    if (page) {
+      const imported = (
+        importedPages as Record<
+          string,
+          { content: string; testimonials: { name: string; image: string; content: string }[] }
+        >
+      )[normalized];
+      return {
+        kind: "page" as const,
+        page: {
+          ...page,
+          content: imported?.content ?? "",
+          testimonials: imported?.testimonials ?? [],
+        },
+      };
+    }
     return null;
   });

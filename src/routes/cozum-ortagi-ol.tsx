@@ -12,7 +12,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import techImage from "@/assets/technology-scan.jpg";
-import insoleImage from "@/assets/insole-product.jpg";
 import finalImage from "@/assets/final-movement.jpg";
 import logo from "@/assets/footbalance-logo.svg";
 
@@ -156,7 +155,12 @@ function PartnerPage() {
     <div className="min-h-screen bg-background text-foreground pb-16 md:pb-0">
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-md">
         <div className="mx-auto flex h-[76px] max-w-[1360px] items-center gap-2 px-4 sm:gap-6 sm:px-5 lg:px-8">
-          <Link to="/" aria-label={tx("FootBalance Türkiye ana sayfa")} className="shrink-0">
+          <Link
+            to="/"
+            reloadDocument
+            aria-label={tx("FootBalance Türkiye ana sayfa")}
+            className="shrink-0"
+          >
             <img src={logo} alt="FootBalance" className="h-8 w-auto" />
           </Link>
           <nav
@@ -244,12 +248,19 @@ function PartnerPage() {
               </p>
             </div>
             <div className="md:col-span-7">
-              <img
-                src={techImage}
-                width={1504}
-                height={1008}
-                alt={tx("FootBalance merkezinde ayak ve basış analizi uygulaması")}
-                className="aspect-[16/11] w-full rounded-2xl object-cover"
+              <video
+                src="/videos/footbalance-partner.mp4"
+                poster="/videos/footbalance-partner-poster.jpg"
+                width={1920}
+                height={726}
+                aria-label={tx("FootBalance merkezinde ayak ve basış analizi uygulaması")}
+                autoPlay
+                muted
+                loop
+                playsInline
+                controls
+                preload="metadata"
+                className="aspect-[1920/726] w-full rounded-2xl object-contain"
               />
             </div>
           </div>
@@ -298,13 +309,19 @@ function PartnerPage() {
               </BrandButton>
             </div>
             <div className="md:col-span-6">
-              <img
-                src={insoleImage}
-                loading="lazy"
-                width={1200}
-                height={1008}
-                alt={tx("Kişiye özel şekillendirilen FootBalance ortopedik tabanlık")}
-                className="w-full rounded-2xl"
+              <video
+                src="/videos/footbalance-partner-benefits.mp4"
+                poster="/videos/footbalance-partner-benefits-poster.jpg"
+                width={1080}
+                height={1920}
+                aria-label={tx("Kişiye özel şekillendirilen FootBalance ortopedik tabanlık")}
+                autoPlay
+                muted
+                loop
+                playsInline
+                controls
+                preload="metadata"
+                className="mx-auto aspect-[9/16] max-h-[720px] w-auto max-w-full rounded-2xl object-contain"
               />
             </div>
           </div>
@@ -462,11 +479,29 @@ function PartnerPage() {
                   "Formu doldurun, ekibimiz sizi arasın. Merkezinizin ihtiyaçlarını birlikte değerlendirelim.",
                 )}
               </p>
-              <ol className="mt-8 space-y-3 text-sm text-muted-foreground">
-                <li>{tx("1. Başvuru formunu iletin")}</li>
-                <li>{tx("2. Ekibimiz sizi arayıp ihtiyacınızı dinlesin")}</li>
-                <li>{tx("3. İş birliği modelini birlikte planlayalım")}</li>
-                <li>{tx("4. Kurulum, eğitim ve uygulamaya başlayın")}</li>
+              <ol className="mt-8 space-y-4">
+                {[
+                  "1. Başvuru formunu iletin",
+                  "2. Ekibimiz sizi arayıp ihtiyacınızı dinlesin",
+                  "3. İş birliği modelini birlikte planlayalım",
+                  "4. Kurulum, eğitim ve uygulamaya başlayın",
+                ].map((step, index) => (
+                  <li
+                    key={step}
+                    className="flex items-center gap-4 rounded-2xl border border-primary/15 bg-background p-5 shadow-sm"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary text-xl font-bold text-primary-foreground"
+                    >
+                      {index + 1}
+                    </span>
+                    <span className="text-base font-semibold leading-7 text-foreground sm:text-lg">
+                      <span className="sr-only">{index + 1}. </span>
+                      {tx(step).replace(/^\d+\.\s*/, "")}
+                    </span>
+                  </li>
+                ))}
               </ol>
             </div>
             <div className="md:col-span-7">
@@ -476,66 +511,11 @@ function PartnerPage() {
         </section>
       </main>
 
-      <PartnerFooter />
       <div className="fixed inset-x-0 bottom-0 z-40 grid h-16 border-t border-border bg-background md:hidden">
         <Button className="h-full rounded-none" onClick={scrollToForm}>
           {tx("Çözüm Ortağı Ol")}
         </Button>
       </div>
     </div>
-  );
-}
-
-function PartnerFooter() {
-  const { tx } = useTranslation();
-  const groups: Record<string, string[]> = {
-    FootBalance: ["Hakkımızda", "Teknolojimiz", "Kullanıcı Deneyimleri", "İletişim"],
-    "Ayak Sağlığı": ["Blog", "Sık Sorulan Sorular"],
-    "Çözüm Ortaklığı": ["Ne Kazandırır?", "3D Sistem", "Referanslar", "Başvuru"],
-    Online: ["Online Mağaza", "Instagram", "YouTube"],
-  };
-  return (
-    <footer className="bg-graphite text-primary-foreground">
-      <div className="mx-auto max-w-[1360px] px-5 py-16 lg:px-8">
-        <Link
-          to="/"
-          aria-label={tx("FootBalance Türkiye ana sayfa")}
-          className="inline-block shrink-0"
-        >
-          <img src={logo} alt="FootBalance" className="h-9 w-auto brightness-0 invert" />
-        </Link>
-        <div className="mt-12 grid grid-cols-2 gap-8 md:grid-cols-4">
-          {Object.entries(groups).map(([g, links]) => (
-            <div key={g}>
-              <h2 className="text-sm font-bold uppercase">{tx(g)}</h2>
-              <ul className="mt-4 space-y-3 text-sm text-primary-foreground/65">
-                {links.map((x) => (
-                  <li key={x}>
-                    {x === "Blog" ? (
-                      <Link
-                        to="/ayak-sagligi-hakkinda-bilgiler/"
-                        className="min-h-6 text-left hover:text-primary-foreground"
-                      >
-                        {tx(x)}
-                      </Link>
-                    ) : (
-                      <span className="min-h-6 text-left">{tx(x)}</span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-        <div className="mt-14 flex flex-col justify-between gap-5 border-t border-primary-foreground/15 pt-6 text-xs text-primary-foreground/55 sm:flex-row">
-          <p>{tx("© 2026 FootBalance Türkiye")}</p>
-          <div className="flex gap-5">
-            <span>{tx("KVKK")}</span>
-            <span>{tx("Çerez Politikası")}</span>
-            <span>{tx("Kullanım Koşulları")}</span>
-          </div>
-        </div>
-      </div>
-    </footer>
   );
 }

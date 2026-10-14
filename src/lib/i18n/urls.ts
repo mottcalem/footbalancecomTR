@@ -13,6 +13,7 @@ export const PUBLIC_PATHS: Record<string, { tr: string; en: string }> = {
   "/iletisim": { tr: "/bize-ulasin/", en: "/en/contact/" },
   "/hakkimizda": { tr: "/hakkimizda/", en: "/en/about-us/" },
   "/cozum-ortagi-ol": { tr: "/cozum-ortagi-ol/", en: "/en/become-a-partner/" },
+  "/prof-dr-gul-baltaci": { tr: "/prof-dr-gul-baltaci/", en: "/en/prof-dr-gul-baltaci/" },
 };
 
 export function languagePath(pathname: string, language: Language): string {

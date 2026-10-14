@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Check, LoaderCircle } from "lucide-react";
@@ -20,6 +20,7 @@ export function RequestForm({ type }: { type: "appointment" | "partner" }) {
   const id = useId();
   const [sent, setSent] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const submission = useRef<{ id: string; payload: string } | undefined>(undefined);
   const {
     register,
     handleSubmit,
@@ -73,13 +74,16 @@ export function RequestForm({ type }: { type: "appointment" | "partner" }) {
       </p>
     ) : null;
   const submit = handleSubmit(async (values) => {
+    const payload = JSON.stringify({ ...values, language });
+    if (submission.current?.payload !== payload)
+      submission.current = { id: crypto.randomUUID(), payload };
     setSubmitError("");
     try {
       const response = await fetch("/api/requests", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...values, language }),
-        signal: AbortSignal.timeout(15000),
+        body: JSON.stringify({ ...values, language, submissionId: submission.current.id }),
+        signal: AbortSignal.timeout(30000),
       });
       const result: { ok?: boolean } = await response.json();
       if (!response.ok || result.ok !== true) throw new Error("Request failed");
@@ -118,6 +122,7 @@ export function RequestForm({ type }: { type: "appointment" | "partner" }) {
           className="mt-6"
           onClick={() => {
             reset();
+            submission.current = undefined;
             setSent(false);
           }}
         >

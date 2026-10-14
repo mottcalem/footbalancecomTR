@@ -1,0 +1,19 @@
+[Unit]
+Description=FootBalance weekly lead report
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=footbalance
+Group=footbalance
+WorkingDirectory=/var/www/footbalance-current
+EnvironmentFile=/etc/footbalance.env
+ExecStart=/usr/bin/node scripts/weekly-lead-report.ts
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/footbalance/leads
+Restart=on-failure
+RestartSec=15min

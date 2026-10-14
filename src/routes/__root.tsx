@@ -1,3 +1,5 @@
+import { SiteFooter } from "@/components/site-footer";
+import { InterviewBanner } from "@/components/interview-banner";
 import { Analytics } from "@/components/analytics";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { jsonLd } from "@/lib/seo";
@@ -192,7 +194,9 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+      <InterviewBanner />
       <Outlet />
+      <SiteFooter />
       <Analytics />
       <ScrollToTop />
       {pathname.replace(/\/$/, "") !== "/merkezler" &&

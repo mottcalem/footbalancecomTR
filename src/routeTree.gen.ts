@@ -16,6 +16,7 @@ import { Route as CozumOrtagiOlRouteImport } from './routes/cozum-ortagi-ol'
 import { Route as HakkimizdaRouteImport } from './routes/hakkimizda'
 import { Route as IletisimRouteImport } from './routes/iletisim'
 import { Route as MerkezlerRouteImport } from './routes/merkezler'
+import { Route as ProfDrGulBaltaciRouteImport } from './routes/prof-dr-gul-baltaci'
 import { Route as RandevuRouteImport } from './routes/randevu'
 
 const IndexRoute = IndexRouteImport.update({
@@ -54,6 +55,11 @@ const MerkezlerRoute = MerkezlerRouteImport.update({
   path: '/merkezler',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfDrGulBaltaciRoute = ProfDrGulBaltaciRouteImport.update({
+  id: '/prof-dr-gul-baltaci',
+  path: '/prof-dr-gul-baltaci',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RandevuRoute = RandevuRouteImport.update({
   id: '/randevu',
   path: '/randevu',
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/hakkimizda': typeof HakkimizdaRoute
   '/iletisim': typeof IletisimRoute
   '/merkezler': typeof MerkezlerRoute
+  '/prof-dr-gul-baltaci': typeof ProfDrGulBaltaciRoute
   '/randevu': typeof RandevuRoute
 }
 export interface FileRoutesByTo {
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/hakkimizda': typeof HakkimizdaRoute
   '/iletisim': typeof IletisimRoute
   '/merkezler': typeof MerkezlerRoute
+  '/prof-dr-gul-baltaci': typeof ProfDrGulBaltaciRoute
   '/randevu': typeof RandevuRoute
 }
 export interface FileRoutesById {
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/hakkimizda': typeof HakkimizdaRoute
   '/iletisim': typeof IletisimRoute
   '/merkezler': typeof MerkezlerRoute
+  '/prof-dr-gul-baltaci': typeof ProfDrGulBaltaciRoute
   '/randevu': typeof RandevuRoute
 }
 export interface FileRouteTypes {
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/hakkimizda'
     | '/iletisim'
     | '/merkezler'
+    | '/prof-dr-gul-baltaci'
     | '/randevu'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/hakkimizda'
     | '/iletisim'
     | '/merkezler'
+    | '/prof-dr-gul-baltaci'
     | '/randevu'
   id:
     | '__root__'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/hakkimizda'
     | '/iletisim'
     | '/merkezler'
+    | '/prof-dr-gul-baltaci'
     | '/randevu'
   fileRoutesById: FileRoutesById
 }
@@ -132,6 +144,7 @@ export interface RootRouteChildren {
   HakkimizdaRoute: typeof HakkimizdaRoute
   IletisimRoute: typeof IletisimRoute
   MerkezlerRoute: typeof MerkezlerRoute
+  ProfDrGulBaltaciRoute: typeof ProfDrGulBaltaciRoute
   RandevuRoute: typeof RandevuRoute
 }
 
@@ -186,6 +199,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MerkezlerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/prof-dr-gul-baltaci': {
+      id: '/prof-dr-gul-baltaci'
+      path: '/prof-dr-gul-baltaci'
+      fullPath: '/prof-dr-gul-baltaci'
+      preLoaderRoute: typeof ProfDrGulBaltaciRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/randevu': {
       id: '/randevu'
       path: '/randevu'
@@ -204,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   HakkimizdaRoute: HakkimizdaRoute,
   IletisimRoute: IletisimRoute,
   MerkezlerRoute: MerkezlerRoute,
+  ProfDrGulBaltaciRoute: ProfDrGulBaltaciRoute,
   RandevuRoute: RandevuRoute,
 }
 export const routeTree = rootRouteImport

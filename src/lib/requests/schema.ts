@@ -8,6 +8,12 @@ export const PRACTICE_AREAS = [
   "Perakende / Mağaza",
   "Diğer",
 ] as const;
+export const INTERVIEW_PROFESSIONS = [
+  "Fizyoterapist",
+  "Sağlık Uzmanı",
+  "PT / Spor Uzmanı",
+  "Diğer",
+] as const;
 export function todayInIstanbul() {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Europe/Istanbul",
@@ -21,7 +27,8 @@ export function todayInIstanbul() {
 }
 export const requestSchema = z
   .object({
-    type: z.enum(["appointment", "partner"]),
+    type: z.enum(["appointment", "partner", "interview"]),
+    submissionId: z.string().uuid().optional(),
     language: z.enum(["tr", "en"]),
     name: z.string().trim().min(2, "Adınızı ve soyadınızı yazın.").max(100),
     phone: z
@@ -40,7 +47,8 @@ export const requestSchema = z
         (value) => !value || z.string().email().safeParse(value).success,
         "Geçerli bir e-posta adresi yazın.",
       ),
-    city: z.string().trim().min(2, "Şehir seçin veya yazın.").max(80),
+    city: z.string().trim().max(80).default(""),
+    profession: z.string().trim().max(100).default(""),
     center: z.string().trim().max(200).default(""),
     company: z.string().trim().max(150).default(""),
     field: z.string().max(100).default(""),
@@ -75,6 +83,20 @@ export const requestSchema = z
     website: z.string().max(0).default(""),
   })
   .superRefine((value, context) => {
+    if (value.type !== "interview" && value.city.length < 2)
+      context.addIssue({ code: "custom", path: ["city"], message: "Şehir seçin veya yazın." });
+    if (value.type === "interview") {
+      if (!value.email)
+        context.addIssue({
+          code: "custom",
+          path: ["email"],
+          message: "Geçerli bir e-posta adresi yazın.",
+        });
+      if (
+        !INTERVIEW_PROFESSIONS.includes(value.profession as (typeof INTERVIEW_PROFESSIONS)[number])
+      )
+        context.addIssue({ code: "custom", path: ["profession"], message: "Mesleğinizi seçin." });
+    }
     if (value.type === "appointment" && !value.center)
       context.addIssue({ code: "custom", path: ["center"], message: "Bir merkez seçin." });
     if (value.type === "partner") {

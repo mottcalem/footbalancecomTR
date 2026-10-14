@@ -264,21 +264,6 @@ function ContactPage() {
         </section>
       </main>
 
-      <footer className="bg-graphite text-primary-foreground">
-        <div className="mx-auto flex max-w-[1360px] flex-col gap-5 px-5 py-10 text-xs text-primary-foreground/55 sm:flex-row sm:items-center sm:justify-between lg:px-8">
-          <Link
-            to="/"
-            aria-label={tx("FootBalance Türkiye ana sayfa")}
-            className="inline-block shrink-0"
-          >
-            <img src={logo} alt="FootBalance" className="h-8 w-auto brightness-0 invert" />
-          </Link>
-          <Link to="/ayak-sagligi-hakkinda-bilgiler/" className="hover:underline">
-            {tx("Blog")}
-          </Link>
-          <p>{tx("© 2026 FootBalance Türkiye")}</p>
-        </div>
-      </footer>
       <div className="fixed inset-x-0 bottom-0 z-40 grid h-16 grid-cols-2 border-t border-border bg-background md:hidden">
         <Link
           to="/merkezler/"

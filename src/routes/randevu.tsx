@@ -143,15 +143,6 @@ function AppointmentPage() {
           </div>
         </div>
       </main>
-      <footer className="border-t border-border bg-background">
-        <div className="mx-auto flex max-w-[1180px] flex-wrap items-center justify-between gap-4 px-5 py-7 text-xs text-muted-foreground">
-          <Link to="/ayak-sagligi-hakkinda-bilgiler/" className="hover:underline">
-            {tx("Blog")}
-          </Link>
-          <p>© 2026 FootBalance Türkiye</p>
-          <Link to="/iletisim/">{tx("İletişim")}</Link>
-        </div>
-      </footer>
     </div>
   );
 }

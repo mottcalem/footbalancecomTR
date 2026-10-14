@@ -1,12 +1,9 @@
+import { archiveSubmission } from "../leads/submission.ts";
+import { setting } from "../leads/settings.ts";
 import { requestSchema } from "./schema.ts";
 import { CENTERS } from "../../data/centers.ts";
 
 const attempts = new Map<string, { count: number; expires: number }>();
-function setting(env: unknown, key: string): string | undefined {
-  const bindings = env && typeof env === "object" ? (env as Record<string, unknown>) : {};
-  const value = bindings[key] ?? process.env[key];
-  return typeof value === "string" && value.trim() ? value.trim() : undefined;
-}
 function json(status: number, code: string) {
   return Response.json(
     { ok: status === 202, code },
@@ -48,6 +45,14 @@ export async function handleRequestSubmission(request: Request, env: unknown): P
       : undefined;
   if (values.type === "appointment" && (!selectedCenter || selectedCenter.city !== values.city))
     return json(400, "INVALID_CENTER");
+  if (values.type === "partner" || values.type === "interview") {
+    try {
+      await archiveSubmission(env, values);
+      return json(202, "ACCEPTED");
+    } catch {
+      return json(503, "STORAGE_UNAVAILABLE");
+    }
+  }
   const webhook = setting(env, "FORM_WEBHOOK_URL");
   if (!webhook) return json(503, "DELIVERY_UNAVAILABLE");
   try {

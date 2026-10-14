@@ -3,7 +3,7 @@ import { FAQ_ITEMS } from "@/data/faq";
 import { existingPageHead } from "@/lib/seo";
 import { translate, useTranslation, LanguageSwitcher } from "@/lib/i18n";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BookingDialog } from "@/components/booking-dialog";
 import {
   ArrowRight,
@@ -29,7 +29,6 @@ import supportImage from "@/assets/need-support-banner.jpg";
 import activeImage from "@/assets/need-active-banner.jpg";
 import sportImage from "@/assets/need-sport-banner.jpg";
 import insoleImage from "@/assets/insole-range.jpg";
-import techImage from "@/assets/technology-scan.jpg";
 import finalImage from "@/assets/final-movement.jpg";
 import problemIceDisa from "@/assets/problems/ice-disa-basma.jpg";
 import problemDuzTaban from "@/assets/problems/duz-taban.jpg";
@@ -129,6 +128,35 @@ function Home() {
   const [bookingOpen, setBookingOpen] = useState(false);
   const [menu, setMenu] = useState(false);
   const [blogOpen, setBlogOpen] = useState(false);
+  const technologyVideo = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const video = technologyVideo.current;
+    if (!video) return;
+    let visible = false;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        visible = Boolean(entry?.isIntersecting && entry.intersectionRatio >= 0.25);
+        if (visible) {
+          if (video.ended) video.currentTime = 0;
+          void video
+            .play()
+            .then(() => {
+              if (!visible) video.pause();
+            })
+            .catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: [0, 0.25] },
+    );
+    observer.observe(video);
+    return () => {
+      visible = false;
+      observer.disconnect();
+      video.pause();
+    };
+  }, []);
   const openBlog = () => {
     setBlogOpen(true);
     track("blog_post_click", { action: "open" });
@@ -146,7 +174,12 @@ function Home() {
     <div className="min-h-screen bg-background text-foreground pb-16 md:pb-0">
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-md">
         <div className="mx-auto flex h-[76px] max-w-[1360px] items-center gap-2 px-4 sm:gap-6 sm:px-5 lg:px-8">
-          <Link to="/" aria-label={tx("FootBalance Türkiye ana sayfa")} className="shrink-0">
+          <Link
+            to="/"
+            reloadDocument
+            aria-label={tx("FootBalance Türkiye ana sayfa")}
+            className="shrink-0"
+          >
             <img src={logo} alt="FootBalance" className="h-8 w-auto" />
           </Link>
           <nav
@@ -648,19 +681,20 @@ function Home() {
                 {tx("Teknolojiyi Deneyimle — Randevu Al")}
               </BrandButton>
             </div>
-            <div className="relative overflow-hidden rounded-2xl border border-[#DCF6F3] bg-background shadow-sm md:col-span-7">
-              <img
-                src={techImage}
-                loading="lazy"
-                width={1504}
-                height={1008}
-                alt={tx("FootBalance ayak ve basış analizi uygulaması")}
-                className="h-full w-full object-cover"
-              />
-              <span
-                aria-hidden="true"
-                className="scan-line absolute inset-x-0 top-0 h-px bg-accent"
-              />
+            <div className="overflow-hidden rounded-2xl border border-[#DCF6F3] bg-black shadow-sm md:col-span-7">
+              <video
+                ref={technologyVideo}
+                muted
+                controls
+                playsInline
+                preload="metadata"
+                poster="/videos/footbalance-technology-poster.jpg"
+                aria-label={tx("FootBalance ayak ve basış analizi uygulaması")}
+                className="aspect-square w-full object-contain md:h-full"
+              >
+                <source src="/videos/footbalance-technology.mp4" type="video/mp4" />
+                {tx("Tarayıcınız video oynatmayı desteklemiyor.")}
+              </video>
             </div>
           </div>
         </section>
@@ -672,22 +706,18 @@ function Home() {
             <h2 className="mb-8 text-center text-2xl font-semibold sm:text-3xl lg:mb-12">
               {tx("Sık Sorulan Sorular")}
             </h2>
-            <div className="grid items-start gap-x-10 md:grid-cols-2 lg:gap-x-16">
-              {[FAQ_ITEMS.slice(0, 8), FAQ_ITEMS.slice(8)].map((items, column) => (
-                <Accordion key={column} type="single" collapsible>
-                  {items.map(({ question, answer }, i) => (
-                    <AccordionItem key={question} value={`q${column}-${i}`}>
-                      <AccordionTrigger className="py-4 text-sm sm:text-base">
-                        {tx(question)}
-                      </AccordionTrigger>
-                      <AccordionContent className="pb-4 text-sm leading-6 text-muted-foreground [&_p+p]:mt-3 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-5 [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-foreground">
-                        {answer}
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
+            <Accordion type="single" collapsible className="mx-auto max-w-4xl">
+              {FAQ_ITEMS.map(({ question, answer }, i) => (
+                <AccordionItem key={question} value={`q${i}`}>
+                  <AccordionTrigger className="py-4 text-sm sm:text-base">
+                    {tx(question)}
+                  </AccordionTrigger>
+                  <AccordionContent className="pb-4 text-sm leading-6 text-muted-foreground [&_p+p]:mt-3 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-5 [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-foreground">
+                    {answer}
+                  </AccordionContent>
+                </AccordionItem>
               ))}
-            </div>
+            </Accordion>
             <div className="mt-8 flex justify-center">
               <BrandButton onClick={() => openBooking("faq")}>
                 {tx("Ücretsiz Ayak Analizi İçin Randevu Al")}
@@ -720,7 +750,6 @@ function Home() {
       </main>
 
       <BookingDialog open={bookingOpen} onOpenChange={setBookingOpen} />
-      <Footer onBooking={() => openBooking("footer")} onOpenBlog={openBlog} />
       <div className="fixed inset-x-0 bottom-0 z-40 grid h-16 grid-cols-2 border-t border-border bg-background md:hidden">
         <button
           type="button"
@@ -737,161 +766,6 @@ function Home() {
         </Button>
       </div>
     </div>
-  );
-}
-
-function Footer({ onBooking, onOpenBlog }: { onBooking: () => void; onOpenBlog: () => void }) {
-  const { tx } = useTranslation();
-  const scroll = (id: string) =>
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  const external: Record<string, string> = {
-    Instagram: "https://www.instagram.com/footbalance/",
-    YouTube: "https://www.youtube.com/@FootBalance",
-  };
-  const onClick = (x: string) => {
-    if (x === "Randevu Al") return onBooking;
-    if (x === "Blog") return onOpenBlog;
-    if (x === "Merkez Bul") return () => scroll("top");
-    if (x === "Teknolojimiz") return () => scroll("teknoloji");
-    if (x === "Kullanıcı Deneyimleri") return () => scroll("deneyimler");
-    if (x === "Nasıl Çalışır?") return () => scroll("teknoloji");
-    if (x === "Kimler İçin?") return () => scroll("kimler");
-    if (x === "Sık Sorulan Sorular") return () => scroll("sss");
-    return undefined;
-  };
-  const groups = {
-    FootBalance: ["Hakkımızda", "Teknolojimiz", "Kullanıcı Deneyimleri", "İletişim"],
-    "Kişiye Özel Tabanlık": ["Nasıl Çalışır?", "Kimler İçin?"],
-    "Ayak Sağlığı": ["Blog", "Sık Sorulan Sorular"],
-    Merkezler: ["Merkez Bul", "Randevu Al"],
-    Online: ["Online Mağaza", "Instagram", "YouTube"],
-  };
-  return (
-    <footer className="bg-graphite text-primary-foreground">
-      <div className="mx-auto max-w-[1360px] px-5 py-10 lg:px-8">
-        <div className="flex items-center gap-4">
-          <Link
-            to="/"
-            aria-label={tx("FootBalance Türkiye ana sayfa")}
-            className="inline-block shrink-0"
-          >
-            <img src={logo} alt="FootBalance" className="h-9 w-auto brightness-0 invert" />
-          </Link>
-        </div>
-        <div className="mt-7 grid grid-cols-2 gap-6 md:grid-cols-5 md:gap-5">
-          {Object.entries(groups).map(([g, links]) => (
-            <div key={g}>
-              {g === tx("Online") ? (
-                <Link
-                  to="/cozum-ortagi-ol/"
-                  onClick={() => track("online_store_click")}
-                  className="text-sm font-bold uppercase text-primary-foreground hover:text-primary-foreground/80"
-                >
-                  {tx("Çözüm Ortağı Ol")}
-                </Link>
-              ) : (
-                <h2 className="text-sm font-bold uppercase">{tx(g)}</h2>
-              )}
-              <ul className="mt-3 space-y-2 text-sm text-primary-foreground/65">
-                {links.map((x) => {
-                  const handler = onClick(x);
-                  if (x === "Hakkımızda")
-                    return (
-                      <li key={x}>
-                        <Link
-                          to="/hakkimizda/"
-                          className="min-h-6 block text-left hover:text-primary-foreground"
-                        >
-                          {tx(x)}
-                        </Link>
-                      </li>
-                    );
-                  if (x === "İletişim")
-                    return (
-                      <li key={x}>
-                        <Link
-                          to="/iletisim/"
-                          className="min-h-6 block text-left hover:text-primary-foreground"
-                        >
-                          {tx(x)}
-                        </Link>
-                      </li>
-                    );
-                  if (x === "Online Mağaza")
-                    return (
-                      <li key={x}>
-                        <Link
-                          to="/cozum-ortagi-ol/"
-                          onClick={() => track("online_store_click")}
-                          className="min-h-6 block text-left hover:text-primary-foreground"
-                        >
-                          {tx(x)}
-                        </Link>
-                      </li>
-                    );
-                  if (x === "Blog")
-                    return (
-                      <li key={x}>
-                        <Link
-                          to="/ayak-sagligi-hakkinda-bilgiler/"
-                          onClick={() => track("blog_post_click")}
-                          className="min-h-6 block text-left hover:text-primary-foreground"
-                        >
-                          {tx(x)}
-                        </Link>
-                      </li>
-                    );
-                  if (x === "Merkez Bul")
-                    return (
-                      <li key={x}>
-                        <Link
-                          to="/merkezler/"
-                          onClick={() => track("center_finder_open")}
-                          className="min-h-6 block text-left hover:text-primary-foreground"
-                        >
-                          {tx(x)}
-                        </Link>
-                      </li>
-                    );
-                  if (external[x])
-                    return (
-                      <li key={x}>
-                        <a
-                          href={external[x]}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="min-h-6 block text-left hover:text-primary-foreground"
-                        >
-                          {tx(x)}
-                        </a>
-                      </li>
-                    );
-                  return (
-                    <li key={x}>
-                      <button
-                        type="button"
-                        onClick={handler}
-                        className="min-h-6 text-left hover:text-primary-foreground"
-                      >
-                        {tx(x)}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
-        </div>
-        <div className="mt-8 flex flex-col justify-between gap-5 border-t border-primary-foreground/15 pt-5 text-xs text-primary-foreground/55 sm:flex-row">
-          <p>{tx("© 2026 FootBalance Türkiye")}</p>
-          <div className="flex gap-5">
-            <span>{tx("KVKK")}</span>
-            <span>{tx("Çerez Politikası")}</span>
-            <span>{tx("Kullanım Koşulları")}</span>
-          </div>
-        </div>
-      </div>
-    </footer>
   );
 }
 

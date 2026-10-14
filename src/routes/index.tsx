@@ -28,7 +28,7 @@ import heroImage from "@/assets/footbalance-hero-analysis.jpg";
 import supportImage from "@/assets/need-support-banner.jpg";
 import activeImage from "@/assets/need-active-banner.jpg";
 import sportImage from "@/assets/need-sport-banner.jpg";
-import insoleImage from "@/assets/insole-product-detail.jpg";
+import insoleImage from "@/assets/insole-range.jpg";
 import techImage from "@/assets/technology-scan.jpg";
 import finalImage from "@/assets/final-movement.jpg";
 import problemIceDisa from "@/assets/problems/ice-disa-basma.jpg";
@@ -768,7 +768,7 @@ function Footer({ onBooking, onOpenBlog }: { onBooking: () => void; onOpenBlog: 
   };
   return (
     <footer className="bg-graphite text-primary-foreground">
-      <div className="mx-auto max-w-[1360px] px-5 py-16 lg:px-8">
+      <div className="mx-auto max-w-[1360px] px-5 py-10 lg:px-8">
         <div className="flex items-center gap-4">
           <Link
             to="/"
@@ -778,7 +778,7 @@ function Footer({ onBooking, onOpenBlog }: { onBooking: () => void; onOpenBlog: 
             <img src={logo} alt="FootBalance" className="h-9 w-auto brightness-0 invert" />
           </Link>
         </div>
-        <div className="mt-10 grid grid-cols-2 gap-6 md:grid-cols-5 md:gap-5">
+        <div className="mt-7 grid grid-cols-2 gap-6 md:grid-cols-5 md:gap-5">
           {Object.entries(groups).map(([g, links]) => (
             <div key={g}>
               {g === tx("Online") ? (
@@ -792,7 +792,7 @@ function Footer({ onBooking, onOpenBlog }: { onBooking: () => void; onOpenBlog: 
               ) : (
                 <h2 className="text-sm font-bold uppercase">{tx(g)}</h2>
               )}
-              <ul className="mt-4 space-y-3 text-sm text-primary-foreground/65">
+              <ul className="mt-3 space-y-2 text-sm text-primary-foreground/65">
                 {links.map((x) => {
                   const handler = onClick(x);
                   if (x === "Hakkımızda")
@@ -882,7 +882,7 @@ function Footer({ onBooking, onOpenBlog }: { onBooking: () => void; onOpenBlog: 
             </div>
           ))}
         </div>
-        <div className="mt-14 flex flex-col justify-between gap-5 border-t border-primary-foreground/15 pt-6 text-xs text-primary-foreground/55 sm:flex-row">
+        <div className="mt-8 flex flex-col justify-between gap-5 border-t border-primary-foreground/15 pt-5 text-xs text-primary-foreground/55 sm:flex-row">
           <p>{tx("© 2026 FootBalance Türkiye")}</p>
           <div className="flex gap-5">
             <span>{tx("KVKK")}</span>

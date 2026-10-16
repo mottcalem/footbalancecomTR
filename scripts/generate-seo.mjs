@@ -1,6 +1,9 @@
 import { readFile, writeFile } from "node:fs/promises";
 const posts = JSON.parse(await readFile(new URL("../src/data/blog-posts.json", import.meta.url)));
 const pages = JSON.parse(await readFile(new URL("../src/data/legacy-pages.json", import.meta.url)));
+const redirects = JSON.parse(
+  await readFile(new URL("../src/data/legacy-redirects.json", import.meta.url)),
+);
 const base = "https://footbalance.com.tr";
 const xml = (s) =>
   String(s).replace(
@@ -9,6 +12,7 @@ const xml = (s) =>
   );
 const out = (name, content) => writeFile(new URL("../public/" + name, import.meta.url), content);
 const index = posts
+  .filter((p) => !redirects[p.path])
   .toSorted((a, b) => b.published.localeCompare(a.published))
   .map(({ content, seoTitle, ...p }) => p);
 await writeFile(
@@ -17,7 +21,7 @@ await writeFile(
 );
 const urls = new Map(
   [...pages, ...posts]
-    .filter((p) => !/\/(basarili|tesekkurler)\/$/.test(p.path))
+    .filter((p) => !redirects[p.path] && !/\/(basarili|tesekkurler)\/$/.test(p.path))
     .map((p) => [p.path, p]),
 );
 const sitemap =

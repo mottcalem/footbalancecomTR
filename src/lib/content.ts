@@ -6,6 +6,8 @@ export const getLegacyContent = createServerFn({ method: "GET" })
     const { default: posts } = await import("@/data/blog-posts.json");
     const { default: pages } = await import("@/data/legacy-pages.json");
     const { default: importedPages } = await import("@/data/imported-pages.json");
+    const { default: catalogs } = await import("@/data/product-catalogs.json");
+    const { default: productPages } = await import("@/data/product-pages.json");
     const normalized = `/${path.replace(/^\/+|\/+$/g, "")}/`;
     const post = posts.find((p) => p.path === normalized);
     if (post) return { kind: "post" as const, post };
@@ -21,6 +23,14 @@ export const getLegacyContent = createServerFn({ method: "GET" })
         kind: "page" as const,
         page: {
           ...page,
+          catalog:
+            (catalogs as Record<string, import("@/components/product-catalog").ProductCatalogData>)[
+              normalized
+            ] ?? null,
+          product:
+            (
+              productPages as Record<string, import("@/components/product-catalog").ProductPageData>
+            )[normalized] ?? null,
           content: imported?.content ?? "",
           testimonials: imported?.testimonials ?? [],
         },

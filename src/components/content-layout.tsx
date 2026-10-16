@@ -39,7 +39,6 @@ export function ContentLayout({ children }: { children: ReactNode }) {
                 {tx(label)}
               </a>
             ))}
-            <Link to="/ayak-sagligi-hakkinda-bilgiler/">{tx("Blog")}</Link>
           </nav>
           <Link
             to="/cozum-ortagi-ol/"
@@ -83,13 +82,6 @@ export function ContentLayout({ children }: { children: ReactNode }) {
             ))}
             <Link className="py-3" to="/cozum-ortagi-ol/" onClick={() => setMenu(false)}>
               {tx("Çözüm Ortağı Ol")}
-            </Link>
-            <Link
-              className="py-3"
-              to="/ayak-sagligi-hakkinda-bilgiler/"
-              onClick={() => setMenu(false)}
-            >
-              {tx("Blog")}
             </Link>
           </nav>
         )}

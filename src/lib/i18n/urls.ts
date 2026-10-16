@@ -3,6 +3,11 @@ import type { Language } from "./translate";
 
 // Route IDs stay stable; public paths retain the established WordPress URLs.
 export const PUBLIC_PATHS: Record<string, { tr: string; en: string }> = {
+  "/urunler": { tr: "/urunler/", en: "/en/products/" },
+  "/ortopedik-tabanlik-hakkinda": {
+    tr: "/ortopedik-tabanlik-hakkinda/",
+    en: "/en/frequently-asked-questions/",
+  },
   "/ayak-sagligi-hakkinda-bilgiler": {
     tr: "/ayak-sagligi-hakkinda-bilgiler/",
     en: "/en/foot-health-blog/",

@@ -190,7 +190,6 @@ function Home() {
             <a href="#nedir">{tx("Kişiye Özel Tabanlık")}</a>
             <a href="#teknoloji">{tx("Nasıl Hazırlanır?")}</a>
             <a href="#sss">{tx("Sık Sorulan Sorular")}</a>
-            <Link to="/ayak-sagligi-hakkinda-bilgiler/">{tx("Blog")}</Link>
           </nav>
           <Link
             to="/cozum-ortagi-ol/"
@@ -229,13 +228,6 @@ function Home() {
             </a>
             <Link className="py-3" to="/cozum-ortagi-ol/" onClick={() => setMenu(false)}>
               {tx("Çözüm Ortağı Ol")}
-            </Link>
-            <Link
-              to="/ayak-sagligi-hakkinda-bilgiler/"
-              className="py-3"
-              onClick={() => setMenu(false)}
-            >
-              {tx("Blog")}
             </Link>
           </nav>
         )}
@@ -701,27 +693,32 @@ function Home() {
 
         <GoogleReviews />
 
-        <section id="sss" className="bg-muted">
-          <div className="mx-auto max-w-[1360px] px-5 py-12 lg:px-8 lg:py-16">
-            <h2 className="mb-8 text-center text-2xl font-semibold sm:text-3xl lg:mb-12">
-              {tx("Sık Sorulan Sorular")}
+        <section id="sss" className="scroll-mt-20 bg-muted">
+          <div className="mx-auto grid max-w-[1600px] gap-8 px-5 py-12 md:grid-cols-[2fr_3fr] md:gap-12 lg:gap-20 lg:px-20 lg:py-16">
+            <h2 className="max-w-[540px] text-3xl font-semibold leading-[1.2] tracking-tight lg:text-4xl">
+              {tx("Randevu almadan önce bilmek isteyebileceklerin.")}
             </h2>
-            <Accordion type="single" collapsible className="mx-auto max-w-4xl">
-              {FAQ_ITEMS.map(({ question, answer }, i) => (
-                <AccordionItem key={question} value={`q${i}`}>
-                  <AccordionTrigger className="py-4 text-sm sm:text-base">
-                    {tx(question)}
-                  </AccordionTrigger>
-                  <AccordionContent className="pb-4 text-sm leading-6 text-muted-foreground [&_p+p]:mt-3 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-5 [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-foreground">
-                    {answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-            <div className="mt-8 flex justify-center">
-              <BrandButton onClick={() => openBooking("faq")}>
-                {tx("Ücretsiz Ayak Analizi İçin Randevu Al")}
-              </BrandButton>
+            <div className="min-w-0">
+              <Accordion type="single" collapsible className="w-full">
+                {FAQ_ITEMS.map(({ question, answer }, i) => (
+                  <AccordionItem key={question} value={`q${i}`}>
+                    <AccordionTrigger className="gap-4 py-5 text-base font-semibold lg:text-lg">
+                      {tx(question)}
+                    </AccordionTrigger>
+                    <AccordionContent className="pb-4 text-sm leading-6 text-muted-foreground [&_p+p]:mt-3 [&_ul]:list-disc [&_ul]:space-y-2 [&_ul]:pl-5 [&_a]:underline [&_a]:underline-offset-2 [&_a:hover]:text-foreground">
+                      {answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+              <div className="mt-7">
+                <BrandButton
+                  onClick={() => openBooking("faq")}
+                  className="max-w-full whitespace-normal text-center"
+                >
+                  {tx("Ücretsiz Ayak Analizi İçin Randevu Al")}
+                </BrandButton>
+              </div>
             </div>
           </div>
         </section>

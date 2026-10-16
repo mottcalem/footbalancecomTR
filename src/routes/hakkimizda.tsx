@@ -80,7 +80,6 @@ function AboutPage() {
             <Link to="/" hash="sss">
               {tx("Sık Sorulan Sorular")}
             </Link>
-            <Link to="/ayak-sagligi-hakkinda-bilgiler/">{tx("Blog")}</Link>
           </nav>
           <Link
             to="/cozum-ortagi-ol/"
@@ -120,13 +119,6 @@ function AboutPage() {
             </Link>
             <Link className="py-3" to="/cozum-ortagi-ol/" onClick={() => setMenu(false)}>
               {tx("Çözüm Ortağı Ol")}
-            </Link>
-            <Link
-              to="/ayak-sagligi-hakkinda-bilgiler/"
-              className="py-3"
-              onClick={() => setMenu(false)}
-            >
-              {tx("Blog")}
             </Link>
           </nav>
         )}

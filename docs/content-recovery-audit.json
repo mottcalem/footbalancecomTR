@@ -1,0 +1,144 @@
+{
+  "catalogs": {
+    "/urunler/": 30,
+    "/en/products/": 30
+  },
+  "restored": [
+    "/en/frequently-asked-questions/",
+    "/en/insole-molding-videos/",
+    "/en/ortopedik-tabanlik/100-custom-leather-orthopedic-range/3-4-leather-insoles/",
+    "/en/ortopedik-tabanlik/100-custom-leather-orthopedic-range/active-profile/",
+    "/en/ortopedik-tabanlik/100-custom-leather-orthopedic-range/dynamic-profile/",
+    "/en/ortopedik-tabanlik/100-custom-medical-range/medical-black/",
+    "/en/ortopedik-tabanlik/100-custom-medical-range/medical-gold/",
+    "/en/ortopedik-tabanlik/100-custom-medical-range/medical-green-soft/",
+    "/en/ortopedik-tabanlik/100-custom-medical-range/medikal-silver/",
+    "/en/ortopedik-tabanlik/100-custom-sports-range/100-balance-narrow/",
+    "/en/ortopedik-tabanlik/100-custom-sports-range/100-balance/",
+    "/en/ortopedik-tabanlik/100-custom-sports-range/100-control/",
+    "/en/ortopedik-tabanlik/100-custom-sports-range/100-impact/",
+    "/en/ortopedik-tabanlik/os1st-socks-wearable-support-products/af7-ankle-bracing-sleeve/",
+    "/en/ortopedik-tabanlik/os1st-socks-wearable-support-products/as6-performance-arm-sleeve/",
+    "/en/ortopedik-tabanlik/os1st-socks-wearable-support-products/br4-bunion-relief-socks/",
+    "/en/ortopedik-tabanlik/os1st-socks-wearable-support-products/cs6-performance-calf-sleeves/",
+    "/en/ortopedik-tabanlik/os1st-socks-wearable-support-products/es3-performance-elbow-sleeve/",
+    "/en/ortopedik-tabanlik/os1st-socks-wearable-support-products/es6-elbow-bracing-sleeve/",
+    "/en/ortopedik-tabanlik/os1st-socks-wearable-support-products/fs4-compression-bracing-socks/",
+    "/en/ortopedik-tabanlik/os1st-socks-wearable-support-products/fs4-plantar-fasciitis-socks/",
+    "/en/ortopedik-tabanlik/os1st-socks-wearable-support-products/hv3-bunion-bracing-sleeve/",
+    "/en/ortopedik-tabanlik/os1st-socks-wearable-support-products/ks7-performance-knee-sleeve/",
+    "/en/ortopedik-tabanlik/os1st-socks-wearable-support-products/qs4-performance-quad-sleeve/",
+    "/en/ortopedik-tabanlik/os1st-socks-wearable-support-products/ta4-thin-air-performance-socks/",
+    "/en/ortopedik-tabanlik/os1st-socks-wearable-support-products/ts5-travel-socks/",
+    "/en/ortopedik-tabanlik/os1st-socks-wearable-support-products/wp4-diabetic-socks/",
+    "/en/ortopedik-tabanlik/os1st-socks-wearable-support-products/ws6-performance-wrist-sleeve/",
+    "/en/ortopedik-tabanlik/quickfit-custom-insoles/quickfit-balance-narrow/",
+    "/en/ortopedik-tabanlik/quickfit-custom-insoles/quickfit-balance/",
+    "/en/ortopedik-tabanlik/quickfit-custom-insoles/quickfit-casual/",
+    "/en/ortopedik-tabanlik/quickfit-custom-insoles/quickfit-control/",
+    "/en/personalized-insoles-reviews/",
+    "/home/",
+    "/ortopedik-tabanlik-hakkinda/",
+    "/ortopedik-tabanlik/os1st-coraplar-giyilebilir-destekleyici-urunler/af7-ayak-bilek-destegi/",
+    "/ortopedik-tabanlik/os1st-coraplar-giyilebilir-destekleyici-urunler/as6-performans-kol-destegi/",
+    "/ortopedik-tabanlik/os1st-coraplar-giyilebilir-destekleyici-urunler/br4-bunyon-corap/",
+    "/ortopedik-tabanlik/os1st-coraplar-giyilebilir-destekleyici-urunler/cs6-performans-kalf-koruyucu/",
+    "/ortopedik-tabanlik/os1st-coraplar-giyilebilir-destekleyici-urunler/es3-performans-dirsek-koruyucu/",
+    "/ortopedik-tabanlik/os1st-coraplar-giyilebilir-destekleyici-urunler/es6-dirsek-destegi/",
+    "/ortopedik-tabanlik/os1st-coraplar-giyilebilir-destekleyici-urunler/fs4-compression-destek-corap/",
+    "/ortopedik-tabanlik/os1st-coraplar-giyilebilir-destekleyici-urunler/fs4-plantar-fasiit-corap/",
+    "/ortopedik-tabanlik/os1st-coraplar-giyilebilir-destekleyici-urunler/hv3-bunyon-destek/",
+    "/ortopedik-tabanlik/os1st-coraplar-giyilebilir-destekleyici-urunler/ks7-performans-diz-koruyucu/",
+    "/ortopedik-tabanlik/os1st-coraplar-giyilebilir-destekleyici-urunler/qs4-diz-ustu-quadriceps/",
+    "/ortopedik-tabanlik/os1st-coraplar-giyilebilir-destekleyici-urunler/ta4-air-performans-corap/",
+    "/ortopedik-tabanlik/os1st-coraplar-giyilebilir-destekleyici-urunler/ts5-seyahat-corabi/",
+    "/ortopedik-tabanlik/os1st-coraplar-giyilebilir-destekleyici-urunler/wp4-diyabet-corap/",
+    "/ortopedik-tabanlik/os1st-coraplar-giyilebilir-destekleyici-urunler/ws6-performans-bilek-koruyucu/",
+    "/ortopedik-tabanlik/quickfit-kisiye-ozel-tabanliklar/quickfit-balance-narrow/",
+    "/ortopedik-tabanlik/quickfit-kisiye-ozel-tabanliklar/quickfit-balance/",
+    "/ortopedik-tabanlik/quickfit-kisiye-ozel-tabanliklar/quickfit-casual/",
+    "/ortopedik-tabanlik/quickfit-kisiye-ozel-tabanliklar/quickfit-control/",
+    "/ortopedik-tabanlik/yuzde-deri-ortopedik-serisi/3-4-deri-tabanlik/",
+    "/ortopedik-tabanlik/yuzde-deri-ortopedik-serisi/active-profile/",
+    "/ortopedik-tabanlik/yuzde-deri-ortopedik-serisi/dynamic-profile/",
+    "/ortopedik-tabanlik/yuzde-yuz-kisiye-ozel-medikal-tabanliklari/medical-black/",
+    "/ortopedik-tabanlik/yuzde-yuz-kisiye-ozel-medikal-tabanliklari/medical-green-soft/",
+    "/ortopedik-tabanlik/yuzde-yuz-kisiye-ozel-medikal-tabanliklari/medical-silver-kopya/",
+    "/ortopedik-tabanlik/yuzde-yuz-kisiye-ozel-medikal-tabanliklari/medikal-silver/",
+    "/ortopedik-tabanlik/yuzde-yuz-kisiye-ozel-spor-tabanliklari/100-balance-narrow/",
+    "/ortopedik-tabanlik/yuzde-yuz-kisiye-ozel-spor-tabanliklari/100-balance/",
+    "/ortopedik-tabanlik/yuzde-yuz-kisiye-ozel-spor-tabanliklari/100-control/",
+    "/ortopedik-tabanlik/yuzde-yuz-kisiye-ozel-spor-tabanliklari/100-impact/",
+    "/product-category/os1st-coraplar-giyilebilir-destekleyici-urunler/",
+    "/product-category/quickfit-kisiye-ozel-tabanliklar/",
+    "/product-category/yuzde-yuz-kisiye-ozel-medikal-tabanliklari/"
+  ],
+  "redirects": [
+    {
+      "path": "/ayak-sagligi-hakkinda-bilgiler/asil-tendon-yaralanmalari-tedavisi-ayak-sagliginiz-icin-oneriler/",
+      "target": "/ayak-sagligi-hakkinda-bilgiler/asil-tendon-yaralanmalari-ve-tedavisi-ayak-sagliginiz-icin-oneriler/",
+      "reason": "Legacy source returns 404; mapped to the existing equivalent content"
+    },
+    {
+      "path": "/ayak-sagligi-hakkinda-bilgiler/ayak-tabani-agrisi-neder-belirtiler-ve-cozum-yollari",
+      "target": "/ayak-sagligi-hakkinda-bilgiler/ayak-tabani-agrisi-neden-olur-belirtiler-ve-cozum-yollari/",
+      "reason": "Legacy source returns 404; mapped to the existing equivalent content"
+    },
+    {
+      "path": "/ayak-sagligi-hakkinda-bilgiler/ayakkabi-tabani-nasil-secilir-en-rahat-ayakkabi-tabani-hangisidir/",
+      "target": "/ayak-sagligi-hakkinda-bilgiler/ayakkabi-tabani-rehberi-hangi-taban-sizin-icin-daha-saglikli/",
+      "reason": "Legacy source returns 404; mapped to the existing equivalent content"
+    },
+    {
+      "path": "/ayak-sagligi-hakkinda-bilgiler/ortopedik-tabanlik-rehberi-ayak-sagligi-hakkinda-tam-cozum/",
+      "target": "/ayak-sagligi-hakkinda-bilgiler/ortopedik-tabanlik-rehberi-ayak-sagligi-ve-konfor-icin-tam-cozum/",
+      "reason": "Legacy source returns 404; mapped to the existing equivalent content"
+    },
+    {
+      "path": "/ayak-sagligi-hakkinda-bilgiler/saglik-kan-dolasimi-icin-kompresyon-corap-destegi/",
+      "target": "/ayak-sagligi-hakkinda-bilgiler/saglikli-kan-dolasimi-icin-kompresyon-corap-destegi/",
+      "reason": "Legacy source returns 404; mapped to the existing equivalent content"
+    },
+    {
+      "path": "/ortopedik-tabanliklar/memory-foam-tabanlik-rehberi-kapsamli-kilavuz/",
+      "target": "/ortopedik-tabanliklar/memory-foam-tabanlik-rehberi-konforlu-adimlar-icin-kapsamli-kilavuz/",
+      "reason": "Legacy source returns 404; mapped to the existing equivalent content"
+    },
+    {
+      "path": "/ortopedik-tabanliklar/topuk-dikeni-agridan-kurtulusun-anahtari/",
+      "target": "/ortopedik-tabanliklar/topuk-dikeni-tabanlik-agridan-kurtulusun-anahtari/",
+      "reason": "Legacy source returns 404; mapped to the existing equivalent content"
+    },
+    {
+      "path": "/ortopedik-tabanliklar/topuk-dikeni-tabanlik-agridan-kurtulusun-agri-agridan-kurtulusun-anahtari/",
+      "target": "/ortopedik-tabanliklar/topuk-dikeni-tabanlik-agridan-kurtulusun-anahtari/",
+      "reason": "Legacy source returns 404; mapped to the existing equivalent content"
+    },
+    {
+      "path": "/quickfit-control/",
+      "target": "/ortopedik-tabanlik/quickfit-kisiye-ozel-tabanliklar/quickfit-control/",
+      "reason": "Legacy source returns 404; mapped to the existing equivalent content"
+    },
+    {
+      "path": "/ortopedik-tabanliklar/duz-taban-icin-duz-taban-icin-tabanlik-rehberi-hangi-model-sizin-icin-dogru/",
+      "target": "/ortopedik-tabanliklar/duz-taban-icin-tabanlik-rehberi-hangi-model-sizin-icin-dogru/",
+      "reason": "Legacy source returns 404; mapped to the existing equivalent content"
+    },
+    {
+      "path": "/ortopedik-tabanliklar/duz-taban-icin-tabanlik-rehberi-hangi-model-sin-icin-dogru/",
+      "target": "/ortopedik-tabanliklar/duz-taban-icin-tabanlik-rehberi-hangi-model-sizin-icin-dogru/",
+      "reason": "Legacy source returns 404; mapped to the existing equivalent content"
+    },
+    {
+      "path": "/ortopedik-tabanliklar/duz-taban-icin-tabanlik-rehberi-hangi-model-sinin-icin-dogru/",
+      "target": "/ortopedik-tabanliklar/duz-taban-icin-tabanlik-rehberi-hangi-model-sizin-icin-dogru/",
+      "reason": "Legacy source returns 404; mapped to the existing equivalent content"
+    },
+    {
+      "path": "/ortopedik-tabanliklar/duz-taban-icin-tabanlik-rehberi-hangi-model-sizin-dogru/",
+      "target": "/ortopedik-tabanliklar/duz-taban-icin-tabanlik-rehberi-hangi-model-sizin-icin-dogru/",
+      "reason": "Legacy source returns 404; mapped to the existing equivalent content"
+    }
+  ],
+  "unresolved": []
+}

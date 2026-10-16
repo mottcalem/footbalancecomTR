@@ -1,14 +1,17 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
+import { languagePath } from "@/lib/i18n/urls";
 import { getLegacyContent } from "@/lib/content";
 import { seoHead, canonicalUrl, jsonLd } from "@/lib/seo";
+import { ProductCatalog, ProductDetail } from "@/components/product-catalog";
 import { ContentLayout } from "@/components/content-layout";
+import { BlogSidebar } from "@/components/blog-sidebar";
 import { VideoLibrary } from "@/components/video-library";
 
 export const Route = createFileRoute("/$")({
   loaderDeps: ({ search }) => ({ lang: search.lang }),
   loader: async ({ params, deps }) => {
     const content = await getLegacyContent({
-      data: `${deps.lang === "en" ? "/en" : ""}/${params._splat ?? ""}`,
+      data: languagePath(`/${params._splat ?? ""}`, deps.lang === "en" ? "en" : "tr"),
     });
     if (!content) throw notFound();
     return content;
@@ -44,6 +47,17 @@ function LegacyContent() {
   const content = Route.useLoaderData();
   if (content.kind === "page") {
     const p = content.page;
+    if (p.catalog || p.product) {
+      return (
+        <ContentLayout>
+          {p.catalog ? (
+            <ProductCatalog catalog={p.catalog} english={p.path.startsWith("/en/")} />
+          ) : p.product ? (
+            <ProductDetail product={p.product} english={p.path.startsWith("/en/")} />
+          ) : null}
+        </ContentLayout>
+      );
+    }
     return (
       <ContentLayout>
         <div
@@ -102,52 +116,57 @@ function LegacyContent() {
   const p = content.post;
   return (
     <ContentLayout>
-      <article className="mx-auto max-w-3xl">
-        <a
-          href={p.language === "en" ? "/en/foot-health-blog/" : "/ayak-sagligi-hakkinda-bilgiler/"}
-          className="text-sm font-semibold text-muted-foreground"
-        >
-          {p.language === "en" ? "← Foot Health Blog" : "← Ayak Sağlığı Rehberi"}
-        </a>
-        <h1 className="mt-5 text-3xl font-semibold leading-tight sm:text-4xl">{p.title}</h1>
-        <p className="mt-4 text-sm text-muted-foreground">
-          FootBalance ·{" "}
-          <time dateTime={p.published}>
-            {new Intl.DateTimeFormat(p.language === "en" ? "en-GB" : "tr-TR", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-              timeZone: "Europe/Istanbul",
-            }).format(new Date(p.published))}
-          </time>
-        </p>
-        {p.image && (
-          <img
-            src={p.image}
-            alt={p.title}
-            className="mt-8 max-h-[480px] w-full rounded-2xl object-contain"
+      <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-12">
+        <article className="min-w-0">
+          <a
+            href={
+              p.language === "en" ? "/en/foot-health-blog/" : "/ayak-sagligi-hakkinda-bilgiler/"
+            }
+            className="text-sm font-semibold text-muted-foreground"
+          >
+            {p.language === "en" ? "← Foot Health Blog" : "← Ayak Sağlığı Rehberi"}
+          </a>
+          <h1 className="mt-5 text-3xl font-semibold leading-tight sm:text-4xl">{p.title}</h1>
+          <p className="mt-4 text-sm text-muted-foreground">
+            FootBalance ·{" "}
+            <time dateTime={p.published}>
+              {new Intl.DateTimeFormat(p.language === "en" ? "en-GB" : "tr-TR", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+                timeZone: "Europe/Istanbul",
+              }).format(new Date(p.published))}
+            </time>
+          </p>
+          {p.image && (
+            <img
+              src={p.image}
+              alt={p.title}
+              className="mt-8 max-h-[480px] w-full rounded-2xl object-contain"
+            />
+          )}
+          <div className="article-content mt-8" dangerouslySetInnerHTML={{ __html: p.content }} />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: jsonLd({
+                "@context": "https://schema.org",
+                "@type": "BlogPosting",
+                headline: p.title,
+                description: p.description,
+                datePublished: p.published,
+                dateModified: p.modified,
+                inLanguage: p.language,
+                ...(p.image ? { image: canonicalUrl(p.image) } : {}),
+                author: { "@type": "Organization", name: "FootBalance" },
+                publisher: { "@id": "https://footbalance.com.tr/#organization" },
+                mainEntityOfPage: canonicalUrl(p.path),
+              }),
+            }}
           />
-        )}
-        <div className="article-content mt-8" dangerouslySetInnerHTML={{ __html: p.content }} />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: jsonLd({
-              "@context": "https://schema.org",
-              "@type": "BlogPosting",
-              headline: p.title,
-              description: p.description,
-              datePublished: p.published,
-              dateModified: p.modified,
-              inLanguage: p.language,
-              ...(p.image ? { image: canonicalUrl(p.image) } : {}),
-              author: { "@type": "Organization", name: "FootBalance" },
-              publisher: { "@id": "https://footbalance.com.tr/#organization" },
-              mainEntityOfPage: canonicalUrl(p.path),
-            }),
-          }}
-        />
-      </article>
+        </article>
+        <BlogSidebar currentPath={p.path} language={p.language} />
+      </div>
     </ContentLayout>
   );
 }

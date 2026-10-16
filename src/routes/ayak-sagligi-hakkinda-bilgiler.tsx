@@ -1,11 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import posts from "@/data/blog-index.json";
+import { InterviewBanner } from "@/components/interview-banner";
 import { ContentLayout } from "@/components/content-layout";
 import { existingPageHead } from "@/lib/seo";
 import { useTranslation } from "@/lib/i18n";
 
 export const Route = createFileRoute("/ayak-sagligi-hakkinda-bilgiler")({
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { category?: string | undefined; q?: string | undefined } => ({
+    category: typeof search["category"] === "string" ? search["category"] : undefined,
+    q: typeof search["q"] === "string" ? search["q"].slice(0, 200) : undefined,
+  }),
   head: ({ match }) =>
     existingPageHead(
       "/ayak-sagligi-hakkinda-bilgiler",
@@ -17,11 +24,13 @@ export const Route = createFileRoute("/ayak-sagligi-hakkinda-bilgiler")({
 });
 function BlogArchive() {
   const { language, tx } = useTranslation();
-  const [query, setQuery] = useState("");
+  const { category, q: query = "" } = Route.useSearch();
+  const navigate = Route.useNavigate();
   const [page, setPage] = useState(1);
   const list = posts.filter(
     (p) =>
       p.language === language &&
+      (!category || p.categories.includes(category)) &&
       `${p.title} ${p.description}`
         .toLocaleLowerCase(language === "tr" ? "tr-TR" : "en")
         .includes(query.toLocaleLowerCase(language === "tr" ? "tr-TR" : "en")),
@@ -29,16 +38,33 @@ function BlogArchive() {
   const pageCount = Math.ceil(list.length / 18);
   return (
     <ContentLayout>
-      <h1 className="text-3xl font-semibold sm:text-4xl">{tx("Ayak Sağlığı Rehberi")}</h1>
+      <InterviewBanner />
+      <h1 className="mt-8 text-3xl font-semibold sm:text-4xl">{tx("Ayak Sağlığı Rehberi")}</h1>
       <p className="mt-4 text-muted-foreground">
         {tx("Ayak sağlığı, tabanlık kullanımı ve spor performansı hakkında güncel yazılar.")}
       </p>
+      {category && (
+        <div className="mt-5 flex flex-wrap items-center gap-3 text-sm">
+          <span className="rounded-full bg-muted px-4 py-2 font-medium">{category}</span>
+          <a
+            href={language === "en" ? "/en/foot-health-blog/" : "/ayak-sagligi-hakkinda-bilgiler/"}
+            className="font-semibold underline underline-offset-4"
+          >
+            {language === "en" ? "All posts" : "Tüm yazılar"}
+          </a>
+        </div>
+      )}
       <input
         aria-label={tx("Yazılarda ara")}
         type="search"
+        maxLength={200}
         value={query}
         onChange={(e) => {
-          setQuery(e.target.value);
+          const q = e.target.value;
+          void navigate({
+            search: (previous) => ({ ...previous, q: q || undefined }),
+            replace: true,
+          });
           setPage(1);
         }}
         placeholder={tx("Yazılarda ara")}

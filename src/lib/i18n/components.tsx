@@ -1,3 +1,4 @@
+import productLanguagePairs from "@/data/product-language-pairs.json";
 import { type ReactNode } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import { LanguageContext, useTranslation } from "./context";
@@ -32,10 +33,14 @@ export function LanguageSwitcher() {
         search.delete("lang");
         const query = search.toString();
         const routeKey = location.pathname.replace(/\/$/, "") || "/";
+        const pair = (productLanguagePairs as Record<string, { tr: string; en: string }>)[
+          languagePath(location.pathname, language)
+        ];
         const targetPath =
-          code !== language && !PUBLIC_PATHS[routeKey]
+          pair?.[code] ??
+          (code !== language && !PUBLIC_PATHS[routeKey]
             ? languagePath("/ayak-sagligi-hakkinda-bilgiler", code)
-            : languagePath(location.pathname, code);
+            : languagePath(location.pathname, code));
         const href = `${targetPath}${query ? `?${query}` : ""}${location.hash ? `#${location.hash}` : ""}`;
         return (
           <a

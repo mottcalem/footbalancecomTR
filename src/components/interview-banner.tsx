@@ -11,7 +11,7 @@ export function InterviewBanner() {
   return (
     <aside
       aria-label={tx("Prof. Dr. Gül Baltacı röportajı")}
-      className="bg-primary text-primary-foreground"
+      className="overflow-hidden rounded-2xl bg-primary text-primary-foreground"
     >
       <div className="mx-auto flex max-w-[1360px] items-center gap-3 px-5 py-3 lg:px-8">
         <Link

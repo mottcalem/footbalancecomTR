@@ -18,6 +18,7 @@ const groups = [
   [
     "Kişiye Özel Tabanlık",
     [
+      ["Ürünler", "/urunler/"],
       ["Nasıl Çalışır?", "/#surec"],
       ["Kimler İçin?", "/#kimler"],
     ],
@@ -54,6 +55,7 @@ export function SiteFooter() {
   const href = (path: string) => {
     if (path.startsWith("https:")) return path;
     const [pathname = "/", hash] = path.split("#");
+    if (pathname === "/urunler/") return language === "en" ? "/en/products/" : "/urunler/";
     const translated = [
       "/kisiye-ozel-tabanlik-yorumlari/",
       "/tabanlik-sekillendirme-videolari/",

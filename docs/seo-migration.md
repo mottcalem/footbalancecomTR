@@ -49,3 +49,45 @@ npm run seo:generate
 ```
 
 `--crawl` açık ağ erişimi kullanır. HTML önbelleği /private/tmp/footbalance-migration altındadır. İçe aktarım HTML'i izinli etiket ve attribute listesiyle temizler; scriptler ve event handler'lar içeriğe alınmaz.
+
+## 16 Ekim 2026 A4 yönlendirme düzeltmesi
+
+SEO yönergesindeki örnek tablonun beş kuralından yalnız `/randevu-al/` önceden tanımlıydı. Diğer dört kural eklendi. İki blog adresinin güncel hedefleri eski production sitenin HTTP 301 Location başlıkları üzerinden doğrulandı:
+
+| Eski URL | Nihai hedef |
+| --- | --- |
+| `/randevu-al/` | `/ucretsiz-ayak-analizi/` |
+| `/footbalance-yuzde-yuz-ile-quickfit-tabanliklari-arasindaki-fark-nedir/` | `/` |
+| `/footbalance-merkez/` | `/bize-ulasin/` |
+| `/ayak-sagligi-hakkinda-bilgiler/ayak-taban-agrilari/` | `/ayak-sagligi-hakkinda-bilgiler/ayak-tabani-agrisi-neden-olur-belirtiler-ve-cozum-yollari/` |
+| `/ortopedik-tabanliklar/duz-taban-tabanlik-rehberi-muhendislik-ve-biyomekanik-cozumler/` | `/ortopedik-tabanliklar/duz-taban-icin-tabanlik-rehberi-hangi-model-sizin-icin-dogru/` |
+
+Kurallar `legacy-redirect-overrides.json` ile yeniden WordPress importunda korunur. Yönlenen iki eski yazı kaynak yedeğinde tutulur; blog listesi, sitemap ve llms dosyalarına eklenmez. HTTP kontrolü, yönlendirme kaynaklarını 200 içerik kontrolünden ayırarak 301 olarak doğrular.
+
+Doğrulama: `npm run build`, `npx tsc --noEmit`, değişen JS dosyalarında ESLint başarılı. Gerçek Node production çıktısında `node --test tests/seo-redirects.test.mjs` altı test geçti: beş kuralda GET/HEAD, slash varyantları, takip parametresi, tek adımlı 301 ve nihai canonical 200; yönlenen yazıların keşif dosyalarından çıkarılması. Tam aktarım kontrolünde 283 içerik URL'si ve yönlendirmeler için hata bulunmadı.
+
+Bu sonuç yalnız yerel production çıktısı içindir; yeni kod canlıya yayınlanmadı. PDF'de tam listesi verilmeyen diğer 11 eski kuralın eksiksizliği bu testlerle kanıtlanmış değildir. SEO planı ve ajans Word belgesi tamamlanmış iş raporu değil, uygulama ve kabul planıdır.
+
+## 16 Ekim 2026 trafik alan sayfaların içeriklerinin tamamlanması
+
+`/urunler/` ve `/en/products/` eski sitedeki beş ürün grubu, 30'ar ürün, özgün açıklamalar, görseller ve detay bağlantılarıyla aktarıldı. 60 ürün detayı teknik özellikleri ve özgün görsel galerileriyle mevcut URL'lerinde sunulur. Ürünler footer'a eklendi; katalog ve ürün detaylarının TR/EN dil bağlantıları eşlendi.
+
+Toplam 68 sayfada ürün detayı, kategori, SSS, İngilizce yorum/video ve eski home içeriği geri alındı. Trafik alan üç ürün kategori arşivi tam grup listeleriyle açılır. Görseller yerel wp-content dizinine alındı. Tekrar WordPress importunda kurtarılan sayfa kayıtları ve elle doğrulanmış yönlendirmeler korunur.
+
+Search Console'da tıklama alan ve önceki denetimde eksik içerik/eşleme adayı olan URL'ler `traffic-content-recovery-sources.json` içinde sabitlendi. Bu gruptaki eski sitede de 404 veren 13 hatalı/eski slug, aynı konudaki mevcut gerçek içeriklere 301 ile eşlendi. Boş sayfa veya uydurma içerik üretilmedi. Önceden gözlenen başka bir eski slug'ın kaynak sitedeki yönlendirmesi de korundu. İndirme/aktarım raporu `content-recovery-audit.json` içindedir.
+
+Kontroller: üretim build'i, TypeScript ve değişen TS/JS dosyalarında ESLint başarılı. Dokuz içerik/yönlendirme testi geçti. 60 ürünün detay, açıklama ve yerel görselleri; kurtarılan sayfaların sunucu HTML'inde 200, tek H1 ve eski canonical üretmesi; trafik alan kaynak grubunda boş içerik kalmaması doğrulandı. Tam HTTP denetimi 334 içerik URL'sinde hata bulmadı. Masaüstü ve 390 px mobil katalog görünümü, ürün detayı ve galeri görsel değiştirme tarayıcıda kontrol edildi.
+
+Bu sonuç yerel proje ve production build'i içindir. Canlıya dağıtım yapılmadı; SEO geçiş planının ölçüm, yayın ve diğer maddelerinin tamamlandığı anlamına gelmez.
+
+## 16 Ekim 2026 tüm sayfalarda H1 doğrulaması
+
+Güncel production build'inin gerçek HTTP çıktısında 335 Türkçe/İngilizce içerik URL'si ve iki dilde 404 ekranı kontrol edildi. 337 çıktının tamamında tam olarak bir H1 bulundu; şablon/içerik düzeltmesi gerekmedi. `scripts/verify-migration.mjs` artık H1 sayısı bir değilse hata verir; script ve yorum içindeki HTML metinlerini saymaz. Envanter, sabit public path eşlerini de kapsar. URL bazlı sonuçlar `docs/h1-verification.json` içindedir. Bu kontrol yerel production çıktısında yapılmıştır; canlıya dağıtım doğrulaması değildir.
+
+## 16 Ekim 2026 404 sayfası ve arama
+
+404 ekranı ortak site düzeninde arama formu, ana sayfa/blog bağlantıları ve Search Console tıklamalarına göre seçilen popüler yazılarla yenilendi. Türkçe altı, İngilizce üç yazı gösterilir; sıralama paylaşılan raporun dönemine aittir ve canlı trafik sayacı değildir. Mevcut yazı URL'leri korunur.
+
+Arama formu GET ile ilgili dilin blog arşivine `q` parametresi gönderir. Blog arşivi bu sorguyu sunucu HTML'inde uygular; sorgu URL'de korunur ve arama alanından değiştirilebilir. Sonuç bulunamaması için mevcut bilgilendirme kullanılır.
+
+`tests/not-found.test.mjs` içindeki dört test gerçek GET/HEAD 404 kodunu, yönlendirme olmamasını, tek H1'i, form hedefini, popüler yazıların 200 yanıtını, sorgunun uygulanmasını ve boş sonuçları iki dilde doğrular. Production build, TypeScript ve değişen dosyalarda ESLint başarılıdır. Tam aktarım kontrolü 335 içerik URL'si ve iki 404 ekranında (337 H1 kontrolü) hatasızdır. Masaüstü/mobil görünüm ve formun tarayıcıdan gönderilmesi de kontrol edildi. Değişiklikler yereldir; canlıya dağıtım yapılmadı.

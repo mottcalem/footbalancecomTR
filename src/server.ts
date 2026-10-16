@@ -42,6 +42,40 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   });
 }
 
+// React hoists metadata ahead of inline scripts. Move GTM to the requested
+// first position in the streamed head without buffering the page body.
+function prioritizeTagManager(response: Response): Response {
+  if (!response.body || !response.headers.get("content-type")?.includes("text/html"))
+    return response;
+  const decoder = new TextDecoder();
+  const encoder = new TextEncoder();
+  let pending = "";
+  let complete = false;
+  const body = response.body.pipeThrough(
+    new TransformStream<Uint8Array, Uint8Array>({
+      transform(chunk, controller) {
+        if (complete) {
+          controller.enqueue(encoder.encode(decoder.decode(chunk, { stream: true })));
+          return;
+        }
+        pending += decoder.decode(chunk, { stream: true });
+        if (!pending.includes("</head>")) return;
+        const tag = pending.match(/<script id="google-tag-manager">[\s\S]*?<\/script>/)?.[0];
+        if (tag) pending = pending.replace(tag, "").replace("<head>", "<head>" + tag);
+        controller.enqueue(encoder.encode(pending));
+        pending = "";
+        complete = true;
+      },
+      flush(controller) {
+        controller.enqueue(encoder.encode(pending + decoder.decode()));
+      },
+    }),
+  );
+  const headers = new Headers(response.headers);
+  headers.delete("content-length");
+  return new Response(body, { status: response.status, statusText: response.statusText, headers });
+}
+
 function isH3SwallowedErrorBody(body: string): boolean {
   try {
     const payload = JSON.parse(body) as { unhandled?: unknown; message?: unknown };
@@ -74,6 +108,7 @@ export default {
         const path = decodeURI(url.pathname);
         const alias = (legacyRedirects as Record<string, string>)[path.replace(/\/$/, "") + "/"];
         if (alias) {
+          if (alias.startsWith("https://")) return Response.redirect(alias, 301);
           url.pathname = alias;
           return Response.redirect(url.href, 301);
         }
@@ -90,7 +125,7 @@ export default {
       }
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      return prioritizeTagManager(await normalizeCatastrophicSsrResponse(response));
     } catch (error) {
       console.error(error);
       return new Response(renderErrorPage(), {

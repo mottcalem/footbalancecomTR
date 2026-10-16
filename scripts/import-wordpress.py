@@ -168,9 +168,18 @@ for p in sorted(extra_paths):
   m=Meta();m.feed(cachefile(p).read_text(errors='replace'))
   if m.title and '404' not in m.title and 'bulunamad' not in m.title.lower():
    page_urls.append({'path':p,'modified':'','title':m.title.strip(),'description':m.meta.get('description','') or text(m.title)+' — İçerik güncellenmektedir.','image':'https://footbalance.com.tr/wp-content/uploads/2023/07/thumb.jpg','robots':m.meta.get('robots','')})
+# Keep verified legacy rules even when their source URL also exists in the export.
+overrides_file=ROOT/'src/data/legacy-redirect-overrides.json'
+if overrides_file.exists():redirects.update(json.loads(overrides_file.read_text()))
 (ROOT/'src/data/legacy-redirects.json').write_text(json.dumps(redirects,ensure_ascii=False,indent=2)+'\n')
 (ROOT/'docs/unresolved-legacy-links.json').write_text(json.dumps({'unavailableLiveLinks':extra_errors,'recoveredAliases':len(redirects)},ensure_ascii=False,indent=2)+'\n')
 (ROOT/'src/data/blog-posts.json').write_text(json.dumps(records,ensure_ascii=False,indent=2)+'\n')
+# Retain recovered product and traffic-bearing pages when re-importing an older export.
+recovered_file=ROOT/'src/data/recovered-page-metadata.json'
+if recovered_file.exists():
+ merged_pages={p['path']:p for p in page_urls}
+ merged_pages.update({p['path']:p for p in json.loads(recovered_file.read_text())})
+ page_urls=list(merged_pages.values())
 (ROOT/'src/data/legacy-pages.json').write_text(json.dumps([{**x,**meta.get(x['path'],{})} for x in page_urls],ensure_ascii=False,indent=2)+'\n')
 (ROOT/'docs/migration-inventory.json').write_text(json.dumps({'publishedPosts':len(records),'sitemapPosts':len(post_urls),'sitemapPages':len(sitemap(args.pages)),'recoveredLinkedPages':len(page_urls)-len(sitemap(args.pages)),'missingSitemapPosts':sorted(set(x['path'] for x in post_urls)-set(x['path'] for x in records)),'extraPublishedPosts':sorted(set(x['path'] for x in records)-set(x['path'] for x in post_urls)),'emptyPosts':[x['path'] for x in records if not text(x['content'])],'crawlErrors':errors,'mediaCount':len(media),'missingMedia':[p for p in sorted(media) if not (ROOT/'public'/p.lstrip('/')).exists()]},ensure_ascii=False,indent=2)+'\n')
 print('Imported',len(records),'posts;',len(page_urls),'pages;',len(media),'media; errors:',len(errors),flush=True)

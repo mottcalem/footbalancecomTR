@@ -172,7 +172,6 @@ function PartnerPage() {
             <a href="#sistem">{tx("3D Sistem")}</a>
             <a href="#referanslar">{tx("Referanslar")}</a>
             <a href="#sss-ortak">{tx("Sık Sorulan Sorular")}</a>
-            <Link to="/ayak-sagligi-hakkinda-bilgiler/">{tx("Blog")}</Link>
           </nav>
           <BrandButton onClick={scrollToForm} className="ml-auto hidden sm:inline-flex lg:ml-0">
             {tx("Başvuru Yap")}
@@ -205,13 +204,6 @@ function PartnerPage() {
             <a className="py-3" href="#sss-ortak" onClick={() => setMenu(false)}>
               {tx("Sık Sorulan Sorular")}
             </a>
-            <Link
-              to="/ayak-sagligi-hakkinda-bilgiler/"
-              className="py-3"
-              onClick={() => setMenu(false)}
-            >
-              {tx("Blog")}
-            </Link>
           </nav>
         )}
       </header>

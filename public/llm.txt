@@ -1,4 +1,4 @@
-# FootBalance Türkiye
+﻿# FootBalance Türkiye
 
 > FootBalance Türkiye: kişiye özel ortopedik tabanlık, ayak ve basış analizi ve yetkili hizmet merkezleri.
 
@@ -7,10 +7,22 @@
 - [Ana sayfa](https://footbalance.com.tr/)
 - [Ücretsiz ayak analizi ve randevu](https://footbalance.com.tr/ucretsiz-ayak-analizi/)
 - [Hizmet noktaları](https://footbalance.com.tr/footbalance-hizmet-noktalari/)
+- [Ürünler](https://footbalance.com.tr/urunler/)
+- [Çözüm ortaklığı](https://footbalance.com.tr/cozum-ortagi-ol/)
+- [Prof. Dr. Gül Baltacı röportajı](https://footbalance.com.tr/prof-dr-gul-baltaci/)
 - [Hakkımızda](https://footbalance.com.tr/hakkimizda/)
 - [İletişim](https://footbalance.com.tr/bize-ulasin/)
 - [Blog](https://footbalance.com.tr/ayak-sagligi-hakkinda-bilgiler/)
 - [Online mağaza](https://shop.footbalance.com.tr/)
+
+## English pages
+
+- [Home](https://footbalance.com.tr/en/home/)
+- [Products](https://footbalance.com.tr/en/products/)
+- [Service points](https://footbalance.com.tr/en/footbalance-service-points/)
+- [Book a foot analysis](https://footbalance.com.tr/en/make-an-appointment/)
+- [Become a partner](https://footbalance.com.tr/en/become-a-partner/)
+- [Contact](https://footbalance.com.tr/en/contact/)
 
 ## Blog yazıları
 
@@ -249,7 +261,7 @@
 ## Teknik kaynaklar
 
 - [XML sitemap](https://footbalance.com.tr/sitemap.xml)
-- [RSS](https://footbalance.com.tr/feed/)
+- [RSS](https://footbalance.com.tr/feed.xml)
 
 ## İçerik bilgisi
 

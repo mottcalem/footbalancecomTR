@@ -27,7 +27,10 @@ export function todayInIstanbul() {
 }
 export const requestSchema = z
   .object({
-    type: z.enum(["appointment", "partner", "interview"]),
+    type: z.enum(["appointment", "partner", "interview", "contact"]),
+    subject: z
+      .enum(["", "Randevu Talebi", "Geri Bildirim", "Çözüm Ortağı Ol", "Diğer"])
+      .default(""),
     submissionId: z.string().uuid().optional(),
     language: z.enum(["tr", "en"]),
     name: z.string().trim().min(2, "Adınızı ve soyadınızı yazın.").max(100),
@@ -85,6 +88,18 @@ export const requestSchema = z
   .superRefine((value, context) => {
     if (value.type !== "interview" && value.city.length < 2)
       context.addIssue({ code: "custom", path: ["city"], message: "Şehir seçin veya yazın." });
+    if (value.type === "contact") {
+      if (!value.email)
+        context.addIssue({
+          code: "custom",
+          path: ["email"],
+          message: "Geçerli bir e-posta adresi yazın.",
+        });
+      if (!value.subject)
+        context.addIssue({ code: "custom", path: ["subject"], message: "Konu seçin." });
+      if (!value.message)
+        context.addIssue({ code: "custom", path: ["message"], message: "Mesajınızı yazın." });
+    }
     if (value.type === "interview") {
       if (!value.email)
         context.addIssue({

@@ -6,7 +6,7 @@ import {
   CarouselNext,
 } from "@/components/ui/carousel";
 import { useEffect, useRef, useState } from "react";
-import { Star, ArrowUpRight } from "lucide-react";
+import { Star, ArrowUpRight, ArrowDown, MessageSquareQuote } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 
 const reviewsUrl = "https://www.google.com/search?q=footbalance+t%C3%BCrkiye";
@@ -28,6 +28,19 @@ type Place = {
   reviews?: Review[];
   attributions?: { provider: string; providerUri?: string }[];
 };
+let reviewsRequest:
+  { expires: number; promise: Promise<{ available?: boolean; place?: Place } | null> } | undefined;
+function loadReviews() {
+  if (!reviewsRequest || reviewsRequest.expires < Date.now()) {
+    reviewsRequest = {
+      expires: Date.now() + 60_000,
+      promise: fetch("/api/google-reviews", { cache: "no-store" })
+        .then((response) => (response.ok ? response.json() : null))
+        .catch(() => null),
+    };
+  }
+  return reviewsRequest.promise;
+}
 function Stars({ rating }: { rating: number }) {
   return (
     <span className="flex gap-1 text-[#B77908]" aria-label={`${rating} / 5`}>
@@ -42,7 +55,7 @@ function Stars({ rating }: { rating: number }) {
     </span>
   );
 }
-export function GoogleReviews() {
+export function GoogleReviews({ compact = false }: { compact?: boolean }) {
   const { language, tx } = useTranslation();
   const en = language === "en";
   const section = useRef<HTMLElement>(null);
@@ -54,10 +67,10 @@ export function GoogleReviews() {
       ([entry]) => {
         if (!entry?.isIntersecting) return;
         observer.disconnect();
-        fetch("/api/google-reviews", { signal: controller.signal, cache: "no-store" })
-          .then((response) => (response.ok ? response.json() : null))
+        loadReviews()
           .then((result) => {
-            if (result?.available) setPlace(result.place);
+            if (!controller.signal.aborted && result?.available && result.place)
+              setPlace(result.place);
           })
           .catch(() => {})
           .finally(() => {
@@ -72,12 +85,70 @@ export function GoogleReviews() {
       controller.abort();
     };
   }, []);
+  if (compact) {
+    return (
+      <section
+        ref={section}
+        aria-label={en ? "Customer reviews" : "Kullanıcı yorumları"}
+        className="bg-muted"
+      >
+        <div className="mx-auto max-w-[1360px] px-5 py-4 lg:px-8">
+          <a
+            href="#deneyimler"
+            className="group flex flex-col gap-5 rounded-2xl border border-primary/15 bg-background px-6 py-5 shadow-sm transition hover:border-primary/35 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:flex-row sm:items-center sm:justify-between"
+          >
+            <div className="flex items-center gap-4">
+              <span className="grid size-12 shrink-0 place-items-center rounded-full bg-muted text-primary">
+                <MessageSquareQuote className="size-6" aria-hidden="true" />
+              </span>
+              <div>
+                <p className="text-base font-semibold sm:text-lg">
+                  {en
+                    ? "Real experiences. Confident steps."
+                    : "Gerçek deneyimler. Güvenli adımlar."}
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {en
+                    ? "Discover what our customers say on Google."
+                    : "Kullanıcılarımızın Google yorumlarını keşfet."}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-3 sm:justify-end">
+              {place?.rating !== undefined && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm font-semibold">Google</span>
+                  <strong className="text-xl">
+                    {place.rating.toLocaleString(en ? "en" : "tr")}
+                  </strong>
+                  <Stars rating={place.rating} />
+                  {place.userRatingCount !== undefined && (
+                    <span className="text-xs text-muted-foreground">
+                      ({place.userRatingCount.toLocaleString(en ? "en" : "tr")}{" "}
+                      {en ? "reviews" : "yorum"})
+                    </span>
+                  )}
+                </div>
+              )}
+              <span className="inline-flex min-h-11 items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">
+                {en ? "Read reviews" : "Yorumları incele"}
+                <ArrowDown
+                  className="size-4 transition-transform group-hover:translate-y-0.5"
+                  aria-hidden="true"
+                />
+              </span>
+            </div>
+          </a>
+        </div>
+      </section>
+    );
+  }
   return (
     <section
       ref={section}
       id="deneyimler"
       aria-labelledby="google-reviews-title"
-      className="bg-background"
+      className="scroll-mt-24 bg-background"
     >
       <div className="mx-auto max-w-[1360px] px-5 py-20 lg:px-8 lg:py-28">
         <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">

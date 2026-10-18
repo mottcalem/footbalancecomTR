@@ -5,4 +5,4 @@ Disallow: /_serverFn/
 Disallow: /basarili/
 Disallow: /tesekkurler/
 
-Sitemap: https://footbalance.com.tr/sitemap.xml
+Sitemap: https://footbalance.com.tr/sitemap_index.xml

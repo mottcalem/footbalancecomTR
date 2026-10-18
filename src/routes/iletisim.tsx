@@ -1,7 +1,7 @@
 import { existingPageHead } from "@/lib/seo";
 import { translate, useTranslation, LanguageSwitcher } from "@/lib/i18n";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ArrowRight, Menu, X, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/footbalance-logo.svg";
@@ -28,9 +28,12 @@ const ADDRESS = "Esentepe Mahallesi, Atom Sok. No:20, Kanyon Apt. Kat:3 Daire: 5
 const SUBJECTS = ["Randevu Talebi", "Geri Bildirim", "Çözüm Ortağı Ol", "Diğer"] as const;
 
 function ContactPage() {
-  const { tx } = useTranslation();
+  const { tx, language } = useTranslation();
   const [menu, setMenu] = useState(false);
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const submission = useRef<{ payload: string; id: string } | null>(null);
 
   return (
     <div className="min-h-screen bg-background pb-16 text-foreground md:pb-0">
@@ -160,18 +163,35 @@ function ContactPage() {
             </div>
             <div className="min-w-0 lg:col-span-7">
               {sent ? (
-                <div className="rounded-xl border border-border bg-secondary p-6 sm:p-8">
-                  <h3 className="text-xl font-semibold">{tx("Mesajın bize ulaştı.")}</h3>
+                <div
+                  role="status"
+                  className="rounded-xl border border-border bg-secondary p-6 sm:p-8"
+                >
+                  <h3 className="text-xl font-semibold">{tx("Mesajın bize ulaştı!")}</h3>
                   <p className="mt-3 text-muted-foreground">
-                    {tx("En kısa sürede seninle iletişime geçeceğiz. Acil konular için")} {PHONE}{" "}
-                    {tx("numarasından bize ulaşabilirsin.")}
+                    {tx(
+                      "Bizimle iletişime geçtiğin için teşekkür ederiz. Ekibimiz en kısa sürede sana dönüş yapacak.",
+                    )}
+                  </p>
+                  <p className="mt-3 text-muted-foreground">
+                    {tx("Bize daha hızlı ulaşmak istersen")}{" "}
+                    <a
+                      href="tel:+902123258851"
+                      className="font-bold text-foreground underline-offset-4 hover:underline"
+                    >
+                      0212 325 88 51
+                    </a>{" "}
+                    {tx("numaralı telefondan iletişime geçebilirsin.")}
                   </p>
                   <Button
                     type="button"
                     variant="quiet"
                     size="touch"
                     className="mt-6"
-                    onClick={() => setSent(false)}
+                    onClick={() => {
+                      setSent(false);
+                      submission.current = null;
+                    }}
                   >
                     {tx("Yeni Mesaj Gönder")}
                   </Button>
@@ -179,14 +199,54 @@ function ContactPage() {
               ) : (
                 <form
                   className="grid gap-x-3 gap-y-4 rounded-xl border border-border bg-card p-4 sm:grid-cols-2 sm:p-5"
-                  onSubmit={(e) => {
+                  onSubmit={async (e) => {
                     e.preventDefault();
-                    setSent(true);
+                    if (sending) return;
+                    const form = new FormData(e.currentTarget);
+                    const values = {
+                      type: "contact",
+                      language,
+                      name: String(form.get("name") ?? ""),
+                      phone: String(form.get("phone") ?? ""),
+                      email: String(form.get("email") ?? ""),
+                      city: String(form.get("city") ?? ""),
+                      subject: String(form.get("subject") ?? ""),
+                      message: String(form.get("message") ?? ""),
+                      website: String(form.get("website") ?? ""),
+                      consent: form.get("consent") === "on",
+                    };
+                    const payload = JSON.stringify(values);
+                    if (submission.current?.payload !== payload)
+                      submission.current = { payload, id: crypto.randomUUID() };
+                    setSending(true);
+                    setSubmitError("");
+                    try {
+                      const response = await fetch("/api/requests", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ ...values, submissionId: submission.current.id }),
+                        signal: AbortSignal.timeout(60000),
+                      });
+                      const result = await response.json();
+                      if (!response.ok || result.ok !== true)
+                        throw new Error("Contact delivery failed");
+                      setSent(true);
+                    } catch {
+                      setSubmitError(
+                        "Talebiniz gönderilemedi. Bilgileriniz korunuyor; tekrar deneyebilir veya bize telefonla ulaşabilirsiniz.",
+                      );
+                    } finally {
+                      setSending(false);
+                    }
                   }}
                 >
+                  <div className="hidden" aria-hidden="true">
+                    <input name="website" tabIndex={-1} autoComplete="off" />
+                  </div>
                   <label className="block text-sm font-semibold sm:col-span-2">
                     {tx("Konu")}{" "}
                     <select
+                      name="subject"
                       required
                       defaultValue=""
                       className="mt-2 h-11 w-full rounded-lg border border-input bg-background px-4 font-normal"
@@ -204,6 +264,8 @@ function ContactPage() {
                   <label className="block text-sm font-semibold">
                     {tx("Ad Soyad")}
                     <input
+                      name="name"
+                      maxLength={100}
                       required
                       className="mt-2 h-11 w-full rounded-lg border border-input bg-background px-4 font-normal"
                     />
@@ -211,6 +273,8 @@ function ContactPage() {
                   <label className="block text-sm font-semibold">
                     {tx("Telefon")}
                     <input
+                      name="phone"
+                      maxLength={30}
                       required
                       type="tel"
                       className="mt-2 h-11 w-full rounded-lg border border-input bg-background px-4 font-normal"
@@ -219,6 +283,8 @@ function ContactPage() {
                   <label className="block text-sm font-semibold">
                     {tx("E-posta")}
                     <input
+                      name="email"
+                      maxLength={254}
                       required
                       type="email"
                       className="mt-2 h-11 w-full rounded-lg border border-input bg-background px-4 font-normal"
@@ -227,6 +293,8 @@ function ContactPage() {
                   <label className="block text-sm font-semibold">
                     {tx("Bulunduğunuz Şehir?")}{" "}
                     <input
+                      name="city"
+                      maxLength={80}
                       required
                       className="mt-2 h-11 w-full rounded-lg border border-input bg-background px-4 font-normal"
                       placeholder={tx("Şehrinizi yazın")}
@@ -235,18 +303,25 @@ function ContactPage() {
                   <label className="block text-sm font-semibold sm:col-span-2">
                     {tx("Mesajınız")}
                     <textarea
+                      name="message"
+                      maxLength={2000}
                       required
                       rows={4}
                       className="mt-2 w-full rounded-lg border border-input bg-background px-4 py-3 font-normal"
                     />
                   </label>
                   <label className="flex gap-3 text-sm leading-6 sm:col-span-2">
-                    <input required type="checkbox" className="mt-1 size-5" />{" "}
+                    <input name="consent" required type="checkbox" className="mt-1 size-5" />{" "}
                     {tx("KVKK aydınlatma metnini okudum ve iletişim kurulmasına onay veriyorum.")}
                   </label>
                   <div className="sm:col-span-2">
-                    <Button type="submit" variant="appointment" size="wide">
-                      {tx("Mesajı Gönder")}
+                    {submitError && (
+                      <p role="alert" className="mb-3 text-sm text-destructive">
+                        {tx(submitError)}
+                      </p>
+                    )}
+                    <Button type="submit" variant="appointment" size="wide" disabled={sending}>
+                      {tx(sending ? "Gönderiliyor…" : "Mesajı Gönder")}
                     </Button>
                   </div>
                 </form>

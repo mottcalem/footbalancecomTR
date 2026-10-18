@@ -6,6 +6,7 @@ export function emailHtml(
   text: string,
   subject: string,
   links: { label: string; url: string }[] = [],
+  language: "tr" | "en" = "tr",
 ) {
   const escape = (value: string) =>
     value.replace(
@@ -25,7 +26,7 @@ export function emailHtml(
         `<p style="margin:20px 0"><a href="${escape(link.url)}" style="display:inline-block;padding:12px 18px;background:#00263e;color:white;text-decoration:none;border-radius:6px">${escape(link.label)}</a></p>`,
     )
     .join("");
-  return `<!doctype html><html lang="tr"><head><meta charset="utf-8"></head><body style="margin:0;background:#f5f8f8;font-family:Arial,sans-serif;color:#00263e"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="padding:24px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:680px;margin:auto;background:white;border:1px solid #dce8e8"><tr><td style="padding:24px;background:#00263e;color:white;font-size:22px;font-weight:bold">FootBalance Türkiye</td></tr><tr><td style="padding:24px"><h1 style="font-size:20px;margin:0 0 20px">${escape(subject)}</h1><div style="font-size:15px;line-height:1.7;overflow-wrap:anywhere">${escape(text).replace(/\r?\n/g, "<br>")}</div>${buttons}</td></tr></table></td></tr></table></body></html>`;
+  return `<!doctype html><html lang="${language}"><head><meta charset="utf-8"></head><body style="margin:0;background:#f5f8f8;font-family:Arial,sans-serif;color:#00263e"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="padding:24px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:680px;margin:auto;background:white;border:1px solid #dce8e8"><tr><td style="padding:24px;background:#00263e;color:white;font-size:22px;font-weight:bold">FootBalance Türkiye</td></tr><tr><td style="padding:24px"><h1 style="font-size:20px;margin:0 0 20px">${escape(subject)}</h1><div style="font-size:15px;line-height:1.7;overflow-wrap:anywhere">${escape(text).replace(/\r?\n/g, "<br>")}</div>${buttons}</td></tr></table></td></tr></table></body></html>`;
 }
 
 export async function sendMail(env: unknown, message: Mail.Options) {

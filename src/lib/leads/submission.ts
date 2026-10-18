@@ -1,3 +1,4 @@
+import { sendPartnerConfirmation } from "./partner-confirmation.ts";
 import { saveLead, markNotification, type LeadValues } from "./store.ts";
 import { refreshWorkbooks } from "./workbooks.ts";
 import { sendMail } from "./mail.ts";
@@ -46,6 +47,7 @@ export async function archiveSubmission(env: unknown, values: LeadValues) {
       console.error("Lead saved; notification failed", lead.id);
     }
   }
+  if (values.type === "partner") await sendPartnerConfirmation(env, lead);
   // The durable record remains available even if a workbook export needs retrying.
   try {
     await refreshWorkbooks(env);

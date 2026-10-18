@@ -138,3 +138,22 @@ Yerel geliştirmede `.env.local` içindeki `LEADS_DATA_DIR` `.data/leads` klasö
 ayarlanır. `.data` Git’e dahil edilmez. Otomatik raporun sunucuda etkin olması,
 bu bilgisayarın açık olmasına bağlı değildir. Önceki sürümlerde yalnızca e-posta
 iletilen başvurular otomatik olarak geriye dönük içe alınmaz.
+
+### İletişim formu ve kullanıcı e-postası
+
+İletişim formu `/api/requests` üzerinden doğrulanır ve `LEADS_DATA_DIR` altındaki
+SQLite veritabanına kaydedilir. Bildirim `CONTACT_FORM_TO` adresine (boşsa
+`PARTNER_FORM_TO`) gönderilir; ardından kullanıcıya formun TR/EN dilinde teşekkür
+e-postası gider. SMTP ayarları `.env.forms.example` içindedir. Randevu konusu için
+randevu talebi başlığı, diğer konular için mesaj alındı başlığı kullanılır.
+Aynı gönderim kimliğiyle tekrar denendiğinde tamamlanmış e-postalar yeniden gönderilmez.
+Teşekkür ekranı yalnızca iki e-posta da SMTP tarafından kabul edildiğinde açılır.
+
+### Çözüm ortaklığı başvuru alındı e-postası
+
+Yeni çözüm ortaklığı başvurularında başvuru sahibine, formun dilinde (TR/EN)
+kişiselleştirilmiş bir alındı/değerlendirme e-postası gönderilir. Bu gönderim ekip
+bildiriminden bağımsızdır; sonucu SQLite `lead_receipts` tablosunda saklanır.
+Aynı başvurunun başarılı bildirimi tekrar gönderilmez. Başarısız gönderim aynı
+başvuru tekrar denendiğinde yeniden denenebilir; gönderilememesi kalıcı başvuru
+kaydını veya mevcut ekip bildirimini engellemez. Mevcut SMTP ayarları kullanılır.

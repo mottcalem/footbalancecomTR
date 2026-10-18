@@ -186,9 +186,14 @@ test("partner SMTP requires TLS and reports success only when recipient is accep
     assert.equal(options.port, 587);
     return {
       sendMail: async (mail: Record<string, unknown>) => {
-        assert.equal(mail.to, env.PARTNER_FORM_TO);
-        assert.deepEqual(mail.replyTo, { name: partner.name, address: partner.email });
-        assert.match(String(mail.text), /Test Clinic/);
+        if (typeof mail.to === "string") {
+          assert.equal(mail.to, env.PARTNER_FORM_TO);
+          assert.deepEqual(mail.replyTo, { name: partner.name, address: partner.email });
+        } else {
+          assert.deepEqual(mail.to, { name: partner.name, address: partner.email });
+          assert.equal(mail.replyTo, env.PARTNER_FORM_TO);
+        }
+        if (typeof mail.to === "string") assert.match(String(mail.text), /Test Clinic/);
         return {
           accepted: accepted ? [env.PARTNER_FORM_TO] : [],
           rejected: accepted ? [] : [env.PARTNER_FORM_TO],
@@ -207,7 +212,7 @@ test("partner SMTP requires TLS and reports success only when recipient is accep
     accepted = false;
     assert.equal((await handleRequestSubmission(smtpRequest(), env)).status, 202);
     assert.equal(listLeads(env).at(-1)?.notification, "failed");
-    assert.equal(closed, 2);
+    assert.equal(closed, 4);
     assert.equal(
       (await handleRequestSubmission(smtpRequest(), { ...env, SMTP_PASSWORD: "" })).status,
       202,
@@ -218,9 +223,12 @@ test("partner SMTP requires TLS and reports success only when recipient is accep
 });
 
 test("configured public origin works behind HTTPS proxy and rejects other origins", async () => {
-  const makeRequest = (origin: string) => new Request("http://127.0.0.1:3004/api/requests", {
-    method: "POST", headers: { Origin: origin, "Content-Type": "application/json" }, body: "{}",
-  });
+  const makeRequest = (origin: string) =>
+    new Request("http://127.0.0.1:3004/api/requests", {
+      method: "POST",
+      headers: { Origin: origin, "Content-Type": "application/json" },
+      body: "{}",
+    });
   const env = { FORMS_PUBLIC_ORIGIN: "https://footbalance.ugurdogan.net" };
   const acceptedOrigin = await handleRequestSubmission(makeRequest(env.FORMS_PUBLIC_ORIGIN), env);
   assert.equal(acceptedOrigin.status, 400);

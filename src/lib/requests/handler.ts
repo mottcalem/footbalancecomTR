@@ -1,3 +1,4 @@
+import { submitContact } from "./contact.ts";
 import { archiveSubmission } from "../leads/submission.ts";
 import { setting } from "../leads/settings.ts";
 import { requestSchema } from "./schema.ts";
@@ -15,8 +16,7 @@ export async function handleRequestSubmission(request: Request, env: unknown): P
     return new Response(null, { status: 405, headers: { Allow: "POST" } });
   // HTTPS terminates at the reverse proxy; Node receives an internal HTTP URL.
   const expectedOrigin = setting(env, "FORMS_PUBLIC_ORIGIN") ?? new URL(request.url).origin;
-  if (request.headers.get("origin") !== expectedOrigin)
-    return json(403, "INVALID_ORIGIN");
+  if (request.headers.get("origin") !== expectedOrigin) return json(403, "INVALID_ORIGIN");
   if (!request.headers.get("content-type")?.startsWith("application/json"))
     return json(415, "INVALID_CONTENT_TYPE");
   if (Number(request.headers.get("content-length")) > 12000) return json(413, "TOO_LARGE");
@@ -41,6 +41,15 @@ export async function handleRequestSubmission(request: Request, env: unknown): P
   const parsed = requestSchema.safeParse(payload);
   if (!parsed.success) return json(400, "INVALID_FORM");
   const values = parsed.data;
+  if (values.type === "contact") {
+    if (!values.submissionId) return json(400, "INVALID_FORM");
+    try {
+      await submitContact(env, values);
+      return json(202, "ACCEPTED");
+    } catch {
+      return json(503, "DELIVERY_UNAVAILABLE");
+    }
+  }
   const selectedCenter =
     values.type === "appointment" && /^(0|[1-9]\d*)$/.test(values.center)
       ? CENTERS[Number(values.center)]

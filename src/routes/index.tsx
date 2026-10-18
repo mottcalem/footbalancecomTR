@@ -311,6 +311,8 @@ function Home() {
           </div>
         </section>
 
+        <GoogleReviews compact />
+
         <section aria-label={tx("FootBalance güvencesi")} className="bg-muted">
           <div className="mx-auto grid max-w-[1360px] grid-cols-2 gap-3 px-5 py-8 md:grid-cols-4 md:gap-4 lg:px-8">
             {[

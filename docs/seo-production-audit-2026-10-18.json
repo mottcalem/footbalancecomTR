@@ -1,0 +1,56 @@
+{
+  "files": {
+    "/sitemap_index.xml": {
+      "status": 200,
+      "type": "application/xml",
+      "bytes": 189
+    },
+    "/sitemap.xml": {
+      "status": 200,
+      "type": "application/xml",
+      "bytes": 93789
+    },
+    "/robots.txt": {
+      "status": 200,
+      "type": "text/plain; charset=utf-8",
+      "bytes": 161
+    },
+    "/llm.txt": {
+      "status": 200,
+      "type": "text/plain; charset=utf-8",
+      "bytes": 72621
+    },
+    "/llms.txt": {
+      "status": 200,
+      "type": "text/plain; charset=utf-8",
+      "bytes": 72621
+    },
+    "/feed.xml": {
+      "status": 200,
+      "type": "application/xml",
+      "bytes": 16576
+    }
+  },
+  "urlCount": 328,
+  "failures": [],
+  "redirects": [],
+  "llmLinks": [
+    {
+      "url": "https://footbalance.com.tr/sitemap.xml",
+      "status": 200,
+      "final": "https://footbalance.com.tr/sitemap.xml"
+    },
+    {
+      "url": "https://footbalance.com.tr/feed.xml",
+      "status": 200,
+      "final": "https://footbalance.com.tr/feed.xml"
+    }
+  ],
+  "externalWarnings": [
+    {
+      "llmURL": "https://shop.footbalance.com.tr/",
+      "error": "HTTP Error 429: Too Many Requests"
+    }
+  ],
+  "imageCount": 251
+}

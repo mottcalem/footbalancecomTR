@@ -3,7 +3,18 @@ import { RequestForm } from "@/components/request-form";
 import { translate, useTranslation, LanguageSwitcher } from "@/lib/i18n";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowRight, Check, ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
+import {
+  ArrowRight,
+  BadgeCheck,
+  GraduationCap,
+  Headset,
+  Megaphone,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Menu,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -225,11 +236,24 @@ function PartnerPage() {
                   "Sadece 10 dakika içinde gelişmiş ayak ve basış analizi yapın, danışanınıza aynı ziyarette %100 kişiye özel ortopedik tabanlığını şekillendirin.",
                 )}
               </p>
-              <p className="mt-5 text-sm font-semibold leading-6">
-                {tx(
-                  "Patentli teknoloji • Ücretsiz eğitim• Sürekli teknik destek • Pazarlama desteği",
-                )}
-              </p>
+              <ul className="mt-6 grid grid-cols-1 gap-3 min-[360px]:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
+                {[
+                  { icon: BadgeCheck, label: "Patentli teknoloji" },
+                  { icon: GraduationCap, label: "Ücretsiz eğitim" },
+                  { icon: Headset, label: "Sürekli teknik destek" },
+                  { icon: Megaphone, label: "Pazarlama desteği" },
+                ].map(({ icon: Icon, label }) => (
+                  <li
+                    key={label}
+                    className="flex items-center gap-3 rounded-xl border border-mint-deep/20 bg-background p-3 shadow-sm lg:p-4"
+                  >
+                    <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-secondary text-mint-deep">
+                      <Icon className="size-5" strokeWidth={1.8} aria-hidden="true" />
+                    </span>
+                    <span className="text-sm font-bold leading-5 text-foreground">{tx(label)}</span>
+                  </li>
+                ))}
+              </ul>
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                 <BrandButton onClick={scrollToForm} className="sm:min-h-14">
                   {tx("Çözüm Ortağı Ol")} <ArrowRight />

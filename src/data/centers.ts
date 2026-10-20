@@ -94,7 +94,7 @@ export const CENTERS: Center[] = [
   { name: "FİZYODİYET SAĞLIKLI YAŞAM", person: "", phone: "+90 533 469 13 00", address: "Kültür Mahallesi Cumhuriyet Caddesi No:69 Tatvan/Bitlis", email: "", maps: "https://maps.app.goo.gl/h8qKKU5URTb1DC5HA", site: "", city: "Bitlis", main: false },
   { name: "Teknik İnternational", person: "", phone: "0850 377 37 37 - 0532 431 19 79", address: "19 Mayıs Mah. 19 Mayıs Cad. No: 37 İç Kapı No: 15 Şişli / İstanbul", email: "", maps: "https://maps.app.goo.gl/u4ctUoYcpkQLzNfD7", site: "", city: "İstanbul (Avrupa)", main: false },
   { name: "Gloria Sports Arena", person: "", phone: "+90 531 593 01 70", address: "Gloria Sports Arena, Belek, Turizm Cd. No: 4, 07506 Serik/Antalya", email: "", maps: "https://goo.gl/maps/aDM1vgSDCPK6mpKA9", site: "", city: "Antalya", main: false },
-  { name: "Nar Tanesi Sağlık Hizmetleri", person: "", phone: "0224 413 82 72 - 0501 627 82 63", address: "Opus Evke Plaza, Bağlarbaşı, Sanayi Cd. No:348 B No:46 Osmangazi̇/Bursa", email: "", maps: "https://maps.app.goo.gl/4chX7eEhoQmbWBur6", site: "", city: "Bursa", main: false },
+  { name: "Health Harmony", person: "", phone: "0533 318 72 98", address: "Koşuyolu Mah. Koşuyolu Cad. No:37 Kadıköy/İstanbul", email: "", maps: "https://www.google.com/maps/search/Ko%C5%9Fuyolu+mah.+Ko%C5%9Fuyolu+Cad.+No:37+Kad%C4%B1k%C3%B6y%2F%C4%B0stanbul", site: "", city: "İstanbul (Anadolu)", main: false },
 ];
 
 export const CENTER_CITIES = Array.from(new Set(CENTERS.map((c) => c.city))).sort((a, b) => a.localeCompare(b, "tr"));

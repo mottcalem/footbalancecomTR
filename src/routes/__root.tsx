@@ -142,6 +142,17 @@ fbq('init','258016955490147');
 fbq('track','PageView');`,
             }}
           />
+          <script
+            id="microsoft-clarity"
+            type="text/javascript"
+            dangerouslySetInnerHTML={{
+              __html: `(function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window, document, "clarity", "script", "z17gdw3hei");`,
+            }}
+          />
           <HeadContent />
           <script
             type="application/ld+json"
@@ -188,6 +199,20 @@ fbq('track','PageView');`,
           </noscript>
           {children}
           <Scripts />
+          <script
+            id="supsis-init"
+            dangerouslySetInnerHTML={{
+              __html: `window.supsis = window.supsis || function () {
+    (supsis.q = supsis.q || []).push(arguments);
+};
+supsis.l = +new Date();`,
+            }}
+          />
+          <script
+            src="https://footbalance.visitor.supsis.live/static/js/loader.js"
+            type="text/javascript"
+            defer
+          />
         </body>
       </html>
     </LanguageProvider>

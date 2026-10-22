@@ -30,7 +30,7 @@ export function ScrollToTop() {
             : "smooth",
         })
       }
-      className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] right-4 z-30 grid size-11 cursor-pointer place-items-center rounded-full border border-border bg-background/95 text-muted-foreground shadow-sm backdrop-blur-sm transition-colors hover:border-primary/30 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:bottom-6 md:right-6"
+      className="fixed bottom-[calc(8rem+env(safe-area-inset-bottom))] right-4 z-30 grid size-11 cursor-pointer place-items-center rounded-full border border-border bg-background/95 text-muted-foreground shadow-sm backdrop-blur-sm transition-colors hover:border-primary/30 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:right-6"
     >
       <ArrowUp className="size-4" aria-hidden="true" />
     </button>

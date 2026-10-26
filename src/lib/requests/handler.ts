@@ -2,7 +2,7 @@ import { submitContact } from "./contact.ts";
 import { archiveSubmission } from "../leads/submission.ts";
 import { setting } from "../leads/settings.ts";
 import { requestSchema } from "./schema.ts";
-import { CENTERS } from "../../data/centers.ts";
+import { listCenters } from "../centers/store.server.ts";
 
 const attempts = new Map<string, { count: number; expires: number }>();
 function json(status: number, code: string) {
@@ -50,10 +50,15 @@ export async function handleRequestSubmission(request: Request, env: unknown): P
       return json(503, "DELIVERY_UNAVAILABLE");
     }
   }
-  const selectedCenter =
-    values.type === "appointment" && /^(0|[1-9]\d*)$/.test(values.center)
-      ? CENTERS[Number(values.center)]
-      : undefined;
+  let selectedCenter;
+  try {
+    selectedCenter =
+      values.type === "appointment"
+        ? (await listCenters()).find((c) => c.id === values.center)
+        : undefined;
+  } catch {
+    return json(503, "STORAGE_UNAVAILABLE");
+  }
   if (values.type === "appointment" && (!selectedCenter || selectedCenter.city !== values.city))
     return json(400, "INVALID_CENTER");
   if (values.type === "partner" || values.type === "interview") {

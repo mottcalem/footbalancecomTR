@@ -1,10 +1,11 @@
+import { centerPhones, centerPhoneHref } from "@/lib/centers/phones";
 import { languagePath } from "@/lib/i18n/urls";
 import { useState } from "react";
 import { ChevronLeft, Search, MapPin, Navigation, Phone } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { CenterCard } from "@/components/center-card";
 import { Button } from "@/components/ui/button";
-import { CENTERS, CENTER_CITIES } from "@/data/centers";
+import { useCenters } from "@/lib/centers/context";
 import { BeeasistBooking } from "@/components/beeasist-booking";
 import { useTranslation } from "@/lib/i18n";
 import logo from "@/assets/footbalance-logo.svg";
@@ -46,6 +47,7 @@ export function BookingSteps({
   dealersOnly?: boolean;
 }) {
   const { tx, language } = useTranslation();
+  const { centers: CENTERS, cities: CENTER_CITIES } = useCenters();
   const [step, setStep] = useState(initialCenter ? 1 : 0);
   const [center, setCenter] = useState(initialCenter ?? "");
   const [query, setQuery] = useState("");
@@ -59,7 +61,7 @@ export function BookingSteps({
       .replace(/\p{Diacritic}/gu, "");
   const term = normalize(query.trim());
   const centers = hasSearch
-    ? CENTERS.map((c, i) => ({ c, i }))
+    ? CENTERS.map((c) => ({ c, i: c.id }))
         .filter(
           ({ c }) =>
             (!dealersOnly || !c.main) &&
@@ -71,7 +73,7 @@ export function BookingSteps({
         .sort((a, b) => Number(b.c.main) - Number(a.c.main))
     : [];
 
-  const selected = center ? CENTERS[Number(center)] : undefined;
+  const selected = center ? CENTERS.find((c) => c.id === center) : undefined;
   const Title = inline ? "h2" : SheetTitle;
   const Description = inline ? "p" : SheetDescription;
   return (
@@ -163,14 +165,14 @@ export function BookingSteps({
             <BeeasistBooking />
           ) : (
             <div className="grid gap-3 sm:grid-cols-2">
-              {selected.phone && (
-                <Button asChild variant="appointment" size="touch">
-                  <a href={`tel:${selected.phone.split(/\s+-\s+/)[0]?.replace(/[^\d+]/g, "")}`}>
+              {centerPhones(selected.phone).map((number) => (
+                <Button key={number} asChild variant="appointment" size="touch">
+                  <a href={centerPhoneHref(number)}>
                     <Phone aria-hidden="true" />
-                    {tx("Bayiyi Ara")}
+                    {number}
                   </a>
                 </Button>
-              )}
+              ))}
               <Button asChild variant="outline" size="touch">
                 <a
                   href={

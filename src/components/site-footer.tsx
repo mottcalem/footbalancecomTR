@@ -38,13 +38,17 @@ const groups = [
     ],
   ],
   [
+    "Online Mağaza",
+    [
+      ["Instagram", "https://www.instagram.com/FootBalanceTR/"],
+      ["YouTube", "https://www.youtube.com/channel/UCFnMmPY9CVrzRmI7v_8D2gg"],
+    ],
+  ],
+  [
     "Kurumsal",
     [
       ["Çözüm Ortağı Ol", "/cozum-ortagi-ol/"],
       ["Bayi Portal Giriş", "https://siparis.footbalance.com.tr/"],
-      ["Online Mağaza", "https://shop.footbalance.com.tr/"],
-      ["Instagram", "https://www.instagram.com/FootBalanceTR/"],
-      ["YouTube", "https://www.youtube.com/channel/UCFnMmPY9CVrzRmI7v_8D2gg"],
     ],
   ],
 ] as const;
@@ -74,11 +78,24 @@ export function SiteFooter() {
           >
             <img src={logo} alt="FootBalance" className="h-9 w-auto brightness-0 invert" />
           </Link>
-          <div className="mt-4 grid grid-cols-2 gap-5 md:grid-cols-5 md:gap-5">
+          <div className="mt-4 grid grid-cols-2 gap-5 md:grid-cols-3 lg:grid-cols-6">
             {groups.map(([title, links]) => (
               <div key={title}>
                 {title !== "FootBalance" ? (
-                  <h2 className="text-sm font-bold uppercase">{tx(title)}</h2>
+                  <h2 className="text-sm font-bold uppercase">
+                    {title === "Online Mağaza" ? (
+                      <a
+                        href="https://shop.footbalance.com.tr/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-primary-foreground/80"
+                      >
+                        {tx(title)}
+                      </a>
+                    ) : (
+                      tx(title)
+                    )}
+                  </h2>
                 ) : null}
                 <ul className="mt-2 space-y-1 text-sm text-primary-foreground/65">
                   {links.map(([label, path]) => (

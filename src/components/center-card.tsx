@@ -1,3 +1,4 @@
+import { centerPhones, centerPhoneHref } from "@/lib/centers/phones";
 import { MapPin, Navigation, Phone, User, Mail, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n";
@@ -15,7 +16,8 @@ export function CenterCard({
   compact?: boolean;
 }) {
   const { tx } = useTranslation();
-  const phone = c.phone.split(/\s*-\s*/)[0]?.replace(/[^\d+]/g, "") ?? "";
+  const numbers = centerPhones(c.phone);
+  const phone = numbers[0] ? centerPhoneHref(numbers[0]) : "";
   return (
     <article
       className={`flex h-full flex-col rounded-2xl border bg-card p-5 transition hover:border-foreground/25 hover:shadow-sm ${c.main ? "border-primary/50 ring-1 ring-primary/15" : "border-border"}`}
@@ -51,12 +53,8 @@ export function CenterCard({
           <p className="flex gap-2">
             <Phone className="mt-0.5 size-3.5 shrink-0 text-mint-deep" aria-hidden="true" />{" "}
             <span className="flex flex-col">
-              {c.phone.split(/\s+-\s+/).map((number) => (
-                <a
-                  key={number}
-                  href={`tel:${number.replace(/[^\d+]/g, "")}`}
-                  className="hover:text-foreground"
-                >
+              {numbers.map((number) => (
+                <a key={number} href={centerPhoneHref(number)} className="hover:text-foreground">
                   {number}
                 </a>
               ))}
@@ -108,7 +106,7 @@ export function CenterCard({
               variant="appointment"
               className="min-h-10 flex-1 rounded-lg px-3 text-xs shadow-none"
             >
-              <a href={`tel:${phone}`} aria-label={`${tx("Bayiyi Ara")}: ${c.name}`}>
+              <a href={phone} aria-label={`${tx("Bayiyi Ara")}: ${c.name}`}>
                 <Phone className="size-3.5" aria-hidden="true" />
                 {tx("Bayiyi Ara")}
               </a>

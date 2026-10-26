@@ -1,3 +1,5 @@
+import { CentersContext } from "@/lib/centers/context";
+import { getPublicCenters } from "@/lib/centers/functions";
 import { NotFoundPage } from "@/components/not-found-page";
 import { SiteFooter } from "@/components/site-footer";
 import { Analytics } from "@/components/analytics";
@@ -61,6 +63,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  loader: () => getPublicCenters(),
   validateSearch: (search: Record<string, unknown>): { lang?: "en" | undefined } =>
     search["lang"] === "en" ? { lang: "en" } : {},
   search: { middlewares: [retainSearchParams(["lang"])] },
@@ -222,26 +225,29 @@ supsis.l = +new Date();`,
 function RootComponent() {
   const { tx } = useTranslation();
   const { queryClient } = Route.useRouteContext();
+  const centers = Route.useLoaderData();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
-      <SiteFooter />
-      <Analytics />
-      <ScrollToTop />
-      {pathname.replace(/\/$/, "") !== "/merkezler" &&
-        pathname.replace(/\/$/, "") !== "/randevu" &&
-        pathname.replace(/\/$/, "") !== "/cozum-ortagi-ol" && (
-          <Link
-            to="/merkezler/"
-            className="fixed right-0 top-1/2 z-30 hidden -translate-y-1/2 items-center gap-2 rounded-l-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition-transform hover:-translate-x-1 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 lg:inline-flex"
-          >
-            <MapPin className="size-4" aria-hidden="true" />
-            {tx("Merkez Bul")}{" "}
-          </Link>
-        )}
+      <CentersContext.Provider value={centers}>
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <Outlet />
+        <SiteFooter />
+        <Analytics />
+        <ScrollToTop />
+        {pathname.replace(/\/$/, "") !== "/merkezler" &&
+          pathname.replace(/\/$/, "") !== "/randevu" &&
+          pathname.replace(/\/$/, "") !== "/cozum-ortagi-ol" && (
+            <Link
+              to="/merkezler/"
+              className="fixed right-0 top-1/2 z-30 hidden -translate-y-1/2 items-center gap-2 rounded-l-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-lg transition-transform hover:-translate-x-1 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 lg:inline-flex"
+            >
+              <MapPin className="size-4" aria-hidden="true" />
+              {tx("Merkez Bul")}{" "}
+            </Link>
+          )}
+      </CentersContext.Provider>
     </QueryClientProvider>
   );
 }

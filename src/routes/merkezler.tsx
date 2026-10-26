@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { CenterCard } from "@/components/center-card";
 import { BookingDialog } from "@/components/booking-dialog";
 import logo from "@/assets/footbalance-logo.svg";
-import { CENTERS, CENTER_CITIES } from "@/data/centers";
+import { useCenters } from "@/lib/centers/context";
 
 export const Route = createFileRoute("/merkezler")({
   loaderDeps: ({ search }) => ({ lang: search.lang }),
@@ -32,6 +32,7 @@ const norm = (s: string) =>
     .replace(/\p{Diacritic}/gu, "");
 
 function CentersPage() {
+  const { centers: CENTERS, cities: CENTER_CITIES } = useCenters();
   const [bookingCenter, setBookingCenter] = useState<string | undefined>();
   const { tx } = useTranslation();
   const [menu, setMenu] = useState(false);
@@ -185,7 +186,7 @@ function CentersPage() {
                 <CenterCard
                   key={`${c.name}-${c.address}`}
                   c={c}
-                  onBooking={() => setBookingCenter(String(CENTERS.indexOf(c)))}
+                  onBooking={() => setBookingCenter(c.id)}
                 />
               ))}
             </div>

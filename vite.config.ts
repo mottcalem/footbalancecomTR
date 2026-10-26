@@ -18,6 +18,8 @@ const localFormsEnv = loadEnv("", process.cwd(), [
   "INTERVIEW_FORM_",
   "FORM_WEBHOOK_",
   "LEADS_",
+  "DATABASE_URL",
+  "ADMIN_",
 ]);
 for (const [key, value] of Object.entries(localFormsEnv)) {
   if (!process.env[key] && value) process.env[key] = value;

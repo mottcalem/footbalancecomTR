@@ -1,3 +1,4 @@
+import { handleAdmin } from "./lib/centers/admin.server";
 import "./lib/error-capture";
 import { handleLeadDownload } from "./lib/leads/downloads";
 import { handleGoogleReviews } from "./lib/reviews/handler";
@@ -89,6 +90,8 @@ export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       const url = new URL(request.url);
+      if (url.pathname === "/admin" || url.pathname.startsWith("/admin/"))
+        return await handleAdmin(request);
       if (url.pathname.startsWith("/api/lead-reports/")) return handleLeadDownload(request, env);
       if (url.pathname === "/api/google-reviews") return handleGoogleReviews(request, env);
       if (url.pathname === "/api/requests") return handleRequestSubmission(request, env);

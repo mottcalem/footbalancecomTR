@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Check, LoaderCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CENTERS, CENTER_CITIES } from "@/data/centers";
+import { useCenters } from "@/lib/centers/context";
 import { useTranslation } from "@/lib/i18n";
 import {
   PRACTICE_AREAS,
@@ -17,6 +17,7 @@ const inputClass =
 
 export function RequestForm({ type }: { type: "appointment" | "partner" }) {
   const { tx, language } = useTranslation();
+  const { centers: CENTERS, cities: CENTER_CITIES } = useCenters();
   const id = useId();
   const [sent, setSent] = useState(false);
   const [submitError, setSubmitError] = useState("");
@@ -49,9 +50,9 @@ export function RequestForm({ type }: { type: "appointment" | "partner" }) {
     mode: "onBlur",
   });
   const city = watch("city");
-  const centers = CENTERS.map((center, index) => ({ ...center, id: String(index) }))
-    .filter((center) => center.city === city)
-    .sort((a, b) => Number(b.main) - Number(a.main));
+  const centers = CENTERS.filter((center) => center.city === city).sort(
+    (a, b) => Number(b.main) - Number(a.main),
+  );
   const fieldProps = (name: keyof RequestValues) => ({
     id: `${id}-${name}`,
     "aria-required": [

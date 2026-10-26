@@ -24,7 +24,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import heroImage from "@/assets/footbalance-hero-analysis.jpg";
 import supportImage from "@/assets/need-support-banner.jpg";
 import activeImage from "@/assets/need-active-banner.jpg";
 import sportImage from "@/assets/need-sport-banner.jpg";
@@ -299,12 +298,18 @@ function Home() {
               </p>
             </div>
             <div className="md:col-span-7">
-              <img
-                src={heroImage}
-                width={1920}
+              <video
+                src="/videos/footbalance-hero-20261026.mp4"
+                poster="/videos/footbalance-hero-20261026.jpg"
+                width={1600}
                 height={1100}
-                alt={tx("FootBalance cihazında uzman eşliğinde ayak ve basış analizi")}
-                fetchPriority="high"
+                aria-label={tx("FootBalance cihazında uzman eşliğinde ayak ve basış analizi")}
+                autoPlay
+                muted
+                loop
+                playsInline
+                controls
+                preload="metadata"
                 className="h-auto w-full rounded-2xl"
               />
             </div>

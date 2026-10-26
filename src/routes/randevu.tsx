@@ -1,10 +1,11 @@
 import { existingPageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X, Check, Phone } from "lucide-react";
+import { Menu, X, Check, Phone, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { BookingSteps } from "@/components/booking-dialog";
+import { BookingDialog } from "@/components/booking-dialog";
 import { translate, useTranslation, LanguageSwitcher } from "@/lib/i18n";
+import { BeeasistBooking } from "@/components/beeasist-booking";
 import logo from "@/assets/footbalance-logo.svg";
 
 export const Route = createFileRoute("/randevu")({
@@ -24,6 +25,7 @@ export const Route = createFileRoute("/randevu")({
 function AppointmentPage() {
   const { tx } = useTranslation();
   const [menu, setMenu] = useState(false);
+  const [dealersOpen, setDealersOpen] = useState(false);
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-md">
@@ -102,7 +104,7 @@ function AppointmentPage() {
             </h1>
             <p className="mt-5 text-lg leading-8 text-muted-foreground">
               {tx(
-                "Sana en yakın merkezi seç. FootBalance merkezinde online randevu oluşturabilir, diğer bayilerimiz için telefon ve yol tarifi bilgilerine ulaşabilirsin.",
+                "FootBalance merkezinde ücretsiz ayak analizin için sana uygun günü ve saati seç, randevunu hemen oluştur.",
               )}
             </p>
             <ul className="mt-8 space-y-4 text-sm">
@@ -131,10 +133,25 @@ function AppointmentPage() {
             </div>
           </div>
           <div className="min-w-0 lg:col-span-7">
-            <BookingSteps inline />
+            <h2 className="mb-5 text-2xl font-semibold">{tx("FootBalance Randevu Al")}</h2>
+            <BeeasistBooking />
+            <div className="mt-6 border-t border-border/70 pt-5 text-center">
+              <Button
+                type="button"
+                variant="ghost"
+                className="min-h-11 max-w-full whitespace-normal text-sm text-muted-foreground hover:text-foreground"
+                aria-haspopup="dialog"
+                aria-expanded={dealersOpen}
+                onClick={() => setDealersOpen(true)}
+              >
+                {tx("Diğer bayilerden randevu al")}
+                <ArrowRight className="size-4 shrink-0" aria-hidden="true" />
+              </Button>
+            </div>
           </div>
         </div>
       </main>
+      <BookingDialog open={dealersOpen} onOpenChange={setDealersOpen} dealersOnly />
     </div>
   );
 }

@@ -13,10 +13,12 @@ export function BookingDialog({
   open,
   onOpenChange,
   initialCenter,
+  dealersOnly = false,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   initialCenter?: string | undefined;
+  dealersOnly?: boolean;
 }) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -25,7 +27,11 @@ export function BookingDialog({
         overlayClassName="bg-[#062d3e]/45"
         className="h-[100dvh] w-full overflow-y-auto border-0 p-5 sm:w-[min(720px,90vw)] sm:max-w-[720px] sm:p-8 [&>button]:right-6 [&>button]:top-8 [&>button>svg]:size-5 motion-reduce:animate-none"
       >
-        <BookingSteps key={`${open}-${initialCenter ?? ""}`} initialCenter={initialCenter} />
+        <BookingSteps
+          key={`${open}-${initialCenter ?? ""}`}
+          initialCenter={initialCenter}
+          dealersOnly={dealersOnly}
+        />
       </SheetContent>
     </Sheet>
   );
@@ -33,9 +39,11 @@ export function BookingDialog({
 export function BookingSteps({
   initialCenter,
   inline = false,
+  dealersOnly = false,
 }: {
   initialCenter?: string | undefined;
   inline?: boolean;
+  dealersOnly?: boolean;
 }) {
   const { tx, language } = useTranslation();
   const [step, setStep] = useState(initialCenter ? 1 : 0);
@@ -54,6 +62,7 @@ export function BookingSteps({
     ? CENTERS.map((c, i) => ({ c, i }))
         .filter(
           ({ c }) =>
+            (!dealersOnly || !c.main) &&
             (!city || c.city === city) &&
             [c.name, c.person, c.city, tx(c.city), c.address].some((value) =>
               normalize(value).includes(term),

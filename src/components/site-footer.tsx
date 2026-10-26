@@ -1,6 +1,4 @@
-import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { BookingDialog } from "@/components/booking-dialog";
 import { useTranslation } from "@/lib/i18n";
 import { languagePath } from "@/lib/i18n/urls";
 import logo from "@/assets/footbalance-logo.svg";
@@ -36,12 +34,14 @@ const groups = [
     "Merkezler",
     [
       ["Merkez Bul", "/merkezler/"],
-      ["Randevu Al", "booking"],
+      ["Randevu Al", "/ucretsiz-ayak-analizi/"],
     ],
   ],
   [
-    "Çözüm Ortağı Ol",
+    "Kurumsal",
     [
+      ["Çözüm Ortağı Ol", "/cozum-ortagi-ol/"],
+      ["Bayi Portal Giriş", "https://siparis.footbalance.com.tr/"],
       ["Online Mağaza", "https://shop.footbalance.com.tr/"],
       ["Instagram", "https://www.instagram.com/FootBalanceTR/"],
       ["YouTube", "https://www.youtube.com/channel/UCFnMmPY9CVrzRmI7v_8D2gg"],
@@ -51,7 +51,6 @@ const groups = [
 
 export function SiteFooter() {
   const { tx, language } = useTranslation();
-  const [booking, setBooking] = useState(false);
   const href = (path: string) => {
     if (path.startsWith("https:")) return path;
     const [pathname = "/", hash] = path.split("#");
@@ -78,37 +77,20 @@ export function SiteFooter() {
           <div className="mt-4 grid grid-cols-2 gap-5 md:grid-cols-5 md:gap-5">
             {groups.map(([title, links]) => (
               <div key={title}>
-                {title === "Çözüm Ortağı Ol" ? (
-                  <Link
-                    to="/cozum-ortagi-ol/"
-                    className="text-sm font-bold uppercase hover:text-primary-foreground/80"
-                  >
-                    {tx(title)}
-                  </Link>
-                ) : title !== "FootBalance" ? (
+                {title !== "FootBalance" ? (
                   <h2 className="text-sm font-bold uppercase">{tx(title)}</h2>
                 ) : null}
                 <ul className="mt-2 space-y-1 text-sm text-primary-foreground/65">
                   {links.map(([label, path]) => (
                     <li key={label}>
-                      {path === "booking" ? (
-                        <button
-                          type="button"
-                          onClick={() => setBooking(true)}
-                          className="min-h-6 text-left hover:text-primary-foreground"
-                        >
-                          {tx(label)}
-                        </button>
-                      ) : (
-                        <a
-                          href={href(path)}
-                          target={path.startsWith("https:") ? "_blank" : undefined}
-                          rel={path.startsWith("https:") ? "noopener noreferrer" : undefined}
-                          className="block min-h-6 text-left hover:text-primary-foreground"
-                        >
-                          {tx(label)}
-                        </a>
-                      )}
+                      <a
+                        href={href(path)}
+                        target={path.startsWith("https:") ? "_blank" : undefined}
+                        rel={path.startsWith("https:") ? "noopener noreferrer" : undefined}
+                        className="block min-h-6 text-left hover:text-primary-foreground"
+                      >
+                        {tx(label)}
+                      </a>
                     </li>
                   ))}
                 </ul>
@@ -130,7 +112,6 @@ export function SiteFooter() {
           </div>
         </div>
       </footer>
-      <BookingDialog open={booking} onOpenChange={setBooking} />
     </>
   );
 }

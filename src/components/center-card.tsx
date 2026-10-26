@@ -1,4 +1,4 @@
-import { MapPin, Navigation, Phone, User } from "lucide-react";
+import { MapPin, Navigation, Phone, User, Mail, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n";
 import type { Center } from "@/data/centers";
@@ -50,8 +50,37 @@ export function CenterCard({
         {c.phone && (
           <p className="flex gap-2">
             <Phone className="mt-0.5 size-3.5 shrink-0 text-mint-deep" aria-hidden="true" />{" "}
-            <a href={`tel:${phone}`} className="hover:text-foreground">
-              {c.phone}
+            <span className="flex flex-col">
+              {c.phone.split(/\s+-\s+/).map((number) => (
+                <a
+                  key={number}
+                  href={`tel:${number.replace(/[^\d+]/g, "")}`}
+                  className="hover:text-foreground"
+                >
+                  {number}
+                </a>
+              ))}
+            </span>
+          </p>
+        )}
+        {c.email && (
+          <p className="flex gap-2">
+            <Mail className="mt-0.5 size-3.5 shrink-0 text-mint-deep" aria-hidden="true" />
+            <a href={`mailto:${c.email}`} className="break-all hover:text-foreground">
+              {c.email}
+            </a>
+          </p>
+        )}
+        {c.site && (
+          <p className="flex gap-2">
+            <Globe className="mt-0.5 size-3.5 shrink-0 text-mint-deep" aria-hidden="true" />
+            <a
+              href={c.site}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="break-all hover:text-foreground"
+            >
+              {c.site.replace(/^https?:\/\//, "").replace(/\/$/, "")}
             </a>
           </p>
         )}

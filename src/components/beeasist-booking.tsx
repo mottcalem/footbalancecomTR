@@ -1,41 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "@/lib/i18n";
 
 export function BeeasistBooking() {
-  const container = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
   const { tx } = useTranslation();
-
-  useEffect(() => {
-    const element = container.current;
-    if (!element) return;
-    const script = document.createElement("script");
-    script.src = "https://app.beeasist.com/embed.js";
-    script.type = "text/javascript";
-    script.async = true;
-    script.onerror = () => setFailed(true);
-    const observer = new MutationObserver(() => {
-      const frame = element.querySelector("iframe");
-      if (frame) frame.title = "Beeasist — FootBalance";
-    });
-    observer.observe(element, { childList: true });
-    element.appendChild(script);
-    return () => {
-      observer.disconnect();
-      script.remove();
-      element.replaceChildren();
-    };
-  }, []);
 
   return (
     <>
       <style>{".sticky-buttons { display: none !important; }"}</style>
-      <div
-        ref={container}
-        className="beeasist-embed min-h-[725px] w-full"
-        data-url="https://app.beeasist.com/c/ncXdSJGv"
-        data-width="100%"
-        data-height="725px"
+      <iframe
+        title="Beeasist — FootBalance"
+        src="https://app.beeasist.com/c/ncXdSJGv?source=embed"
+        className="h-[1150px] w-full border-0 md:h-[725px]"
+        onError={() => setFailed(true)}
       />
       {failed && (
         <a

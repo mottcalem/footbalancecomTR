@@ -7,11 +7,6 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { loadEnv } from "vite";
 
-// Keep Google credentials on the server; never use the VITE_ prefix for secrets.
-const localGoogleEnv = loadEnv("", process.cwd(), "GOOGLE_");
-for (const key of ["GOOGLE_PLACES_API_KEY", "GOOGLE_PLACE_ID"]) {
-  if (!process.env[key] && localGoogleEnv[key]) process.env[key] = localGoogleEnv[key];
-}
 const localFormsEnv = loadEnv("", process.cwd(), [
   "SMTP_",
   "PARTNER_FORM_",

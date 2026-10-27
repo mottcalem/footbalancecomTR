@@ -5,7 +5,7 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from "@/components/ui/carousel";
-import { useEffect, useRef, useState } from "react";
+import staticReviews from "@/data/google-reviews.json";
 import { Star, ArrowUpRight, ArrowDown, MessageSquareQuote } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 
@@ -28,19 +28,7 @@ type Place = {
   reviews?: Review[];
   attributions?: { provider: string; providerUri?: string }[];
 };
-let reviewsRequest:
-  { expires: number; promise: Promise<{ available?: boolean; place?: Place } | null> } | undefined;
-function loadReviews() {
-  if (!reviewsRequest || reviewsRequest.expires < Date.now()) {
-    reviewsRequest = {
-      expires: Date.now() + 60_000,
-      promise: fetch("/api/google-reviews", { cache: "no-store" })
-        .then((response) => (response.ok ? response.json() : null))
-        .catch(() => null),
-    };
-  }
-  return reviewsRequest.promise;
-}
+const place: Place = staticReviews;
 function Stars({ rating }: { rating: number }) {
   return (
     <span className="flex gap-1 text-[#B77908]" aria-label={`${rating} / 5`}>
@@ -58,40 +46,9 @@ function Stars({ rating }: { rating: number }) {
 export function GoogleReviews({ compact = false }: { compact?: boolean }) {
   const { language, tx } = useTranslation();
   const en = language === "en";
-  const section = useRef<HTMLElement>(null);
-  const [place, setPlace] = useState<Place | null>(null);
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    const controller = new AbortController();
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry?.isIntersecting) return;
-        observer.disconnect();
-        loadReviews()
-          .then((result) => {
-            if (!controller.signal.aborted && result?.available && result.place)
-              setPlace(result.place);
-          })
-          .catch(() => {})
-          .finally(() => {
-            if (!controller.signal.aborted) setLoading(false);
-          });
-      },
-      { rootMargin: "200px" },
-    );
-    if (section.current) observer.observe(section.current);
-    return () => {
-      observer.disconnect();
-      controller.abort();
-    };
-  }, []);
   if (compact) {
     return (
-      <section
-        ref={section}
-        aria-label={en ? "Customer reviews" : "Kullanıcı yorumları"}
-        className="bg-muted"
-      >
+      <section aria-label={en ? "Customer reviews" : "Kullanıcı yorumları"} className="bg-muted">
         <div className="mx-auto max-w-[1360px] px-5 py-4 lg:px-8">
           <a
             href="#deneyimler"
@@ -145,7 +102,6 @@ export function GoogleReviews({ compact = false }: { compact?: boolean }) {
   }
   return (
     <section
-      ref={section}
       id="deneyimler"
       aria-labelledby="google-reviews-title"
       className="scroll-mt-24 bg-background"
@@ -184,17 +140,13 @@ export function GoogleReviews({ compact = false }: { compact?: boolean }) {
             <ArrowUpRight className="size-4" />
           </a>
         </div>
-        {loading ? (
-          <p role="status" className="mt-8 text-sm text-muted-foreground">
-            {en ? "Loading Google reviews…" : "Google yorumları yükleniyor…"}
-          </p>
-        ) : place?.reviews?.length ? (
+        {place.reviews?.length ? (
           <>
             <p className="mt-8 text-xs text-muted-foreground">
               <span className="mr-2 font-medium">Google Maps</span>
               {en
-                ? "Reviews selected by Google, sorted by relevance. Shown in their original language."
-                : "Google’ın seçtiği yorumlar, alaka düzeyine göre listelenir. Yorumlar orijinal dilinde gösterilir."}
+                ? "Selected reviews, shown in their original language."
+                : "Seçilmiş yorumlar orijinal dilinde gösterilir."}
             </p>
             <Carousel
               opts={{ align: "start" }}

@@ -93,7 +93,7 @@ export default {
       if (url.pathname === "/admin" || url.pathname.startsWith("/admin/"))
         return await handleAdmin(request);
       if (url.pathname.startsWith("/api/lead-reports/")) return handleLeadDownload(request, env);
-      if (url.pathname === "/api/google-reviews") return handleGoogleReviews(request, env);
+      if (url.pathname === "/api/google-reviews") return handleGoogleReviews();
       if (url.pathname === "/api/requests") return handleRequestSubmission(request, env);
       if (
         (request.method === "GET" || request.method === "HEAD") &&

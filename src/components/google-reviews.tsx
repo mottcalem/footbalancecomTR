@@ -49,7 +49,7 @@ export function GoogleReviews({ compact = false }: { compact?: boolean }) {
   if (compact) {
     return (
       <section aria-label={en ? "Customer reviews" : "Kullanıcı yorumları"} className="bg-muted">
-        <div className="mx-auto max-w-[1360px] px-5 py-4 lg:px-8">
+        <div className="mx-auto max-w-[1360px] px-5 pt-4 pb-10 md:pb-12 lg:px-8">
           <a
             href="#deneyimler"
             className="group flex flex-col gap-5 rounded-2xl border border-primary/15 bg-background px-6 py-5 shadow-sm transition hover:border-primary/35 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:flex-row sm:items-center sm:justify-between"

@@ -234,7 +234,7 @@ function Home() {
 
       <main id="top">
         <section className="bg-muted">
-          <div className="mx-auto grid max-w-[1360px] items-center gap-10 px-5 py-12 md:grid-cols-12 md:py-20 lg:px-8">
+          <div className="mx-auto grid max-w-[1360px] items-center gap-10 px-5 pt-12 pb-6 md:grid-cols-12 md:pt-20 md:pb-12 lg:px-8">
             <div className="md:col-span-5">
               <p className="mb-5 text-xs font-bold uppercase text-muted-foreground">
                 {tx("Kişiye Özel Ortopedik Tabanlık")}
@@ -317,24 +317,6 @@ function Home() {
         </section>
 
         <GoogleReviews compact />
-
-        <section aria-label={tx("FootBalance güvencesi")} className="bg-muted">
-          <div className="mx-auto grid max-w-[1360px] grid-cols-2 gap-3 px-5 py-8 md:grid-cols-4 md:gap-4 lg:px-8">
-            {[
-              tx("Finlandiya Teknolojisi"),
-              tx("Kişiye Özel Şekillendirme"),
-              tx("Uzman Uygulaması"),
-              tx("Türkiye Genelinde Yetkili Merkezler"),
-            ].map((x) => (
-              <div
-                key={x}
-                className="flex min-h-12 items-center rounded-xl border border-border bg-background px-4 py-3 text-sm font-semibold shadow-sm"
-              >
-                {tx(x)}
-              </div>
-            ))}
-          </div>
-        </section>
 
         <section id="kimler" className="bg-background">
           <div className="mx-auto max-w-[1360px] px-5 py-20 lg:px-8 lg:py-28">

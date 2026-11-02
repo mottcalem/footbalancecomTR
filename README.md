@@ -128,6 +128,18 @@ systemctl start footbalance-lead-report.service
 journalctl -u footbalance-lead-report.service
 ```
 
+Rapor hataları `OnFailure` ile bağımsız Python hata bildirimi servisini tetikler.
+`deploy/footbalance-lead-report-alert@.service` dosyasını `/etc/systemd/system/`
+altına, `scripts/report-failure-alert.py` dosyasını
+`/usr/local/lib/footbalance/report-failure-alert.py` konumuna kurup
+`systemctl daemon-reload` çalıştırın. Bildirim alıcısı `dgn.ugur@gmail.com`;
+aynı hata için başarılı bildirimler altı saatte birle sınırlıdır. Uygulamanın
+Node bağımlılıkları bozulsa da bildirim çalışır. SMTP kesintisinde uyarı servisi
+beş dakikada bir yeniden dener. E-posta gövdesinde servis durumu, hata mesajı
+ve ilgili stack trace satırları yer alır. Yalnızca son çalıştırmanın hata
+satırları alınır; secret değerleri, URL'ler ve e-posta adresleri maskelenir.
+Gövde UTF-8/base64 ile hem düz metin hem HTML olarak gönderilir.
+
 Yalnızca Excel dosyalarını yeniden üretmek için (e-posta göndermez):
 
 ```bash

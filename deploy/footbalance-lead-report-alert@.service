@@ -1,0 +1,19 @@
+[Unit]
+Description=FootBalance report failure email for %i
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/footbalance.env
+Environment=FOOTBALANCE_ALERT_TO=dgn.ugur@gmail.com
+ExecStart=/usr/bin/python3 /usr/local/lib/footbalance/report-failure-alert.py --unit %i
+StateDirectory=footbalance-report-alert
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+TimeoutStartSec=90
+Restart=on-failure
+RestartSec=5min

@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useTranslation } from "@/lib/i18n";
 import { languagePath } from "@/lib/i18n/urls";
+import { SETTINGS_EVENT } from "@/lib/cookie-consent";
 import logo from "@/assets/footbalance-logo.svg";
 
 const groups = [
@@ -117,7 +118,16 @@ export function SiteFooter() {
           <div className="mt-5 flex flex-col justify-between gap-4 border-t border-primary-foreground/15 pt-4 text-xs text-primary-foreground/55 sm:flex-row">
             <p>{tx("© 2026 FootBalance Türkiye")}</p>
             <div className="flex flex-wrap gap-5">
+              <button
+                type="button"
+                className="cursor-pointer text-left hover:text-primary-foreground focus-visible:underline"
+                onClick={() => window.dispatchEvent(new Event(SETTINGS_EVENT))}
+              >
+                {language === "en" ? "Cookie preferences" : "Çerez tercihleri"}
+              </button>
               {[
+                ["KVKK Aydınlatma Metni", "/kvkk-aydinlatma-metni/"],
+                ["Ön Bilgilendirme Formu", "/on-bilgilendirme-formu/"],
                 ["Çerez Politikası ve Aydınlatma Metni", "/cerez-politikasi-ve-aydinlatma-metni/"],
                 ["Kullanım Koşulları", "/kullanim-kosullari/"],
               ].map(([label, path]) => (

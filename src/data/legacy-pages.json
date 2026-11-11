@@ -33,9 +33,9 @@
   },
   {
     "path": "/kvkk-aydinlatma-metni/",
-    "modified": "2026-06-15T13:19:01+00:00",
-    "title": "KVKK Aydınlatma Metni | FootBalance",
-    "description": "6698 sayılı kanun kapsamında hangi bilgilerinizin işlendiğini, saklama ve aktarım kurallarını, haklarınızı ve başvuru yollarını burada bulabilirsiniz.",
+    "modified": "2026-11-11T00:00:00+03:00",
+    "title": "KİŞİSEL VERİLERİN İŞLENMESİNE İLİŞKİN AYDINLATMA METNİ | FootBalance",
+    "description": "FootBalance Türkiye online mağazası kişisel verilerin işlenmesine ilişkin aydınlatma metni; veri sorumlusu, işleme amaçları, haklar ve başvuru yolları.",
     "image": "https://footbalance.com.tr/wp-content/uploads/2023/07/thumb.jpg",
     "robots": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large"
   },
@@ -782,5 +782,13 @@
     "description": "",
     "image": "/wp-content/uploads/2023/07/thumb.jpg",
     "robots": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large"
+  },
+  {
+    "path": "/on-bilgilendirme-formu/",
+    "image": "",
+    "robots": "follow, index, max-snippet:-1, max-video-preview:-1, max-image-preview:large",
+    "title": "ÖN BİLGİLENDİRME FORMU | FootBalance",
+    "description": "FootBalance Türkiye online mağazası ön bilgilendirme formu; satıcı bilgileri, ödeme, teslimat, cayma hakkı ve iade koşulları.",
+    "modified": "2026-11-11T00:00:00+03:00"
   }
 ]

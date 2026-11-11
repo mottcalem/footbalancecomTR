@@ -1,7 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import { canonicalUrl } from "@/lib/seo";
 import { languagePath } from "@/lib/i18n/urls";
+
+import { CONSENT_EVENT, readConsent } from "@/lib/cookie-consent";
 
 const GA4_ID = "G-XBVGTE635G";
 const LEGACY_ID = "UA-65716654-14";
@@ -12,8 +14,16 @@ declare global {
   }
 }
 export function Analytics() {
+  const [allowed, setAllowed] = useState(false);
+  useEffect(() => {
+    const sync = () => setAllowed(readConsent()?.analytics === true);
+    sync();
+    window.addEventListener(CONSENT_EVENT, sync);
+    return () => window.removeEventListener(CONSENT_EVENT, sync);
+  }, []);
   const location = useRouterState({ select: (s) => s.location });
   useEffect(() => {
+    if (!allowed) return;
     if (!["footbalance.com.tr", "www.footbalance.com.tr"].includes(window.location.hostname))
       return;
     if (!window.gtag) {
@@ -37,11 +47,11 @@ export function Analytics() {
       ),
       page_title: document.title,
     });
-  }, [location.pathname, location.search.lang]);
+  }, [allowed, location.pathname, location.search.lang]);
   useEffect(() => {
     const listener = (event: Event) => {
       const detail = (event as CustomEvent<{ event?: string; [key: string]: unknown }>).detail;
-      if (detail?.event && window.gtag) {
+      if (readConsent()?.analytics && detail?.event && window.gtag) {
         const { event: name, ...params } = detail;
         window.gtag("event", name, { ...params, send_to: GA4_ID });
       }
